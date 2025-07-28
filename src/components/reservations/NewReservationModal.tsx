@@ -5,7 +5,8 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { useCustomers } from '../../hooks/useCustomers';
 import { useCreateReservation } from '../../hooks/useCreateReservation';
-import { format } from 'date-fns';
+import { useReservations } from '../../hooks/useReservations';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 interface NewReservationModalProps {
   isOpen: boolean;
@@ -22,6 +23,11 @@ const NewReservationModal: React.FC<NewReservationModalProps> = ({
 }) => {
   const { data: customers } = useCustomers();
   const createReservation = useCreateReservation();
+  
+  // 今月の予約数をチェック
+  const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
+  const monthEnd = format(endOfMonth(new Date()), 'yyyy-MM-dd');
+  const { data: monthReservations } = useReservations(monthStart, monthEnd);
 
   const [formData, setFormData] = useState({
     customer_id: '',
@@ -52,6 +58,11 @@ const NewReservationModal: React.FC<NewReservationModalProps> = ({
 
     if (formData.price && isNaN(Number(formData.price))) {
       newErrors.price = '料金は数字で入力してください';
+    }
+
+    // 月間予約数上限チェック
+    if (monthReservations && monthReservations.length >= 50) {
+      newErrors.limit = '今月の予約数が上限（50件）に達しています。ライトプランでは月間50件まで予約可能です。';
     }
 
     setErrors(newErrors);
@@ -109,6 +120,21 @@ const NewReservationModal: React.FC<NewReservationModalProps> = ({
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* プラン制限警告 */}
+        {errors.limit && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <X className="h-5 w-5 text-red-400" />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium">{errors.limit}</p>
+                <p className="text-xs mt-1">スタンダードプランにアップグレードすると月間500件まで予約可能です。</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -235,7 +261,7 @@ const NewReservationModal: React.FC<NewReservationModalProps> = ({
             <Button type="button" variant="secondary" onClick={onClose}>
               キャンセル
             </Button>
-            <Button type="submit" disabled={createReservation.isPending}>
+            <Button type="submit" disabled={createReservation.isPending || !!errors.limit}>
               予約を登録
             </Button>
           </div>

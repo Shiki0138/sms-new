@@ -6,14 +6,11 @@ import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
-import CustomersPage from './pages/customers/CustomersPage';
-import NewCustomerPage from './pages/customers/NewCustomerPage';
-import CustomerDetailPage from './pages/customers/CustomerDetailPage';
-import CustomerEditPage from './pages/customers/CustomerEditPage';
-import ReservationsPage from './pages/reservations/ReservationsPage';
-import SettingsPage from './pages/settings/SettingsPage';
-import MenuManagePage from './pages/settings/MenuManagePage';
-import SalesReportPage from './pages/reports/SalesReportPage';
+import CustomersPage from './pages/CustomersPage';
+import ReservationsPage from './pages/ReservationsPage';
+import SettingsPage from './pages/SettingsPage';
+import MessagesPage from './pages/MessagesPage';
+import DesignBoardPage from './pages/DesignBoardPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
 
@@ -47,13 +44,10 @@ function App() {
             >
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/customers" element={<CustomersPage />} />
-              <Route path="/customers/new" element={<NewCustomerPage />} />
-              <Route path="/customers/:id" element={<CustomerDetailPage />} />
-              <Route path="/customers/:id/edit" element={<CustomerEditPage />} />
               <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="/messages" element={<MessagesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/settings/menus" element={<MenuManagePage />} />
-              <Route path="/reports/sales" element={<SalesReportPage />} />
+              <Route path="/design-board" element={<DesignBoardPage />} />
             </Route>
             
             {/* デフォルトリダイレクト */}

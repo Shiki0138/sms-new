@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Store, Bell, Shield, Package, ExternalLink, BarChart3 } from 'lucide-react';
+import { User, Store, Bell, Shield, Package, ExternalLink, BarChart3, Link as LinkIcon, Crown, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -8,12 +8,15 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTenant } from '../../hooks/useTenant';
 import { useUpdateTenant } from '../../hooks/useUpdateTenant';
 import { toast } from 'react-hot-toast';
+import ApiIntegrationSettings from '../../components/settings/ApiIntegrationSettings';
+import ReminderSettings from '../../components/settings/ReminderSettings';
+import PlanUsageCard from '../../components/common/PlanUsageCard';
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
   const { data: tenant } = useTenant();
   const updateTenant = useUpdateTenant();
-  const [activeTab, setActiveTab] = useState<'salon' | 'account' | 'notifications' | 'security'>('salon');
+  const [activeTab, setActiveTab] = useState<'salon' | 'plan' | 'account' | 'api' | 'reminders' | 'notifications' | 'security'>('salon');
 
   // サロン情報
   const [salonData, setSalonData] = useState({
@@ -73,7 +76,10 @@ const SettingsPage: React.FC = () => {
 
   const tabs = [
     { id: 'salon', label: 'サロン情報', icon: Store },
+    { id: 'plan', label: 'プラン・利用状況', icon: Crown },
     { id: 'account', label: 'アカウント', icon: User },
+    { id: 'api', label: 'API連携', icon: LinkIcon },
+    { id: 'reminders', label: 'リマインダー', icon: Bell },
     { id: 'notifications', label: '通知設定', icon: Bell },
     { id: 'security', label: 'セキュリティ', icon: Shield },
   ];
@@ -95,7 +101,7 @@ const SettingsPage: React.FC = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'salon' | 'plan' | 'account' | 'api' | 'reminders' | 'notifications' | 'security')}
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab.id
                     ? 'bg-blue-100 text-blue-700'
@@ -207,6 +213,98 @@ const SettingsPage: React.FC = () => {
         </Card>
       )}
 
+      {/* プラン・利用状況タブ */}
+      {activeTab === 'plan' && (
+        <div className="space-y-6">
+          {/* 現在のプラン情報 */}
+          <Card>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl">
+                  <Crown className="h-6 w-6 text-primary-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">現在のプラン</h2>
+                  <p className="text-sm text-gray-600">ライトプラン</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-primary-600">¥0</div>
+                <div className="text-xs text-gray-500">/ 月</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-2 mb-2">
+                  <User className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">顧客登録</span>
+                </div>
+                <div className="text-xl font-bold text-gray-900">100名まで</div>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Bell className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">月間予約</span>
+                </div>
+                <div className="text-xl font-bold text-gray-900">50件まで</div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h3 className="text-sm font-medium text-gray-900 mb-3">プラン特典</h3>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Star className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-gray-700">基本的な顧客・予約管理</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Star className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-gray-700">簡易統計ダッシュボード</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Star className="h-4 w-4 text-green-500" />
+                  <span className="text-sm text-gray-700">メール通知機能</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* 利用状況 */}
+          <PlanUsageCard />
+
+          {/* プランアップグレード案内 */}
+          <Card>
+            <div className="text-center py-6">
+              <div className="p-4 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-full w-16 h-16 mx-auto mb-4">
+                <Crown className="h-8 w-8 text-primary-600 mx-auto mt-2" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">さらなる機能をお探しですか？</h3>
+              <p className="text-gray-600 mb-4">
+                スタンダードプランでは月間500件の予約管理、詳細分析機能、外部連携機能をご利用いただけます。
+              </p>
+              <div className="space-y-2 mb-6">
+                <div className="flex items-center justify-center space-x-2">
+                  <Star className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">月間予約500件まで</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <Star className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">詳細売上分析</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <Star className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">LINE・Instagram連携</span>
+                </div>
+              </div>
+              <Button className="bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600">
+                スタンダードプランにアップグレード
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* アカウントタブ */}
       {activeTab === 'account' && (
         <Card>
@@ -311,6 +409,16 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
         </Card>
+      )}
+
+      {/* API連携タブ */}
+      {activeTab === 'api' && (
+        <ApiIntegrationSettings />
+      )}
+
+      {/* リマインダータブ */}
+      {activeTab === 'reminders' && (
+        <ReminderSettings />
       )}
 
       {/* セキュリティタブ */}

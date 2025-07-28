@@ -1,21 +1,29 @@
 # 美容サロン管理システム - ライトプラン
 
-個人経営や小規模サロン向けの軽量な管理システムです。
+[![Deploy to Vercel](https://github.com/Shiki0138/sms-new/actions/workflows/deploy.yml/badge.svg)](https://github.com/Shiki0138/sms-new/actions/workflows/deploy.yml)
+[![CI](https://github.com/Shiki0138/sms-new/actions/workflows/ci.yml/badge.svg)](https://github.com/Shiki0138/sms-new/actions/workflows/ci.yml)
 
-## 機能
+個人経営や小規模サロン向けの統合管理システムです。
 
-- 👥 顧客管理（最大100件）
-- 📅 予約管理（月間50件まで）
-- 📊 簡易統計ダッシュボード
-- ⚙️ 営業時間・メニュー設定
+## 🌟 主な機能
+
+- 👥 **顧客管理** - 最大100名まで（ライトプラン制限）
+- 📅 **予約管理** - 月間50件まで予約可能
+- 💬 **統合メッセージング** - LINE/Instagram/メールの一元管理
+- 🤖 **AI返信支援** - Gemini AIによる返信文自動生成（月200回）
+- 📢 **マーケティング** - リマインダー・一斉配信・セグメント機能
+- 📊 **使用状況ダッシュボード** - リアルタイム使用量表示
+- 📱 **モバイル最適化** - スマートフォンでの操作性重視
 
 ## 技術スタック
 
-- **フロントエンド**: React 18 + TypeScript + Vite
-- **スタイリング**: TailwindCSS + Headless UI
-- **バックエンド**: Supabase (認証・データベース)
-- **状態管理**: React Query
-- **デプロイ**: Vercel
+- **フロントエンド**: React 19 + TypeScript + Vite
+- **スタイリング**: TailwindCSS + Framer Motion
+- **バックエンド**: Supabase (認証・データベース・リアルタイム)
+- **状態管理**: React Query + Context API
+- **AI**: Google Gemini API
+- **外部連携**: LINE Messaging API, Instagram API
+- **デプロイ**: Vercel + GitHub Actions
 
 ## セットアップ
 

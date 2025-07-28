@@ -1,0 +1,16 @@
+# Default code owners for all files
+* @Shiki0138
+
+# Frontend specific files
+/src/ @Shiki0138
+*.tsx @Shiki0138
+*.ts @Shiki0138
+
+# Configuration files
+*.json @Shiki0138
+*.yml @Shiki0138
+*.yaml @Shiki0138
+
+# Documentation
+*.md @Shiki0138
+/docs/ @Shiki0138

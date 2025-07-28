@@ -96,12 +96,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      // Edge Functionを使用してサインアップ（RLSをバイパス）
-      const { data, error } = await supabase.functions.invoke('signup', {
-        body: { email, password, tenantName }
-      });
-
-      if (error) throw error;
+      // 直接Supabaseクライアントを使用
+      const data = await supabaseAuth.signUp(email, password, tenantName);
       
       if (data.user && data.tenant) {
         setUser(data.user);
@@ -110,6 +106,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           plan: data.tenant.plan_type // plan_type を plan にマッピング
         });
         setPlan('light');
+        
+        // サインアップ後、自動的にテナント情報を取得
+        await fetchTenantInfo(data.user.id);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '新規登録に失敗しました';

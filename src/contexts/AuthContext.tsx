@@ -33,33 +33,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchTenantInfo = async (userId: string) => {
     try {
-      const { data: mapping, error: mappingError } = await supabase
-        .from('user_tenant_mapping')
+      // ユーザー情報とテナント情報を取得
+      const { data: userData, error: userError } = await supabase
+        .from('users')
         .select(`
           tenant_id,
           role,
           tenants (
             id,
             name,
-            plan,
+            plan_type,
             phone_number,
             address,
             created_at,
             updated_at
           )
         `)
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single();
 
-      if (mappingError) throw mappingError;
+      if (userError) throw userError;
 
-      if (mapping && mapping.tenants) {
-        const tenantData = Array.isArray(mapping.tenants) 
-          ? mapping.tenants[0] 
-          : mapping.tenants;
+      if (userData && userData.tenants) {
+        const tenantData = Array.isArray(userData.tenants) 
+          ? userData.tenants[0] 
+          : userData.tenants;
         
-        setTenant(tenantData as Tenant);
-        setPlan(tenantData.plan as PlanType);
+        setTenant({
+          ...tenantData,
+          plan: tenantData.plan_type // plan_type を plan にマッピング
+        } as Tenant);
+        setPlan(tenantData.plan_type as PlanType);
       }
     } catch (err) {
       console.error('Error fetching tenant info:', err);

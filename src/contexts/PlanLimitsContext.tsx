@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import { ApiService } from '../services/api-service';
 import { toast } from 'sonner';
 
 interface PlanLimits {
@@ -79,53 +80,19 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (!tenant?.id) return;
 
     try {
-      // 顧客数を取得
-      const { count: customerCount } = await supabase
-        .from('customers')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenant.id);
-
-      // 今月の予約数を取得
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
+      // APIサービスから現在の使用状況を取得
+      const currentUsage = await ApiService.getCurrentPlanUsage(tenant.id);
       
-      const { count: reservationCount } = await supabase
-        .from('reservations')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenant.id)
-        .gte('created_at', startOfMonth.toISOString());
-
-      // スタッフ数を取得
-      const { count: staffCount } = await supabase
-        .from('staffs')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenant.id);
-
-      // 今月のAI返信使用数を取得
-      const { data: usageLogs } = await supabase
-        .from('plan_usage_logs')
-        .select('usage_count')
-        .eq('tenant_id', tenant.id)
-        .eq('usage_type', 'ai_reply')
-        .gte('created_at', startOfMonth.toISOString());
-
-      const aiReplyCount = usageLogs?.reduce((sum, log) => sum + (log.usage_count || 0), 0) || 0;
-
-      // 今月のメッセージ送信数を取得
-      const { count: messageCount } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenant.id)
-        .eq('direction', 'sent')
-        .gte('created_at', startOfMonth.toISOString());
+      // 実際の顧客数とスタッフ数を取得
+      const customerCount = await ApiService.getCustomerCount(tenant.id);
+      const staffCount = await ApiService.getStaffCount(tenant.id);
 
       setUsage({
-        customers: customerCount || 0,
-        monthlyReservations: reservationCount || 0,
-        staffAccounts: staffCount || 0,
-        monthlyAiReplies: aiReplyCount,
-        monthlyMessages: messageCount || 0,
+        customers: customerCount,
+        monthlyReservations: currentUsage.reservations_count || 0,
+        staffAccounts: staffCount,
+        monthlyAiReplies: currentUsage.ai_replies_count || 0,
+        monthlyMessages: currentUsage.messages_sent || 0,
       });
     } catch (error) {
       console.error('Error fetching usage:', error);
@@ -158,7 +125,13 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'plan_usage_logs',
+        table: 'plan_usage',
+        filter: `tenant_id=eq.${tenant.id}`,
+      }, fetchUsage)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'staff',
         filter: `tenant_id=eq.${tenant.id}`,
       }, fetchUsage)
       .subscribe();

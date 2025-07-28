@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    global: 'globalThis',
+  },
   server: {
     host: true, // 0.0.0.0でリッスン
     port: 5173,
@@ -13,5 +16,18 @@ export default defineConfig({
   preview: {
     host: true,
     port: 4173,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['framer-motion', '@heroicons/react'],
+          'data-vendor': ['@supabase/supabase-js']
+        }
+      }
+    },
+    target: 'esnext',
+    minify: 'esbuild'
   }
 })

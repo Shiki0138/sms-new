@@ -1,7 +1,18 @@
 // LINE Webhook エンドポイント
-import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
 import { handleLineWebhook } from '../../hooks/useMessages';
+
+interface VercelRequest {
+  method?: string;
+  body: any;
+  headers: any;
+}
+
+interface VercelResponse {
+  status: (code: number) => VercelResponse;
+  json: (body: any) => void;
+  send: (body: any) => void;
+}
 
 // LINE署名検証
 function validateSignature(body: string, signature: string, channelSecret: string): boolean {
@@ -13,7 +24,7 @@ function validateSignature(body: string, signature: string, channelSecret: strin
   return hash === signature;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

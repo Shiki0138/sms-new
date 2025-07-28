@@ -364,7 +364,7 @@ export default function BulkMessageComposer({
           )}
           
           <div className="mt-2 text-xs text-gray-500">
-            使用可能な変数: {{'{'}customer_name{'}'}}, {{'{'}phone{'}'}}, {{'{'}last_visit{'}'}}, {{'{'}visit_count{'}'}}}
+            使用可能な変数: {'{'}customer_name{'}'}, {'{'}phone{'}'}, {'{'}last_visit{'}'}, {'{'}visit_count{'}'}
           </div>
         </div>
 

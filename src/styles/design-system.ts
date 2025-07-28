@@ -198,17 +198,17 @@ export const animations = {
   
   spring: {
     gentle: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 300,
       damping: 30,
     },
     smooth: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 400,
       damping: 25,
     },
     bouncy: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 600,
       damping: 15,
     },

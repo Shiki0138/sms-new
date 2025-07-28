@@ -11,6 +11,7 @@ import {
 import { animations } from '../styles/design-system';
 import HolidaySettingsCard from '../components/settings/HolidaySettingsCard';
 import StaffRegistrationCard from '../components/staff/StaffRegistrationCard';
+import ReminderSettings from '../components/settings/ReminderSettings';
 import { useStaff } from '../hooks/useStaff';
 import { useBusinessHours } from '../hooks/useBusinessHours';
 
@@ -224,29 +225,7 @@ export default function SettingsPage() {
         );
 
       case 'notifications':
-        return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="bg-gradient-to-r from-primary-50 to-secondary-50 px-6 py-4 -m-6 mb-6 border-b border-gray-200">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-primary-100 rounded-lg">
-                  <BellIcon className="h-5 w-5 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-gray-800">通知設定</h3>
-                  <p className="text-sm text-gray-600">リマインダーと通知の設定</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="text-center py-12">
-                <BellIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-2">通知設定機能</p>
-                <p className="text-sm text-gray-400">今後のアップデートで追加予定です</p>
-              </div>
-            </div>
-          </div>
-        );
+        return <ReminderSettings />;
 
       default:
         return null;

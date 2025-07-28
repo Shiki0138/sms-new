@@ -15,6 +15,7 @@ import { animations } from '../../styles/design-system';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import BulkMessageComposer from '../../components/marketing/BulkMessageComposer';
+import ReminderSettings from '../../components/settings/ReminderSettings';
 
 type ActiveTab = 'bulk_message' | 'reminders' | 'history' | 'analytics';
 
@@ -238,57 +239,7 @@ export default function MarketingPage() {
         )}
 
         {activeTab === 'reminders' && (
-          <Card>
-            <div className="text-center py-12">
-              <Cog6ToothIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                リマインダー設定
-              </h3>
-              <p className="text-gray-600 mb-6">
-                予約前後の自動リマインダーを設定できます
-              </p>
-              <div className="space-y-4 max-w-md mx-auto">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="text-left">
-                    <div className="font-medium text-gray-900">1週間前リマインダー</div>
-                    <div className="text-sm text-gray-600">予約の1週間前に自動送信</div>
-                  </div>
-                  <div className="flex items-center">
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="text-left">
-                    <div className="font-medium text-gray-900">3日前リマインダー</div>
-                    <div className="text-sm text-gray-600">予約の3日前に自動送信</div>
-                  </div>
-                  <div className="flex items-center">
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="text-left">
-                    <div className="font-medium text-gray-900">施術後フォロー</div>
-                    <div className="text-sm text-gray-600">施術翌日にお礼メッセージ</div>
-                  </div>
-                  <div className="flex items-center">
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" defaultChecked className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+          <ReminderSettings />
         )}
 
         {activeTab === 'history' && (

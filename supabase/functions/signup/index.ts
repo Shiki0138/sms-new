@@ -63,7 +63,7 @@ serve(async (req) => {
     const { error: userError } = await supabaseAdmin
       .from('users')
       .insert({
-        id: authData.user.id,
+        auth_id: authData.user.id,  // id → auth_id に変更
         tenant_id: tenantData.id,
         email: email,
         full_name: tenantName + ' オーナー',

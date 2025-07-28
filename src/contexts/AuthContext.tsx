@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             updated_at
           )
         `)
-        .eq('id', userId)
+        .eq('auth_id', userId)  // id → auth_id に変更
         .single();
 
       if (userError) throw userError;

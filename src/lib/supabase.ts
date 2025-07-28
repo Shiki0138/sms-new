@@ -54,11 +54,11 @@ export const supabaseAuth = {
 
     if (tenantError) throw new Error(`テナント作成エラー: ${tenantError.message}`);
 
-    // 3. usersテーブルにレコード作成
+    // 3. usersテーブルにレコード作成（auth_idを使用）
     const { error: userError } = await supabase
       .from('users')
       .insert({
-        id: authData.user.id,
+        auth_id: authData.user.id,  // id → auth_id に変更
         tenant_id: tenantData.id,
         email: email,
         full_name: tenantName + ' オーナー',

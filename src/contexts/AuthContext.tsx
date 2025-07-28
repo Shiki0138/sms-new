@@ -96,11 +96,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
       
-      const data = await supabaseAuth.signUp(email, password, tenantName);
+      // Edge Functionを使用してサインアップ（RLSをバイパス）
+      const { data, error } = await supabase.functions.invoke('signup', {
+        body: { email, password, tenantName }
+      });
+
+      if (error) throw error;
       
       if (data.user && data.tenant) {
         setUser(data.user);
-        setTenant(data.tenant);
+        setTenant({
+          ...data.tenant,
+          plan: data.tenant.plan_type // plan_type を plan にマッピング
+        });
         setPlan('light');
       }
     } catch (err) {

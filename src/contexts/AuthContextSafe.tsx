@@ -1,0 +1,252 @@
+import React, { createContext, useEffect, useState } from 'react';
+import { User } from '@supabase/supabase-js';
+import { supabase, supabaseAuth } from '../lib/supabase';
+import { AuthContextType, Tenant, PlanType } from '../types/auth';
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [plan, setPlan] = useState<PlanType>('light');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTenantInfo = async (userId: string) => {
+    try {
+      console.log('Fetching tenant info for user:', userId);
+
+      // まず user_tenant_mapping テーブルから情報を取得
+      const { data: mappingData, error: mappingError } = await supabase
+        .from('user_tenant_mapping')
+        .select('tenant_id, role')
+        .eq('user_id', userId)
+        .single();
+
+      if (mappingError) {
+        console.error('Mapping error:', mappingError);
+        // マッピングが存在しない場合は、テナントなしで続行
+        if (mappingError.code === 'PGRST116') {
+          console.log('No tenant mapping found for user');
+          return;
+        }
+        throw mappingError;
+      }
+
+      if (mappingData?.tenant_id) {
+        // テナント情報を取得
+        const { data: tenantData, error: tenantError } = await supabase
+          .from('tenants')
+          .select('*')
+          .eq('id', mappingData.tenant_id)
+          .single();
+
+        if (tenantError) {
+          console.error('Tenant error:', tenantError);
+          throw tenantError;
+        }
+
+        if (tenantData) {
+          console.log('Tenant data loaded:', tenantData);
+          setTenant({
+            id: tenantData.id,
+            name: tenantData.name,
+            plan: tenantData.plan || 'light',
+            phone_number: tenantData.phone_number,
+            address: tenantData.address,
+            created_at: tenantData.created_at,
+            updated_at: tenantData.updated_at,
+          });
+          setPlan((tenantData.plan || 'light') as PlanType);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching tenant info:', err);
+      setError('テナント情報の取得に失敗しました');
+      // エラーが発生してもアプリを停止させない
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log('Attempting login for:', email);
+      const data = await supabaseAuth.signIn(email, password);
+
+      if (data.user) {
+        console.log('Login successful:', data.user.id);
+        setUser(data.user);
+        await fetchTenantInfo(data.user.id);
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      const errorMessage =
+        err instanceof Error ? err.message : 'ログインに失敗しました';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signup = async (
+    email: string,
+    password: string,
+    tenantName: string
+  ) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log('Attempting signup for:', email);
+      const data = await supabaseAuth.signUp(email, password, tenantName);
+
+      if (data.user && data.tenant) {
+        console.log('Signup successful:', data.user.id);
+        setUser(data.user);
+        setTenant({
+          id: data.tenant.id,
+          name: data.tenant.name,
+          plan: 'light',
+          phone_number: data.tenant.phone_number,
+          address: data.tenant.address,
+          created_at: data.tenant.created_at,
+          updated_at: data.tenant.updated_at,
+        });
+        setPlan('light');
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      const errorMessage =
+        err instanceof Error ? err.message : '新規登録に失敗しました';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log('Logging out...');
+      await supabaseAuth.signOut();
+
+      setUser(null);
+      setTenant(null);
+      setPlan('light');
+      console.log('Logout successful');
+    } catch (err) {
+      console.error('Logout error:', err);
+      const errorMessage =
+        err instanceof Error ? err.message : 'ログアウトに失敗しました';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    // 初期セッション確認
+    const getInitialSession = async () => {
+      try {
+        console.log('Getting initial session...');
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error('Session error:', error);
+          throw error;
+        }
+
+        if (session?.user && mounted) {
+          console.log('Initial session found:', session.user.id);
+          setUser(session.user);
+          await fetchTenantInfo(session.user.id);
+        } else {
+          console.log('No initial session found');
+        }
+      } catch (err) {
+        console.error('Error getting initial session:', err);
+        if (mounted) {
+          setError('セッションの取得に失敗しました');
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    getInitialSession();
+
+    // 認証状態変更の監視
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      console.log('Auth state change:', event, session?.user?.id);
+
+      try {
+        if (event === 'SIGNED_IN' && session?.user) {
+          setUser(session.user);
+          await fetchTenantInfo(session.user.id);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setTenant(null);
+          setPlan('light');
+        }
+      } catch (err) {
+        console.error('Auth state change error:', err);
+        if (mounted) {
+          setError('認証状態の更新に失敗しました');
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const value: AuthContextType = {
+    user: user
+      ? {
+          id: user.id,
+          email: user.email || '',
+          created_at: user.created_at || '',
+        }
+      : null,
+    tenant,
+    plan,
+    login,
+    signup,
+    logout,
+    loading,
+    error,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

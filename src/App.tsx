@@ -7,8 +7,8 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { Toaster as Sonner } from 'sonner';
-import { AuthProvider } from './contexts/AuthContext';
-import { PlanLimitsProvider } from './contexts/PlanLimitsContext';
+import { AuthProvider } from './contexts/AuthContextSafe';
+import { PlanLimitsProvider } from './contexts/PlanLimitsContextSafe';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';

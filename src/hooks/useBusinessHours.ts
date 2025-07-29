@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { 
-  BusinessHoursService, 
-  BusinessHour, 
-  HolidaySetting, 
-  CreateHolidayData 
+import {
+  BusinessHoursService,
+  BusinessHour,
+  HolidaySetting,
+  CreateHolidayData,
 } from '../services/business-hours-service';
 
 interface UseBusinessHoursReturn {
@@ -11,9 +11,17 @@ interface UseBusinessHoursReturn {
   holidaySettings: HolidaySetting[];
   loading: boolean;
   error: string | null;
-  updateBusinessHour: (dayOfWeek: number, hours: Partial<BusinessHour>) => Promise<boolean>;
-  createHolidaySetting: (data: CreateHolidayData) => Promise<{ success: boolean; error?: string }>;
-  updateHolidaySetting: (id: string, updates: Partial<HolidaySetting>) => Promise<boolean>;
+  updateBusinessHour: (
+    dayOfWeek: number,
+    hours: Partial<BusinessHour>
+  ) => Promise<boolean>;
+  createHolidaySetting: (
+    data: CreateHolidayData
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateHolidaySetting: (
+    id: string,
+    updates: Partial<HolidaySetting>
+  ) => Promise<boolean>;
   deleteHolidaySetting: (id: string) => Promise<boolean>;
   isHoliday: (date: Date) => Promise<boolean>;
   isBusinessTime: (date: Date) => Promise<boolean>;
@@ -65,24 +73,20 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
   };
 
   const updateBusinessHour = async (
-    dayOfWeek: number, 
+    dayOfWeek: number,
     hours: Partial<BusinessHour>
   ): Promise<boolean> => {
     try {
       setError(null);
       const success = await service.updateBusinessHours(dayOfWeek, hours);
-      
+
       if (success) {
         // ローカル状態を更新
-        setBusinessHours(prev => 
-          prev.map(h => 
-            h.dayOfWeek === dayOfWeek 
-              ? { ...h, ...hours } 
-              : h
-          )
+        setBusinessHours((prev) =>
+          prev.map((h) => (h.dayOfWeek === dayOfWeek ? { ...h, ...hours } : h))
         );
       }
-      
+
       return success;
     } catch (err) {
       setError('営業時間の更新に失敗しました');
@@ -97,16 +101,16 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
     try {
       setError(null);
       const result = await service.createHolidaySetting(data);
-      
+
       if (result.success && result.holiday) {
-        setHolidaySettings(prev => [...prev, result.holiday!]);
+        setHolidaySettings((prev) => [...prev, result.holiday!]);
       }
-      
+
       return {
         success: result.success,
         error: result.error,
       };
-    } catch (err) {
+    } catch {
       const errorMessage = '休日設定の追加に失敗しました';
       setError(errorMessage);
       return {
@@ -117,23 +121,19 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
   };
 
   const updateHolidaySetting = async (
-    id: string, 
+    id: string,
     updates: Partial<HolidaySetting>
   ): Promise<boolean> => {
     try {
       setError(null);
       const success = await service.updateHolidaySetting(id, updates);
-      
+
       if (success) {
-        setHolidaySettings(prev => 
-          prev.map(h => 
-            h.id === id 
-              ? { ...h, ...updates } 
-              : h
-          )
+        setHolidaySettings((prev) =>
+          prev.map((h) => (h.id === id ? { ...h, ...updates } : h))
         );
       }
-      
+
       return success;
     } catch (err) {
       setError('休日設定の更新に失敗しました');
@@ -146,11 +146,11 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
     try {
       setError(null);
       const success = await service.deleteHolidaySetting(id);
-      
+
       if (success) {
-        setHolidaySettings(prev => prev.filter(h => h.id !== id));
+        setHolidaySettings((prev) => prev.filter((h) => h.id !== id));
       }
-      
+
       return success;
     } catch (err) {
       setError('休日設定の削除に失敗しました');
@@ -167,13 +167,18 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
     return await service.isBusinessTime(date);
   };
 
-  const getHolidaysInRange = async (startDate: Date, endDate: Date): Promise<Date[]> => {
+  const getHolidaysInRange = async (
+    startDate: Date,
+    endDate: Date
+  ): Promise<Date[]> => {
     return await service.getHolidaysInRange(startDate, endDate);
   };
 
   useEffect(() => {
-    fetchData();
-  }, [tenantId]);
+    if (tenantId) {
+      fetchData();
+    }
+  }, [tenantId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     businessHours,

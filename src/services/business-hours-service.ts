@@ -41,7 +41,40 @@ export class BusinessHoursService {
   private tenantId: string;
 
   constructor(tenantId: string) {
-    this.tenantId = tenantId;
+    // テナントIDの正規化とバリデーション
+    this.tenantId = this.validateAndNormalizeTenantId(tenantId);
+    console.log(
+      '[BusinessHoursService] Initialized with tenant ID:',
+      this.tenantId
+    );
+  }
+
+  private validateAndNormalizeTenantId(tenantId: string): string {
+    if (!tenantId) {
+      console.error('[BusinessHoursService] No tenant ID provided');
+      return '';
+    }
+
+    // UUIDの正規表現パターン
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    // 既にUUID形式の場合はそのまま返す
+    if (uuidRegex.test(tenantId)) {
+      return tenantId;
+    }
+
+    // 開発環境用のテナントIDの場合
+    if (tenantId === 'dev-tenant' || tenantId === '01HZTEST001') {
+      console.warn(
+        '[BusinessHoursService] Development tenant ID detected, using default UUID'
+      );
+      // 開発環境用のデフォルトUUID（初期データのテナントID）
+      return 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+    }
+
+    console.error('[BusinessHoursService] Invalid tenant ID format:', tenantId);
+    return tenantId; // 無効な形式でも返すが、後続の処理でエラーになる
   }
 
   /**
@@ -49,6 +82,14 @@ export class BusinessHoursService {
    */
   async getBusinessHours(): Promise<BusinessHour[]> {
     try {
+      // テナントIDが無効な場合は空配列を返す
+      if (!this.tenantId) {
+        console.warn(
+          '[getBusinessHours] No valid tenant ID, returning empty array'
+        );
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('business_hours')
         .select('*')
@@ -138,6 +179,14 @@ export class BusinessHoursService {
     try {
       console.log('[getHolidaySettings] Fetching for tenant:', this.tenantId);
 
+      // テナントIDが無効な場合は空配列を返す
+      if (!this.tenantId) {
+        console.warn(
+          '[getHolidaySettings] No valid tenant ID, returning empty array'
+        );
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('holiday_settings')
         .select('*')
@@ -169,9 +218,7 @@ export class BusinessHoursService {
   /**
    * 休日設定を追加
    */
-  async createHolidaySetting(
-    holidayData: CreateHolidayData
-  ): Promise<{
+  async createHolidaySetting(holidayData: CreateHolidayData): Promise<{
     holiday: HolidaySetting | null;
     success: boolean;
     error?: string;
@@ -187,6 +234,24 @@ export class BusinessHoursService {
           holiday: null,
           success: false,
           error: 'テナント情報が見つかりません',
+        };
+      }
+
+      // テナントIDのフォーマットチェック（既にコンストラクタで正規化されている）
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(this.tenantId)) {
+        console.error(
+          '[createHolidaySetting] Invalid tenant ID format after normalization:',
+          this.tenantId
+        );
+
+        // テナントIDが正規化後も無効な場合
+        return {
+          holiday: null,
+          success: false,
+          error:
+            'テナント情報の取得に問題があります。再度ログインしてください。',
         };
       }
 

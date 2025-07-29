@@ -1,27 +1,37 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
 import { useCustomers } from '../hooks/useCustomers';
 import { useReservations } from '../hooks/useReservations';
-import { Calendar, Users, TrendingUp, Plus, Sparkles, Clock, Heart, Star, Phone, Mail, Scissors } from 'lucide-react';
+import {
+  Calendar,
+  Users,
+  TrendingUp,
+  Plus,
+  Sparkles,
+  Clock,
+  Heart,
+  Star,
+  Phone,
+  Mail,
+  Scissors,
+} from 'lucide-react';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { animations } from '../styles/design-system';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  const { data: customers } = useCustomers();
-  
+  const { customers = [] } = useCustomers();
+
   // 今日の予約を取得
   const today = format(new Date(), 'yyyy-MM-dd');
   const { data: todayReservations } = useReservations(today, today);
-  
+
   // 今月の予約と施術記録を取得
   const monthStart = format(startOfMonth(new Date()), 'yyyy-MM-dd');
   const monthEnd = format(endOfMonth(new Date()), 'yyyy-MM-dd');
   const { data: monthReservations } = useReservations(monthStart, monthEnd);
-  
 
   // 統計カードのデザイン設定
   const statsCards = [
@@ -36,7 +46,7 @@ const DashboardPage: React.FC = () => {
     },
     {
       title: '登録顧客数',
-      value: customers?.length || 0,
+      value: customers.length || 0,
       limit: 100,
       unit: '名',
       icon: Users,
@@ -76,69 +86,76 @@ const DashboardPage: React.FC = () => {
             <p className="text-gray-600 mt-1">ようこそ、{user?.email}さん</p>
           </div>
         </div>
-        
+
         {/* 美容室らしい装飾ライン */}
         <div className="mt-4 h-1 bg-gradient-to-r from-primary-200 via-secondary-200 to-accent-200 rounded-full" />
       </motion.div>
-        {/* 統計カード */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
-          {statsCards.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, ...animations.spring.gentle }}
-              className="relative overflow-hidden rounded-2xl shadow-lg"
-            >
-              <div className={`${stat.gradient} p-6 text-white`}>
-                {/* 背景パターン */}
-                <div className="absolute top-0 right-0 -mt-4 -mr-4 opacity-10">
-                  <Scissors className="h-32 w-32 transform rotate-45" />
-                </div>
-                
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                      <stat.icon className="h-6 w-6" />
-                    </div>
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    >
-                      <Sparkles className="h-6 w-6 opacity-60" />
-                    </motion.div>
-                  </div>
-                  
-                  <h3 className="text-sm font-medium opacity-90">{stat.title}</h3>
-                  <p className="text-3xl font-bold mt-2">
-                    {stat.value}
-                    {stat.limit && ` / ${stat.limit}`}
-                    <span className="text-sm font-normal ml-1">{stat.unit}</span>
-                  </p>
-                  
-                  {stat.limit && (
-                    <div className="mt-4">
-                      <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(stat.value / stat.limit) * 100}%` }}
-                          transition={animations.spring.smooth}
-                          className="h-full bg-white/40"
-                        />
-                      </div>
-                      <p className="text-xs mt-1 opacity-70">{((stat.value / stat.limit) * 100).toFixed(0)}% 使用中</p>
-                    </div>
-                  )}
-                </div>
+      {/* 統計カード */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        {statsCards.map((stat, index) => (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, ...animations.spring.gentle }}
+            className="relative overflow-hidden rounded-2xl shadow-lg"
+          >
+            <div className={`${stat.gradient} p-6 text-white`}>
+              {/* 背景パターン */}
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 opacity-10">
+                <Scissors className="h-32 w-32 transform rotate-45" />
               </div>
-            </motion.div>
-          ))}
-        </div>
+
+              <div className="relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <stat.icon className="h-6 w-6" />
+                  </div>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 20,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                  >
+                    <Sparkles className="h-6 w-6 opacity-60" />
+                  </motion.div>
+                </div>
+
+                <h3 className="text-sm font-medium opacity-90">{stat.title}</h3>
+                <p className="text-3xl font-bold mt-2">
+                  {stat.value}
+                  {stat.limit && ` / ${stat.limit}`}
+                  <span className="text-sm font-normal ml-1">{stat.unit}</span>
+                </p>
+
+                {stat.limit && (
+                  <div className="mt-4">
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{
+                          width: `${(stat.value / stat.limit) * 100}%`,
+                        }}
+                        transition={animations.spring.smooth}
+                        className="h-full bg-white/40"
+                      />
+                    </div>
+                    <p className="text-xs mt-1 opacity-70">
+                      {((stat.value / stat.limit) * 100).toFixed(0)}% 使用中
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* メインコンテンツエリア */}
         <div className="lg:col-span-2 space-y-6">
-
           {/* 本日の予約一覧 */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -152,7 +169,9 @@ const DashboardPage: React.FC = () => {
                   <div className="p-2 bg-white rounded-lg shadow-sm">
                     <Calendar className="h-6 w-6 text-primary-600" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-800">本日の予約</h2>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    本日の予約
+                  </h2>
                 </div>
                 <Link
                   to="/reservations"
@@ -162,7 +181,7 @@ const DashboardPage: React.FC = () => {
                 </Link>
               </div>
             </div>
-            
+
             <div className="p-6">
               {todayReservations && todayReservations.length > 0 ? (
                 <div className="space-y-4">
@@ -171,7 +190,10 @@ const DashboardPage: React.FC = () => {
                       key={reservation.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1, ...animations.spring.gentle }}
+                      transition={{
+                        delay: index * 0.1,
+                        ...animations.spring.gentle,
+                      }}
                       className="group hover:shadow-md transition-all rounded-xl overflow-hidden"
                     >
                       <div className="bg-gradient-to-r from-gray-50 via-primary-50/30 to-secondary-50/30 p-4">
@@ -184,27 +206,31 @@ const DashboardPage: React.FC = () => {
                               <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-400 rounded-full border-2 border-white" />
                             </div>
                           </div>
-                          
+
                           <div className="ml-4 flex-grow">
                             <div className="flex items-center space-x-2">
                               <h3 className="font-semibold text-gray-800">
                                 {reservation.customer?.name}
                               </h3>
-                              <span className="text-xl">{['💇‍♀️', '💆‍♀️', '✨'][index % 3]}</span>
+                              <span className="text-xl">
+                                {['💇‍♀️', '💆‍♀️', '✨'][index % 3]}
+                              </span>
                             </div>
                             <p className="text-sm text-gray-600 mt-1">
                               {reservation.menu_content}
                             </p>
                           </div>
-                          
+
                           <div className="flex items-center space-x-4">
                             <div className="text-right">
                               <div className="flex items-center space-x-1 text-gray-700">
                                 <Clock className="h-4 w-4" />
                                 <span className="font-semibold">
-                                  {new Date(reservation.start_time).toLocaleTimeString('ja-JP', { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
+                                  {new Date(
+                                    reservation.start_time
+                                  ).toLocaleTimeString('ja-JP', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
                                   })}
                                 </span>
                               </div>
@@ -212,7 +238,7 @@ const DashboardPage: React.FC = () => {
                                 ¥{reservation.price?.toLocaleString() || '-'}
                               </p>
                             </div>
-                            
+
                             <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all">
                                 <Phone className="h-5 w-5" />
@@ -253,8 +279,10 @@ const DashboardPage: React.FC = () => {
             transition={animations.spring.gentle}
             className="space-y-4"
           >
-            <h2 className="text-lg font-bold text-gray-800">クイックアクション</h2>
-            
+            <h2 className="text-lg font-bold text-gray-800">
+              クイックアクション
+            </h2>
+
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -269,7 +297,7 @@ const DashboardPage: React.FC = () => {
                 <p className="text-sm opacity-80">今すぐ予約を追加</p>
               </Link>
             </motion.div>
-            
+
             <motion.div
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -297,7 +325,7 @@ const DashboardPage: React.FC = () => {
               <Heart className="h-6 w-6 text-accent-600" />
               <h3 className="font-bold text-gray-800">今日も素敵な一日を</h3>
             </div>
-            
+
             <div className="space-y-2 text-sm text-gray-700">
               <div className="flex items-center justify-between">
                 <span>営業時間</span>
@@ -308,10 +336,13 @@ const DashboardPage: React.FC = () => {
                 <span className="font-medium text-green-600">◯ 空きあり</span>
               </div>
             </div>
-            
+
             <div className="mt-4 flex items-center space-x-1">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-accent-400 text-accent-400" />
+                <Star
+                  key={i}
+                  className="h-4 w-4 fill-accent-400 text-accent-400"
+                />
               ))}
               <span className="text-xs text-gray-600 ml-2">お客様満足度</span>
             </div>

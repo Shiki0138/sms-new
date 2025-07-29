@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Store, Bell, Shield, Package, ExternalLink, BarChart3, Link as LinkIcon, Crown, Star } from 'lucide-react';
+import { User, Store, Bell, Shield, Package, ExternalLink, BarChart3, Link as LinkIcon, Crown, Star, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -10,13 +10,25 @@ import { useUpdateTenant } from '../../hooks/useUpdateTenant';
 import { toast } from 'react-hot-toast';
 import ApiIntegrationSettings from '../../components/settings/ApiIntegrationSettings';
 import ReminderSettings from '../../components/settings/ReminderSettings';
+import HolidaySettingsCard from '../../components/settings/HolidaySettingsCard';
 import PlanUsageCard from '../../components/common/PlanUsageCard';
+import { useBusinessHours } from '../../hooks/useBusinessHours';
 
 const SettingsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, tenant: authTenant } = useAuth();
   const { data: tenant } = useTenant();
   const updateTenant = useUpdateTenant();
-  const [activeTab, setActiveTab] = useState<'salon' | 'plan' | 'account' | 'api' | 'reminders' | 'notifications' | 'security'>('salon');
+  const [activeTab, setActiveTab] = useState<'salon' | 'plan' | 'account' | 'api' | 'reminders' | 'business_hours' | 'notifications' | 'security'>('salon');
+  
+  // 営業時間・休日設定
+  const {
+    businessHours,
+    holidaySettings,
+    updateBusinessHour,
+    createHolidaySetting,
+    updateHolidaySetting,
+    deleteHolidaySetting,
+  } = useBusinessHours(authTenant?.id || '');
 
   // サロン情報
   const [salonData, setSalonData] = useState({
@@ -80,6 +92,7 @@ const SettingsPage: React.FC = () => {
     { id: 'account', label: 'アカウント', icon: User },
     { id: 'api', label: 'API連携', icon: LinkIcon },
     { id: 'reminders', label: 'リマインダー', icon: Bell },
+    { id: 'business_hours', label: '営業時間・休日', icon: Calendar },
     { id: 'notifications', label: '通知設定', icon: Bell },
     { id: 'security', label: 'セキュリティ', icon: Shield },
   ];
@@ -101,7 +114,7 @@ const SettingsPage: React.FC = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'salon' | 'plan' | 'account' | 'api' | 'reminders' | 'notifications' | 'security')}
+                onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab.id
                     ? 'bg-blue-100 text-blue-700'
@@ -419,6 +432,46 @@ const SettingsPage: React.FC = () => {
       {/* リマインダータブ */}
       {activeTab === 'reminders' && (
         <ReminderSettings />
+      )}
+
+      {/* 営業時間・休日タブ */}
+      {activeTab === 'business_hours' && (
+        <HolidaySettingsCard
+          holidays={holidaySettings}
+          businessHours={businessHours}
+          onAddHoliday={async (holiday) => {
+            const result = await createHolidaySetting(holiday);
+            if (!result.success) {
+              toast.error(result.error || '休日設定の追加に失敗しました');
+            } else {
+              toast.success('休日設定を追加しました');
+            }
+          }}
+          onUpdateHoliday={async (id, holiday) => {
+            const success = await updateHolidaySetting(id, holiday);
+            if (success) {
+              toast.success('休日設定を更新しました');
+            } else {
+              toast.error('休日設定の更新に失敗しました');
+            }
+          }}
+          onDeleteHoliday={async (id) => {
+            const success = await deleteHolidaySetting(id);
+            if (success) {
+              toast.success('休日設定を削除しました');
+            } else {
+              toast.error('休日設定の削除に失敗しました');
+            }
+          }}
+          onUpdateBusinessHours={async (dayOfWeek, hours) => {
+            const success = await updateBusinessHour(dayOfWeek, hours);
+            if (success) {
+              toast.success('営業時間を更新しました');
+            } else {
+              toast.error('営業時間の更新に失敗しました');
+            }
+          }}
+        />
       )}
 
       {/* セキュリティタブ */}

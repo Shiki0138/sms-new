@@ -12,7 +12,7 @@ import { PlanLimitsProvider } from './contexts/PlanLimitsContext';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
-import DashboardPage from './pages/DashboardPageSafe';
+import DashboardPage from './pages/DashboardPageFixed';
 import CustomersPage from './pages/customers/CustomersPage';
 import ReservationsPage from './pages/reservations/ReservationsPage';
 import SettingsPage from './pages/settings/SettingsPage';

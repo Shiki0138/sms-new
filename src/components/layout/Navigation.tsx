@@ -19,7 +19,7 @@ import { useAuth } from '../../hooks/useAuth';
 const navigation = [
   {
     name: 'ダッシュボード',
-    href: '/',
+    href: '/dashboard',
     icon: HomeIcon,
   },
   {

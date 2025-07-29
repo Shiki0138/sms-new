@@ -12,153 +12,123 @@ const DashboardPageMinimal: React.FC = () => {
         fontFamily: 'Arial, sans-serif',
       }}
     >
+      <h1 style={{ color: '#1f2937', marginBottom: '20px' }}>
+        最小限ダッシュボード
+      </h1>
+
       <div
         style={{
-          maxWidth: '800px',
-          margin: '0 auto',
           backgroundColor: 'white',
           padding: '20px',
           borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          marginBottom: '20px',
         }}
       >
-        <h1
+        <h2 style={{ color: '#374151', marginBottom: '10px' }}>システム状況</h2>
+        <p style={{ color: '#6b7280' }}>
+          React コンポーネントが正常に動作しています
+        </p>
+        <p style={{ color: '#6b7280' }}>
+          現在時刻: {new Date().toLocaleString('ja-JP')}
+        </p>
+      </div>
+
+      <div
+        style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          marginBottom: '20px',
+        }}
+      >
+        <h2 style={{ color: '#374151', marginBottom: '10px' }}>テスト情報</h2>
+        <ul style={{ color: '#6b7280', listStyle: 'none', padding: 0 }}>
+          <li style={{ marginBottom: '5px' }}>✅ React レンダリング: 正常</li>
+          <li style={{ marginBottom: '5px' }}>✅ CSS スタイル: 正常</li>
+          <li style={{ marginBottom: '5px' }}>✅ JavaScript 実行: 正常</li>
+          <li style={{ marginBottom: '5px' }}>
+            ✅ コンソールログ: 確認してください
+          </li>
+        </ul>
+      </div>
+
+      <div
+        style={{
+          backgroundColor: '#fef3c7',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '1px solid #f59e0b',
+          marginBottom: '20px',
+        }}
+      >
+        <h2 style={{ color: '#92400e', marginBottom: '10px' }}>
+          ⚠️ デバッグ情報
+        </h2>
+        <p style={{ color: '#92400e' }}>
+          この画面が表示されている場合、React は正常に動作しています。
+        </p>
+        <p style={{ color: '#92400e' }}>
+          白画面の原因は他のコンポーネントまたはコンテキストにあります。
+        </p>
+      </div>
+
+      <div
+        style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        }}
+      >
+        <h2 style={{ color: '#374151', marginBottom: '10px' }}>アクション</h2>
+        <button
+          onClick={() => {
+            console.log('ボタンクリック:', new Date().toISOString());
+            alert('ボタンが正常に動作しています！');
+          }}
           style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            marginBottom: '20px',
-            color: '#1f2937',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            marginRight: '10px',
           }}
         >
-          🔍 最小限デバッグページ
-        </h1>
+          テストボタン
+        </button>
 
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '18px', marginBottom: '10px' }}>基本情報</h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li style={{ marginBottom: '8px' }}>
-              ✅ React コンポーネントが正常にレンダリングされています
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              📅 現在時刻: {new Date().toLocaleString('ja-JP')}
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              🌐 URL: {window.location.href}
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              🔧 User Agent: {navigator.userAgent.slice(0, 80)}...
-            </li>
-          </ul>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '18px', marginBottom: '10px' }}>
-            環境変数チェック
-          </h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li style={{ marginBottom: '8px' }}>
-              Supabase URL:{' '}
-              {import.meta.env.VITE_SUPABASE_URL ? '✅ 設定済み' : '❌ 未設定'}
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              Supabase Anon Key:{' '}
-              {import.meta.env.VITE_SUPABASE_ANON_KEY
-                ? '✅ 設定済み'
-                : '❌ 未設定'}
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              NODE_ENV: {import.meta.env.MODE}
-            </li>
-          </ul>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '18px', marginBottom: '10px' }}>
-            ブラウザコンソール
-          </h2>
-          <p
-            style={{
-              backgroundColor: '#fef3c7',
-              padding: '10px',
-              borderRadius: '4px',
-              fontSize: '14px',
-            }}
-          >
-            F12キーを押してブラウザのコンソールを開き、エラーメッセージを確認してください。
-            このページが表示されている場合、基本的なReactレンダリングは動作しています。
-          </p>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '18px', marginBottom: '10px' }}>
-            テストボタン
-          </h2>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => {
-                console.log('Test button clicked');
-                alert('ボタンが正常に動作しています');
-              }}
-              style={{
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                padding: '8px 16px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              テストボタン
-            </button>
-
-            <button
-              onClick={() => window.location.reload()}
-              style={{
-                backgroundColor: '#6b7280',
-                color: 'white',
-                padding: '8px 16px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              ページリロード
-            </button>
-
-            <button
-              onClick={() => (window.location.href = '/auth/login')}
-              style={{
-                backgroundColor: '#ef4444',
-                color: 'white',
-                padding: '8px 16px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
-            >
-              ログイン画面へ
-            </button>
-          </div>
-        </div>
-
-        <div
+        <button
+          onClick={() => window.location.reload()}
           style={{
-            backgroundColor: '#f3f4f6',
-            padding: '15px',
-            borderRadius: '4px',
-            fontSize: '14px',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            marginRight: '10px',
           }}
         >
-          <h3 style={{ fontSize: '16px', marginBottom: '10px' }}>
-            🚨 このページが表示されない場合
-          </h3>
-          <ol style={{ paddingLeft: '20px' }}>
-            <li>JavaScript が無効になっている</li>
-            <li>ビルドエラーが発生している</li>
-            <li>ネットワーク接続の問題</li>
-            <li>Vercelのデプロイエラー</li>
-          </ol>
-        </div>
+          ページリロード
+        </button>
+
+        <a
+          href="/auth/login"
+          style={{
+            backgroundColor: '#10b981',
+            color: 'white',
+            padding: '10px 20px',
+            textDecoration: 'none',
+            borderRadius: '6px',
+            display: 'inline-block',
+          }}
+        >
+          ログイン画面へ
+        </a>
       </div>
     </div>
   );

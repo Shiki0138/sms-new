@@ -40,7 +40,7 @@ serve(async (req) => {
       throw fetchError
     }
 
-    let usage = currentUsage || {
+    const usage = currentUsage || {
       tenant_id,
       month: currentMonth,
       customers_count: 0,

@@ -154,7 +154,7 @@ export class BulkMessagingService {
       throw new Error('セグメントが見つかりません');
     }
 
-    let query = supabase
+    const query = supabase
       .from('customers')
       .select(`
         *,

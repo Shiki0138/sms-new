@@ -10,25 +10,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  // 開発環境の場合、ダミーユーザーを設定
-  const isDev = import.meta.env.DEV;
-  
-  const [user, setUser] = useState<User | null>(
-    isDev ? ({ id: 'dev-user', email: 'dev@example.com', created_at: new Date().toISOString() } as User) : null
-  );
-  const [tenant, setTenant] = useState<Tenant | null>(
-    isDev ? {
-      id: 'dev-tenant',
-      name: '開発用サロン',
-      plan: 'light',
-      phone_number: '03-1234-5678',
-      address: '東京都渋谷区開発1-2-3',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    } : null
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [tenant, setTenant] = useState<Tenant | null>(null);
   const [plan, setPlan] = useState<PlanType>('light');
-  const [loading, setLoading] = useState(!isDev);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTenantInfo = async (userId: string) => {
@@ -139,11 +124,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // 開発環境の場合はスキップ
-    if (isDev) {
-      return;
-    }
-    
     // 初期セッション確認
     const getInitialSession = async () => {
       try {
@@ -181,7 +161,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 
     return () => subscription.unsubscribe();
-  }, [isDev]);
+  }, []);
 
   const value: AuthContextType = {
     user: user ? { id: user.id, email: user.email || '', created_at: user.created_at || '' } : null,

@@ -24,6 +24,7 @@ const LoginForm: React.FC = () => {
       setIsLoading(true);
       await login(email, password);
       toast.success('ログインしました');
+      // リダイレクトは AuthContext とルーターが処理
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'ログインに失敗しました';
       toast.error(errorMessage);

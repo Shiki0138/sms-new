@@ -422,7 +422,7 @@ export class BusinessHoursService {
     const firstWeekday = firstDay.getDay();
     
     // 第1週の該当曜日の日付を計算
-    let firstOccurrence = 1 + (dayOfWeek - firstWeekday + 7) % 7;
+    const firstOccurrence = 1 + (dayOfWeek - firstWeekday + 7) % 7;
     
     // 第n週の該当曜日の日付を計算
     const nthOccurrence = firstOccurrence + (week - 1) * 7;

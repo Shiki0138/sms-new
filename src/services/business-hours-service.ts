@@ -67,18 +67,24 @@ export class BusinessHoursService {
   /**
    * 営業時間を更新/作成
    */
-  async updateBusinessHours(dayOfWeek: number, hours: Partial<BusinessHour>): Promise<boolean> {
+  async updateBusinessHours(
+    dayOfWeek: number,
+    hours: Partial<BusinessHour>
+  ): Promise<boolean> {
     try {
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         tenant_id: this.tenantId,
         day_of_week: dayOfWeek,
       };
 
       if (hours.isOpen !== undefined) updateData.is_open = hours.isOpen;
       if (hours.openTime !== undefined) updateData.open_time = hours.openTime;
-      if (hours.closeTime !== undefined) updateData.close_time = hours.closeTime;
-      if (hours.breakStartTime !== undefined) updateData.break_start_time = hours.breakStartTime || null;
-      if (hours.breakEndTime !== undefined) updateData.break_end_time = hours.breakEndTime || null;
+      if (hours.closeTime !== undefined)
+        updateData.close_time = hours.closeTime;
+      if (hours.breakStartTime !== undefined)
+        updateData.break_start_time = hours.breakStartTime || null;
+      if (hours.breakEndTime !== undefined)
+        updateData.break_end_time = hours.breakEndTime || null;
 
       const { error } = await supabase
         .from('business_hours')
@@ -130,17 +136,32 @@ export class BusinessHoursService {
    */
   async getHolidaySettings(): Promise<HolidaySetting[]> {
     try {
+      console.log('[getHolidaySettings] Fetching for tenant:', this.tenantId);
+
       const { data, error } = await supabase
         .from('holiday_settings')
         .select('*')
         .eq('tenant_id', this.tenantId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[getHolidaySettings] Supabase error:', error);
+        console.error('[getHolidaySettings] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        throw error;
+      }
 
+      console.log('[getHolidaySettings] Fetched data:', data);
       return data?.map(this.mapDatabaseToHolidaySetting) || [];
     } catch (error) {
-      console.error('Error fetching holiday settings:', error);
+      console.error(
+        '[getHolidaySettings] Error fetching holiday settings:',
+        error
+      );
       return [];
     }
   }
@@ -148,10 +169,32 @@ export class BusinessHoursService {
   /**
    * 休日設定を追加
    */
-  async createHolidaySetting(holidayData: CreateHolidayData): Promise<{ holiday: HolidaySetting | null; success: boolean; error?: string }> {
+  async createHolidaySetting(
+    holidayData: CreateHolidayData
+  ): Promise<{
+    holiday: HolidaySetting | null;
+    success: boolean;
+    error?: string;
+  }> {
     try {
+      console.log('[createHolidaySetting] Starting with data:', holidayData);
+      console.log('[createHolidaySetting] Tenant ID:', this.tenantId);
+
+      // テナントIDが存在するか確認
+      if (!this.tenantId) {
+        console.error('[createHolidaySetting] No tenant ID provided');
+        return {
+          holiday: null,
+          success: false,
+          error: 'テナント情報が見つかりません',
+        };
+      }
+
       // 重複チェック
-      if (holidayData.holidayType === 'weekly' && holidayData.dayOfWeek !== undefined) {
+      if (
+        holidayData.holidayType === 'weekly' &&
+        holidayData.dayOfWeek !== undefined
+      ) {
         const existing = await supabase
           .from('holiday_settings')
           .select('id')
@@ -170,17 +213,23 @@ export class BusinessHoursService {
         }
       }
 
-      const insertData: any = {
+      const insertData: Record<string, unknown> = {
         tenant_id: this.tenantId,
         holiday_type: holidayData.holidayType,
         description: holidayData.description,
         is_active: holidayData.isActive ?? true,
       };
 
-      if (holidayData.dayOfWeek !== undefined) insertData.day_of_week = holidayData.dayOfWeek;
-      if (holidayData.weekOfMonth !== undefined) insertData.week_of_month = holidayData.weekOfMonth;
-      if (holidayData.specificDate !== undefined) insertData.specific_date = holidayData.specificDate;
-      if (holidayData.endDate !== undefined) insertData.end_date = holidayData.endDate;
+      if (holidayData.dayOfWeek !== undefined)
+        insertData.day_of_week = holidayData.dayOfWeek;
+      if (holidayData.weekOfMonth !== undefined)
+        insertData.week_of_month = holidayData.weekOfMonth;
+      if (holidayData.specificDate !== undefined)
+        insertData.specific_date = holidayData.specificDate;
+      if (holidayData.endDate !== undefined)
+        insertData.end_date = holidayData.endDate;
+
+      console.log('[createHolidaySetting] Insert data:', insertData);
 
       const { data, error } = await supabase
         .from('holiday_settings')
@@ -188,18 +237,43 @@ export class BusinessHoursService {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[createHolidaySetting] Supabase error:', error);
+        console.error('[createHolidaySetting] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+
+        // より具体的なエラーメッセージ
+        if (error.code === '42P01') {
+          return {
+            holiday: null,
+            success: false,
+            error:
+              'holiday_settingsテーブルが存在しません。データベースの設定を確認してください。',
+          };
+        }
+
+        throw error;
+      }
+
+      console.log('[createHolidaySetting] Success, created holiday:', data);
 
       return {
         holiday: this.mapDatabaseToHolidaySetting(data),
         success: true,
       };
     } catch (error) {
-      console.error('Error creating holiday setting:', error);
+      console.error('[createHolidaySetting] Unexpected error:', error);
       return {
         holiday: null,
         success: false,
-        error: '休日設定の追加に失敗しました',
+        error:
+          error instanceof Error
+            ? error.message
+            : '休日設定の追加に失敗しました',
       };
     }
   }
@@ -207,12 +281,17 @@ export class BusinessHoursService {
   /**
    * 休日設定を更新
    */
-  async updateHolidaySetting(holidayId: string, updates: Partial<HolidaySetting>): Promise<boolean> {
+  async updateHolidaySetting(
+    holidayId: string,
+    updates: Partial<HolidaySetting>
+  ): Promise<boolean> {
     try {
-      const updateData: any = {};
+      const updateData: Record<string, unknown> = {};
 
-      if (updates.description !== undefined) updateData.description = updates.description;
-      if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+      if (updates.description !== undefined)
+        updateData.description = updates.description;
+      if (updates.isActive !== undefined)
+        updateData.is_active = updates.isActive;
 
       const { error } = await supabase
         .from('holiday_settings')
@@ -255,7 +334,7 @@ export class BusinessHoursService {
   async isHoliday(date: Date): Promise<boolean> {
     try {
       const holidays = await this.getHolidaySettings();
-      const activeHolidays = holidays.filter(h => h.isActive);
+      const activeHolidays = holidays.filter((h) => h.isActive);
 
       for (const holiday of activeHolidays) {
         switch (holiday.holidayType) {
@@ -266,7 +345,13 @@ export class BusinessHoursService {
             break;
 
           case 'monthly':
-            if (this.isNthWeekdayOfMonth(date, holiday.weekOfMonth!, holiday.dayOfWeek!)) {
+            if (
+              this.isNthWeekdayOfMonth(
+                date,
+                holiday.weekOfMonth!,
+                holiday.dayOfWeek!
+              )
+            ) {
               return true;
             }
             break;
@@ -274,8 +359,10 @@ export class BusinessHoursService {
           case 'specific_date':
             if (holiday.specificDate) {
               const holidayStart = new Date(holiday.specificDate);
-              const holidayEnd = holiday.endDate ? new Date(holiday.endDate) : holidayStart;
-              
+              const holidayEnd = holiday.endDate
+                ? new Date(holiday.endDate)
+                : holidayStart;
+
               if (date >= holidayStart && date <= holidayEnd) {
                 return true;
               }
@@ -304,7 +391,7 @@ export class BusinessHoursService {
       // 営業時間チェック
       const businessHours = await this.getBusinessHours();
       const dayOfWeek = date.getDay();
-      const todayHours = businessHours.find(h => h.dayOfWeek === dayOfWeek);
+      const todayHours = businessHours.find((h) => h.dayOfWeek === dayOfWeek);
 
       if (!todayHours || !todayHours.isOpen) {
         return false;
@@ -320,12 +407,14 @@ export class BusinessHoursService {
   /**
    * 営業時間を営業日ごとに取得（カレンダー用）
    */
-  async getBusinessHoursForCalendar(): Promise<{ [dayOfWeek: number]: BusinessHour }> {
+  async getBusinessHoursForCalendar(): Promise<{
+    [dayOfWeek: number]: BusinessHour;
+  }> {
     try {
       const businessHours = await this.getBusinessHours();
       const result: { [dayOfWeek: number]: BusinessHour } = {};
 
-      businessHours.forEach(hour => {
+      businessHours.forEach((hour) => {
         result[hour.dayOfWeek] = hour;
       });
 
@@ -342,7 +431,7 @@ export class BusinessHoursService {
   async getHolidaysInRange(startDate: Date, endDate: Date): Promise<Date[]> {
     try {
       const holidays = await this.getHolidaySettings();
-      const activeHolidays = holidays.filter(h => h.isActive);
+      const activeHolidays = holidays.filter((h) => h.isActive);
       const holidayDates: Date[] = [];
 
       const currentDate = new Date(startDate);
@@ -356,7 +445,13 @@ export class BusinessHoursService {
               break;
 
             case 'monthly':
-              if (this.isNthWeekdayOfMonth(currentDate, holiday.weekOfMonth!, holiday.dayOfWeek!)) {
+              if (
+                this.isNthWeekdayOfMonth(
+                  currentDate,
+                  holiday.weekOfMonth!,
+                  holiday.dayOfWeek!
+                )
+              ) {
                 holidayDates.push(new Date(currentDate));
               }
               break;
@@ -364,8 +459,10 @@ export class BusinessHoursService {
             case 'specific_date':
               if (holiday.specificDate) {
                 const holidayStart = new Date(holiday.specificDate);
-                const holidayEnd = holiday.endDate ? new Date(holiday.endDate) : holidayStart;
-                
+                const holidayEnd = holiday.endDate
+                  ? new Date(holiday.endDate)
+                  : holidayStart;
+
                 if (currentDate >= holidayStart && currentDate <= holidayEnd) {
                   holidayDates.push(new Date(currentDate));
                 }
@@ -385,48 +482,56 @@ export class BusinessHoursService {
 
   // プライベートメソッド
 
-  private mapDatabaseToBusinessHour(data: any): BusinessHour {
+  private mapDatabaseToBusinessHour(
+    data: Record<string, unknown>
+  ): BusinessHour {
     return {
-      id: data.id,
-      tenantId: data.tenant_id,
-      dayOfWeek: data.day_of_week,
-      isOpen: data.is_open,
-      openTime: data.open_time,
-      closeTime: data.close_time,
-      breakStartTime: data.break_start_time,
-      breakEndTime: data.break_end_time,
+      id: data.id as string,
+      tenantId: data.tenant_id as string,
+      dayOfWeek: data.day_of_week as number,
+      isOpen: data.is_open as boolean,
+      openTime: data.open_time as string,
+      closeTime: data.close_time as string,
+      breakStartTime: data.break_start_time as string | undefined,
+      breakEndTime: data.break_end_time as string | undefined,
     };
   }
 
-  private mapDatabaseToHolidaySetting(data: any): HolidaySetting {
+  private mapDatabaseToHolidaySetting(
+    data: Record<string, unknown>
+  ): HolidaySetting {
     return {
-      id: data.id,
-      tenantId: data.tenant_id,
-      holidayType: data.holiday_type,
-      dayOfWeek: data.day_of_week,
-      weekOfMonth: data.week_of_month,
-      specificDate: data.specific_date,
-      endDate: data.end_date,
-      description: data.description,
-      isActive: data.is_active,
-      createdAt: data.created_at,
+      id: data.id as string,
+      tenantId: data.tenant_id as string,
+      holidayType: data.holiday_type as 'weekly' | 'monthly' | 'specific_date',
+      dayOfWeek: data.day_of_week as number | undefined,
+      weekOfMonth: data.week_of_month as number | undefined,
+      specificDate: data.specific_date as string | undefined,
+      endDate: data.end_date as string | undefined,
+      description: data.description as string,
+      isActive: data.is_active as boolean,
+      createdAt: data.created_at as string,
     };
   }
 
-  private isNthWeekdayOfMonth(date: Date, week: number, dayOfWeek: number): boolean {
+  private isNthWeekdayOfMonth(
+    date: Date,
+    week: number,
+    dayOfWeek: number
+  ): boolean {
     if (date.getDay() !== dayOfWeek) {
       return false;
     }
 
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const firstWeekday = firstDay.getDay();
-    
+
     // 第1週の該当曜日の日付を計算
-    const firstOccurrence = 1 + (dayOfWeek - firstWeekday + 7) % 7;
-    
+    const firstOccurrence = 1 + ((dayOfWeek - firstWeekday + 7) % 7);
+
     // 第n週の該当曜日の日付を計算
     const nthOccurrence = firstOccurrence + (week - 1) * 7;
-    
+
     return date.getDate() === nthOccurrence;
   }
 }

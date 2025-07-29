@@ -14,9 +14,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { animations } from '../../styles/design-system';
 import PlanLimitWarning from './PlanLimitWarning';
 import { usePlanLimits } from '../../hooks/usePlanLimits';
-
-// 仮のテナントID（実際は認証システムから取得）
-const TENANT_ID = '01HZTEST001';
+import { useAuth } from '../../hooks/useAuth';
 
 const navigation = [
   {
@@ -53,13 +51,10 @@ interface NavigationProps {
 export default function Navigation({ className = '' }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  
+  const { tenant } = useAuth();
+
   // プラン制限管理
-  const {
-    planStatus,
-    warnings,
-    loading: planLoading,
-  } = usePlanLimits(TENANT_ID);
+  const { planStatus, warnings } = usePlanLimits(tenant?.id || '');
 
   const handleUpgrade = () => {
     console.log('プランアップグレード処理');
@@ -74,13 +69,17 @@ export default function Navigation({ className = '' }: NavigationProps) {
   return (
     <>
       {/* デスクトップナビゲーション */}
-      <nav className={`hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200 ${className}`}>
+      <nav
+        className={`hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200 ${className}`}
+      >
         <div className="flex flex-col h-full">
           {/* ロゴ */}
           <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg"></div>
-              <span className="font-bold text-xl text-gray-800">Salon Light</span>
+              <span className="font-bold text-xl text-gray-800">
+                Salon Light
+              </span>
             </div>
           </div>
 
@@ -90,26 +89,29 @@ export default function Navigation({ className = '' }: NavigationProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm font-medium text-gray-800">
-                    {planStatus.planType.charAt(0).toUpperCase() + planStatus.planType.slice(1)}プラン
+                    {planStatus.planType.charAt(0).toUpperCase() +
+                      planStatus.planType.slice(1)}
+                    プラン
                   </div>
                   <div className="text-xs text-gray-600">¥4,980/月</div>
                 </div>
                 <CreditCardIcon className="h-5 w-5 text-gray-400" />
               </div>
-              
+
               {/* 利用状況 */}
               <div className="mt-2 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">顧客</span>
                   <span className="text-gray-800">
-                    {planStatus.currentUsage.totalCustomers}/{planStatus.limits.customerLimit}
+                    {planStatus.currentUsage.totalCustomers}/
+                    {planStatus.limits.customerLimit}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-1">
-                  <div 
+                  <div
                     className="bg-primary-500 h-1 rounded-full transition-all"
-                    style={{ 
-                      width: `${Math.min(100, (planStatus.currentUsage.totalCustomers / planStatus.limits.customerLimit) * 100)}%` 
+                    style={{
+                      width: `${Math.min(100, (planStatus.currentUsage.totalCustomers / planStatus.limits.customerLimit) * 100)}%`,
                     }}
                   ></div>
                 </div>
@@ -122,7 +124,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               const Icon = item.icon;
-              
+
               return (
                 <Link key={item.name} to={item.href}>
                   <motion.div
@@ -134,9 +136,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                     }`}
                   >
-                    <Icon className={`mr-3 h-5 w-5 ${
-                      isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'
-                    }`} />
+                    <Icon
+                      className={`mr-3 h-5 w-5 ${
+                        isActive
+                          ? 'text-primary-600'
+                          : 'text-gray-400 group-hover:text-gray-600'
+                      }`}
+                    />
                     {item.name}
                   </motion.div>
                 </Link>
@@ -172,7 +178,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
             <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg"></div>
             <span className="font-bold text-xl text-gray-800">Salon Light</span>
           </div>
-          
+
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -194,7 +200,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
                 className="fixed inset-0 bg-black bg-opacity-50 z-40"
                 onClick={() => setIsMobileMenuOpen(false)}
               />
-              
+
               <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: 0 }}
@@ -207,9 +213,11 @@ export default function Navigation({ className = '' }: NavigationProps) {
                   <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
                     <div className="flex items-center space-x-2">
                       <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg"></div>
-                      <span className="font-bold text-xl text-gray-800">Salon Light</span>
+                      <span className="font-bold text-xl text-gray-800">
+                        Salon Light
+                      </span>
                     </div>
-                    
+
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -226,7 +234,9 @@ export default function Navigation({ className = '' }: NavigationProps) {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="text-sm font-medium text-gray-800">
-                            {planStatus.planType.charAt(0).toUpperCase() + planStatus.planType.slice(1)}プラン
+                            {planStatus.planType.charAt(0).toUpperCase() +
+                              planStatus.planType.slice(1)}
+                            プラン
                           </div>
                           <div className="text-xs text-gray-600">¥4,980/月</div>
                         </div>
@@ -240,17 +250,20 @@ export default function Navigation({ className = '' }: NavigationProps) {
                     {navigation.map((item, index) => {
                       const isActive = location.pathname === item.href;
                       const Icon = item.icon;
-                      
+
                       return (
-                        <Link 
-                          key={item.name} 
+                        <Link
+                          key={item.name}
                           to={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05, ...animations.spring.gentle }}
+                            transition={{
+                              delay: index * 0.05,
+                              ...animations.spring.gentle,
+                            }}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all ${
@@ -259,9 +272,13 @@ export default function Navigation({ className = '' }: NavigationProps) {
                                 : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                             }`}
                           >
-                            <Icon className={`mr-3 h-5 w-5 ${
-                              isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'
-                            }`} />
+                            <Icon
+                              className={`mr-3 h-5 w-5 ${
+                                isActive
+                                  ? 'text-primary-600'
+                                  : 'text-gray-400 group-hover:text-gray-600'
+                              }`}
+                            />
                             {item.name}
                           </motion.div>
                         </Link>

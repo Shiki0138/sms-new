@@ -9,9 +9,14 @@ import {
 } from 'lucide-react';
 
 const DashboardPageEmergency: React.FC = () => {
-  const { user, tenant, loading } = useAuth();
+  const { user, tenant, loading, error } = useAuth();
 
-  console.log('DashboardPageEmergency rendering...', { user, tenant, loading });
+  console.log('DashboardPageEmergency rendering...', {
+    user,
+    tenant,
+    loading,
+    error,
+  });
 
   if (loading) {
     return (
@@ -19,6 +24,9 @@ const DashboardPageEmergency: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">読み込み中...</p>
+          <p className="text-xs text-gray-500 mt-2">
+            認証情報を確認しています...
+          </p>
         </div>
       </div>
     );
@@ -30,6 +38,11 @@ const DashboardPageEmergency: React.FC = () => {
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <p className="text-gray-600">ログインが必要です</p>
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">エラー: {error}</p>
+            </div>
+          )}
           <a
             href="/auth/login"
             className="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

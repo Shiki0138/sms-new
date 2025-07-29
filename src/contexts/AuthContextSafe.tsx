@@ -23,49 +23,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log('Fetching tenant info for user:', userId);
 
-      // まず user_tenant_mapping テーブルから情報を取得
-      const { data: mappingData, error: mappingError } = await supabase
-        .from('user_tenant_mapping')
-        .select('tenant_id, role')
-        .eq('user_id', userId)
+      // 新しいスキーマに対応: usersテーブルから情報を取得
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select(
+          `
+          tenant_id,
+          role,
+          tenants (
+            id,
+            name,
+            plan_type,
+            phone_number,
+            address,
+            created_at,
+            updated_at
+          )
+        `
+        )
+        .eq('auth_id', userId)
         .single();
 
-      if (mappingError) {
-        console.error('Mapping error:', mappingError);
-        // マッピングが存在しない場合は、テナントなしで続行
-        if (mappingError.code === 'PGRST116') {
-          console.log('No tenant mapping found for user');
+      if (userError) {
+        console.error('User data error:', userError);
+        // ユーザーが存在しない場合は、テナントなしで続行
+        if (userError.code === 'PGRST116') {
+          console.log('No user record found for auth user');
           return;
         }
-        throw mappingError;
+        throw userError;
       }
 
-      if (mappingData?.tenant_id) {
-        // テナント情報を取得
-        const { data: tenantData, error: tenantError } = await supabase
-          .from('tenants')
-          .select('*')
-          .eq('id', mappingData.tenant_id)
-          .single();
+      if (userData?.tenants) {
+        const tenantData = Array.isArray(userData.tenants)
+          ? userData.tenants[0]
+          : userData.tenants;
 
-        if (tenantError) {
-          console.error('Tenant error:', tenantError);
-          throw tenantError;
-        }
-
-        if (tenantData) {
-          console.log('Tenant data loaded:', tenantData);
-          setTenant({
-            id: tenantData.id,
-            name: tenantData.name,
-            plan: tenantData.plan || 'light',
-            phone_number: tenantData.phone_number,
-            address: tenantData.address,
-            created_at: tenantData.created_at,
-            updated_at: tenantData.updated_at,
-          });
-          setPlan((tenantData.plan || 'light') as PlanType);
-        }
+        console.log('Tenant data loaded:', tenantData);
+        setTenant({
+          id: tenantData.id,
+          name: tenantData.name,
+          plan: tenantData.plan_type || 'light',
+          phone_number: tenantData.phone_number,
+          address: tenantData.address,
+          created_at: tenantData.created_at,
+          updated_at: tenantData.updated_at,
+        });
+        setPlan((tenantData.plan_type || 'light') as PlanType);
       }
     } catch (err) {
       console.error('Error fetching tenant info:', err);

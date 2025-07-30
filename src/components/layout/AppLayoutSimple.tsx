@@ -27,6 +27,7 @@ const AppLayoutSimple: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+  // useAuthは必ずAuthProvider内で使用する必要がある
   const { tenant, user, logout } = useAuth();
   const isDev = import.meta.env.DEV;
 

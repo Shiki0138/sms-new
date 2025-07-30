@@ -11,7 +11,7 @@ import { Toaster as Sonner } from 'sonner';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
-import DashboardPage from './pages/DashboardPageMinimal';
+import DashboardPage from './pages/DashboardPageSimple';
 import CustomersPage from './pages/customers/CustomersPage';
 import ReservationsPage from './pages/reservations/ReservationsPage';
 import SettingsPage from './pages/settings/SettingsPage';
@@ -20,6 +20,7 @@ import DesignBoardPage from './pages/DesignBoardPage';
 import MarketingPage from './pages/marketing/MarketingPage';
 
 import ErrorBoundary from './components/ErrorBoundary';
+import { AuthProvider } from './contexts/AuthContextSafe';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,27 +36,29 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <Router>
-          <Routes>
-            {/* 認証ページ */}
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/auth/signup" element={<SignupPage />} />
-            <Route
-              path="/auth/reset-password"
-              element={<ResetPasswordPage />}
-            />
+          <AuthProvider>
+            <Routes>
+              {/* 認証ページ */}
+              <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/auth/signup" element={<SignupPage />} />
+              <Route
+                path="/auth/reset-password"
+                element={<ResetPasswordPage />}
+              />
 
-            {/* 直接ルート（認証なし） */}
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/customers" element={<CustomersPage />} />
-            <Route path="/reservations" element={<ReservationsPage />} />
-            <Route path="/messages" element={<MessagesPage />} />
-            <Route path="/marketing" element={<MarketingPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/design-board" element={<DesignBoardPage />} />
+              {/* 直接ルート（認証なし） */}
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="/messages" element={<MessagesPage />} />
+              <Route path="/marketing" element={<MarketingPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/design-board" element={<DesignBoardPage />} />
 
-            {/* デフォルトリダイレクト */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+              {/* デフォルトリダイレクト */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </AuthProvider>
         </Router>
         <Toaster
           position="top-right"

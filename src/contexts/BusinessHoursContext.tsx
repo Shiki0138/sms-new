@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback } from 'react';
 import { useBusinessHours } from '../hooks/useBusinessHours';
 import { useAuth } from '../hooks/useAuth';
 import { BusinessHour, HolidaySetting } from '../services/business-hours-service';
@@ -39,9 +39,11 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
   } = useBusinessHours(tenantId);
 
   // 休日設定から実際の休日日付を生成（簡易版 - 実際の計算ロジックは後で改善）
-  const getHolidayDates = (): Date[] => {
+  const getHolidayDates = useCallback((): Date[] => {
     const holidays: Date[] = [];
     const today = new Date();
+    
+    console.log('BusinessHoursContext - Getting holiday dates, settings:', holidaySettings);
     
     holidaySettings.forEach(setting => {
       if (!setting.isActive) return;
@@ -54,7 +56,8 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
           if (setting.endDate) {
             const start = new Date(setting.specificDate);
             const end = new Date(setting.endDate);
-            const current = new Date(start);
+            let current = new Date(start);
+            current.setDate(current.getDate() + 1); // 開始日は既に追加されているので翌日から
             
             while (current <= end) {
               holidays.push(new Date(current));
@@ -74,12 +77,42 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
           }
           current.setDate(current.getDate() + 1);
         }
+      } else if (setting.holidayType === 'monthly') {
+        // 毎月第n曜日の休日を生成
+        if (setting.dayOfWeek !== undefined && setting.weekOfMonth) {
+          const monthsToGenerate = 3; // 今後3ヶ月分
+          
+          for (let monthOffset = 0; monthOffset < monthsToGenerate; monthOffset++) {
+            const targetMonth = new Date(today);
+            targetMonth.setMonth(targetMonth.getMonth() + monthOffset);
+            
+            // その月の最初の日を取得
+            const firstDayOfMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
+            
+            // 第n週の該当曜日を計算
+            let dayCount = 0;
+            for (let day = 1; day <= 31; day++) {
+              const currentDate = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), day);
+              
+              // 月が変わったら終了
+              if (currentDate.getMonth() !== targetMonth.getMonth()) break;
+              
+              if (currentDate.getDay() === setting.dayOfWeek) {
+                dayCount++;
+                if (dayCount === setting.weekOfMonth) {
+                  holidays.push(new Date(currentDate));
+                  break;
+                }
+              }
+            }
+          }
+        }
       }
-      // monthly の場合は複雑なので後で実装
     });
     
+    console.log('BusinessHoursContext - Generated holidays:', holidays);
     return holidays;
-  };
+  }, [holidaySettings]);
 
   // 指定した曜日の営業時間を取得
   const getBusinessHoursForDay = (dayOfWeek: number): BusinessHour | null => {

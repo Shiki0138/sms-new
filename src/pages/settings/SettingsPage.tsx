@@ -25,6 +25,7 @@ import ReminderSettings from '../../components/settings/ReminderSettings';
 import HolidaySettingsCard from '../../components/settings/HolidaySettingsCard';
 import PlanUsageCard from '../../components/common/PlanUsageCard';
 import { useBusinessHours } from '../../hooks/useBusinessHours';
+import { useBusinessHoursContext } from '../../contexts/BusinessHoursContext';
 
 const SettingsPage: React.FC = () => {
   const { user, tenant: authTenant } = useAuth();
@@ -61,6 +62,9 @@ const SettingsPage: React.FC = () => {
     updateHolidaySetting,
     deleteHolidaySetting,
   } = useBusinessHours(effectiveTenantId);
+  
+  // コンテキストからrefreshData関数を取得
+  const { refreshData: refreshContextData } = useBusinessHoursContext();
 
   // サロン情報
   const [salonData, setSalonData] = useState({
@@ -565,12 +569,16 @@ const SettingsPage: React.FC = () => {
               toast.error(result.error || '休日設定の追加に失敗しました');
             } else {
               toast.success('休日設定を追加しました');
+              // コンテキストをリフレッシュして予約画面に反映
+              await refreshContextData();
             }
           }}
           onUpdateHoliday={async (id, holiday) => {
             const success = await updateHolidaySetting(id, holiday);
             if (success) {
               toast.success('休日設定を更新しました');
+              // コンテキストをリフレッシュして予約画面に反映
+              await refreshContextData();
             } else {
               toast.error('休日設定の更新に失敗しました');
             }
@@ -579,6 +587,8 @@ const SettingsPage: React.FC = () => {
             const success = await deleteHolidaySetting(id);
             if (success) {
               toast.success('休日設定を削除しました');
+              // コンテキストをリフレッシュして予約画面に反映
+              await refreshContextData();
             } else {
               toast.error('休日設定の削除に失敗しました');
             }
@@ -587,6 +597,8 @@ const SettingsPage: React.FC = () => {
             const success = await updateBusinessHour(dayOfWeek, hours);
             if (success) {
               toast.success('営業時間を更新しました');
+              // コンテキストをリフレッシュして予約画面に反映
+              await refreshContextData();
             } else {
               toast.error('営業時間の更新に失敗しました');
             }

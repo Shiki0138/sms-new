@@ -195,8 +195,13 @@ const ReservationsPageAdvanced: React.FC = () => {
 
   // 設定から取得した休日データ
   const configuredHolidays = useMemo(() => {
-    if (businessHoursLoading) return mockHolidays; // ローディング中はモックデータ
-    return getHolidayDates();
+    if (businessHoursLoading) {
+      console.log('ReservationsPage - Using mock holidays (loading)');
+      return mockHolidays; // ローディング中はモックデータ
+    }
+    const holidays = getHolidayDates();
+    console.log('ReservationsPage - Got holidays from settings:', holidays);
+    return holidays;
   }, [getHolidayDates, businessHoursLoading]);
 
   // 営業時間チェック

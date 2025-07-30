@@ -66,14 +66,18 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
           }
         }
       } else if (setting.holidayType === 'weekly') {
-        // 今後3ヶ月分の毎週の定休日を生成
-        const end = new Date();
-        end.setMonth(end.getMonth() + 3);
+        // 過去1ヶ月から今後3ヶ月分の毎週の定休日を生成
+        const start = new Date();
+        start.setMonth(start.getMonth() - 1); // 過去1ヶ月から開始
         
-        const current = new Date(today);
+        const end = new Date();
+        end.setMonth(end.getMonth() + 3); // 今後3ヶ月まで
+        
+        const current = new Date(start);
         while (current <= end) {
           if (current.getDay() === setting.dayOfWeek) {
             holidays.push(new Date(current));
+            console.log(`Weekly holiday added: ${current.toISOString().split('T')[0]} (dayOfWeek: ${setting.dayOfWeek})`);
           }
           current.setDate(current.getDate() + 1);
         }

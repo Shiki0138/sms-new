@@ -216,36 +216,63 @@ const ReservationsPageAdvanced: React.FC = () => {
     return holidays.length > 0 ? holidays : mockHolidays; // 休日が設定されていない場合はモックデータを使用
   }, [getHolidayDates, businessHoursLoading]);
 
+  // 休日チェック
+  const isHoliday = (date: Date) => {
+    const dayOfWeek = date.getDay();
+    const dateString = format(date, 'yyyy-MM-dd');
+    
+    console.log(`Checking holiday for ${dateString} (dayOfWeek: ${dayOfWeek})`);
+    console.log('Available holidays:', configuredHolidays.map(h => format(h, 'yyyy-MM-dd')));
+    
+    const isHolidayDate = configuredHolidays.some(holiday => {
+      // 日付の比較を正確に行うため、時刻部分を除去して比較
+      const holidayDateOnly = new Date(holiday.getFullYear(), holiday.getMonth(), holiday.getDate());
+      const checkDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const matches = holidayDateOnly.getTime() === checkDateOnly.getTime();
+      
+      if (matches) {
+        console.log(`Holiday match found: ${format(holiday, 'yyyy-MM-dd')} matches ${dateString}`);
+      }
+      
+      return matches;
+    });
+    
+    if (isHolidayDate) {
+      console.log('✅ Holiday detected:', dateString);
+    } else {
+      console.log('❌ Not a holiday:', dateString);
+    }
+    
+    return isHolidayDate;
+  };
+
   // 営業時間チェック
   const isBusinessTime = (date: Date, time?: Date) => {
     const dayOfWeek = date.getDay();
+    
+    // まず休日チェック - 休日なら営業時間外
+    if (isHoliday(date)) {
+      console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} is a holiday - not business time`);
+      return false;
+    }
     
     // 設定から営業時間を取得、なければモックデータを使用
     const businessHour = businessHoursLoading 
       ? mockBusinessHours[dayOfWeek]
       : getBusinessHoursForDay(dayOfWeek) || mockBusinessHours[dayOfWeek];
     
-    if (!businessHour?.isOpen) return false;
+    if (!businessHour?.isOpen) {
+      console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} (dayOfWeek: ${dayOfWeek}) is not open`);
+      return false;
+    }
+    
     if (!time) return true;
     
     const timeStr = format(time, 'HH:mm');
-    return timeStr >= businessHour.openTime && timeStr <= businessHour.closeTime;
-  };
-
-  // 休日チェック
-  const isHoliday = (date: Date) => {
-    const isHolidayDate = configuredHolidays.some(holiday => {
-      // 日付の比較を正確に行うため、時刻部分を除去して比較
-      const holidayDateOnly = new Date(holiday.getFullYear(), holiday.getMonth(), holiday.getDate());
-      const checkDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      return holidayDateOnly.getTime() === checkDateOnly.getTime();
-    });
+    const isWithinHours = timeStr >= businessHour.openTime && timeStr <= businessHour.closeTime;
     
-    if (isHolidayDate) {
-      console.log('Holiday detected:', format(date, 'yyyy-MM-dd'));
-    }
-    
-    return isHolidayDate;
+    console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} ${timeStr} - within hours: ${isWithinHours}`);
+    return isWithinHours;
   };
 
   // 指定日時の予約を取得
@@ -457,18 +484,20 @@ const ReservationsPageAdvanced: React.FC = () => {
                     
                     const slotReservations = getReservationsForDateTime(date, time);
                     const isBusinessSlot = isBusinessTime(date, time);
-                    const isHolidaySlot = isHolidayDate;
+                    const isHolidaySlot = isHoliday(date);
 
                     return (
                       <div
                         key={time.toISOString()}
                         className={`h-16 border-b border-r border-gray-100 relative ${
-                          isBusinessSlot && !isHolidaySlot
-                            ? 'cursor-pointer hover:bg-purple-50'
-                            : 'bg-gray-50 cursor-not-allowed'
+                          isBusinessSlot
+                            ? 'cursor-pointer hover:bg-purple-50 bg-white'
+                            : isHolidaySlot
+                            ? 'bg-gray-100 cursor-not-allowed' // 休日は濃いグレー
+                            : 'bg-gray-50 cursor-not-allowed' // 営業時間外は薄いグレー
                         }`}
                         onClick={() => {
-                          if (isBusinessSlot && !isHolidaySlot) {
+                          if (isBusinessSlot) {
                             alert(`${format(date, 'M月d日')} ${format(time, 'HH:mm')}の予約作成（デモ版）`);
                           }
                         }}
@@ -481,9 +510,18 @@ const ReservationsPageAdvanced: React.FC = () => {
                         </div>
 
                         {/* 新規予約ボタン（空きスロット時） */}
-                        {slotReservations.length === 0 && isBusinessSlot && !isHolidaySlot && (
+                        {slotReservations.length === 0 && isBusinessSlot && (
                           <div className="absolute inset-1 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                             <Plus className="h-4 w-4 text-gray-400" />
+                          </div>
+                        )}
+                        
+                        {/* 休日表示 */}
+                        {isHolidaySlot && (
+                          <div className="absolute inset-1 flex items-center justify-center">
+                            <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                              休
+                            </span>
                           </div>
                         )}
                       </div>

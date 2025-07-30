@@ -419,6 +419,21 @@ export default function HolidaySettingsCard({
                 )}
               </AnimatePresence>
 
+              {/* カレンダー連携状況 */}
+              {holidays.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <CalendarIcon className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <h4 className="text-sm font-medium text-blue-800">カレンダー連携状況</h4>
+                      <p className="text-xs text-blue-600">
+                        {holidays.filter(h => h.isActive).length}件の休日設定が予約管理カレンダーに反映されています
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* 休日一覧 */}
               {holidays.length === 0 ? (
                 <div className="text-center py-12">

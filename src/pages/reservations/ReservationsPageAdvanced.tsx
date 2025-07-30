@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, ChevronLeft, ChevronRight, Calendar, Clock, User, Settings } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Calendar, Clock, User } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import { useBusinessHoursContext } from '../../contexts/BusinessHoursContext';
 import {
   format,
   addDays,
@@ -104,6 +105,14 @@ const mockHolidays = [
 const ReservationsPageAdvanced: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewType, setViewType] = useState<ViewType>('week');
+  
+  // ビジネス時間・休日コンテキストを使用
+  const { 
+    businessHours, 
+    getHolidayDates, 
+    getBusinessHoursForDay,
+    loading: businessHoursLoading 
+  } = useBusinessHoursContext();
 
   // ビュータイプ選択
   const viewTypes = [
@@ -184,10 +193,20 @@ const ReservationsPageAdvanced: React.FC = () => {
     return slots;
   }, [viewType]);
 
+  // 設定から取得した休日データ
+  const configuredHolidays = useMemo(() => {
+    if (businessHoursLoading) return mockHolidays; // ローディング中はモックデータ
+    return getHolidayDates();
+  }, [getHolidayDates, businessHoursLoading]);
+
   // 営業時間チェック
   const isBusinessTime = (date: Date, time?: Date) => {
     const dayOfWeek = date.getDay();
-    const businessHour = mockBusinessHours[dayOfWeek];
+    
+    // 設定から営業時間を取得、なければモックデータを使用
+    const businessHour = businessHoursLoading 
+      ? mockBusinessHours[dayOfWeek]
+      : getBusinessHoursForDay(dayOfWeek) || mockBusinessHours[dayOfWeek];
     
     if (!businessHour?.isOpen) return false;
     if (!time) return true;
@@ -198,7 +217,7 @@ const ReservationsPageAdvanced: React.FC = () => {
 
   // 休日チェック
   const isHoliday = (date: Date) => {
-    return mockHolidays.some(holiday => isSameDay(holiday, date));
+    return configuredHolidays.some(holiday => isSameDay(holiday, date));
   };
 
   // 指定日時の予約を取得
@@ -535,6 +554,12 @@ const ReservationsPageAdvanced: React.FC = () => {
                 <div className="w-3 h-3 bg-gray-100 border border-gray-200 rounded"></div>
                 <span>休業日</span>
               </div>
+              {!businessHoursLoading && (
+                <div className="flex items-center space-x-1 text-blue-600">
+                  <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
+                  <span>設定から読み込み済み</span>
+                </div>
+              )}
             </div>
           </div>
 

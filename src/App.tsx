@@ -21,6 +21,7 @@ import MarketingPage from './pages/marketing/MarketingPage';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
+import { BusinessHoursProvider } from './contexts/BusinessHoursContext';
 import AppLayout from './components/layout/AppLayoutSimple';
 
 const queryClient = new QueryClient({
@@ -38,7 +39,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <Router>
           <AuthProvider>
-            <Routes>
+            <BusinessHoursProvider>
+              <Routes>
               {/* 認証ページ */}
               <Route path="/auth/login" element={<LoginPage />} />
               <Route path="/auth/signup" element={<SignupPage />} />
@@ -62,6 +64,7 @@ function App() {
               {/* デフォルトリダイレクト */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
+            </BusinessHoursProvider>
           </AuthProvider>
         </Router>
         <Toaster

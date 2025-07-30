@@ -7,7 +7,6 @@ import {
   format,
   addDays,
   startOfWeek,
-  endOfWeek,
   addWeeks,
   subWeeks,
   isSameDay,
@@ -108,7 +107,6 @@ const ReservationsPageAdvanced: React.FC = () => {
   
   // ビジネス時間・休日コンテキストを使用
   const { 
-    businessHours, 
     getHolidayDates, 
     getBusinessHoursForDay,
     loading: businessHoursLoading 
@@ -157,17 +155,20 @@ const ReservationsPageAdvanced: React.FC = () => {
   // 表示する日付の配列
   const displayDates = useMemo(() => {
     switch (viewType) {
-      case 'day':
+      case 'day': {
         return [currentDate];
-      case 'week':
+      }
+      case 'week': {
         const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
         return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-      case 'month':
+      }
+      case 'month': {
         const monthStart = startOfMonth(currentDate);
         const monthEnd = endOfMonth(currentDate);
         const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
         const weeksCount = Math.ceil((monthEnd.getTime() - calendarStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
         return Array.from({ length: weeksCount * 7 }, (_, i) => addDays(calendarStart, i));
+      }
       default:
         return [currentDate];
     }
@@ -201,7 +202,18 @@ const ReservationsPageAdvanced: React.FC = () => {
     }
     const holidays = getHolidayDates();
     console.log('ReservationsPage - Got holidays from settings:', holidays);
-    return holidays;
+    
+    // デバッグ: 取得した休日の詳細をログ出力
+    holidays.forEach((holiday, index) => {
+      console.log(`Holiday ${index + 1}:`, {
+        date: holiday,
+        dateString: format(holiday, 'yyyy-MM-dd'),
+        dayOfWeek: holiday.getDay(),
+        isValid: holiday instanceof Date && !isNaN(holiday.getTime())
+      });
+    });
+    
+    return holidays.length > 0 ? holidays : mockHolidays; // 休日が設定されていない場合はモックデータを使用
   }, [getHolidayDates, businessHoursLoading]);
 
   // 営業時間チェック
@@ -222,7 +234,18 @@ const ReservationsPageAdvanced: React.FC = () => {
 
   // 休日チェック
   const isHoliday = (date: Date) => {
-    return configuredHolidays.some(holiday => isSameDay(holiday, date));
+    const isHolidayDate = configuredHolidays.some(holiday => {
+      // 日付の比較を正確に行うため、時刻部分を除去して比較
+      const holidayDateOnly = new Date(holiday.getFullYear(), holiday.getMonth(), holiday.getDate());
+      const checkDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      return holidayDateOnly.getTime() === checkDateOnly.getTime();
+    });
+    
+    if (isHolidayDate) {
+      console.log('Holiday detected:', format(date, 'yyyy-MM-dd'));
+    }
+    
+    return isHolidayDate;
   };
 
   // 指定日時の予約を取得
@@ -247,7 +270,7 @@ const ReservationsPageAdvanced: React.FC = () => {
   };
 
   // 予約ブロックの描画
-  const renderReservationBlock = (reservation: any, isCompact = false) => {
+  const renderReservationBlock = (reservation: typeof mockReservations[0], isCompact = false) => {
     const statusColors = {
       confirmed: 'bg-green-100 text-green-800 border-green-200',
       pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -282,14 +305,17 @@ const ReservationsPageAdvanced: React.FC = () => {
   // ヘッダータイトル
   const getHeaderTitle = () => {
     switch (viewType) {
-      case 'day':
+      case 'day': {
         return format(currentDate, 'yyyy年M月d日(E)', { locale: ja });
-      case 'week':
+      }
+      case 'week': {
         const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
         const weekEnd = addDays(weekStart, 6);
         return `${format(weekStart, 'M月d日', { locale: ja })} - ${format(weekEnd, 'M月d日', { locale: ja })}`;
-      case 'month':
+      }
+      case 'month': {
         return format(currentDate, 'yyyy年M月', { locale: ja });
+      }
       default:
         return '';
     }
@@ -562,7 +588,7 @@ const ReservationsPageAdvanced: React.FC = () => {
               {!businessHoursLoading && (
                 <div className="flex items-center space-x-1 text-blue-600">
                   <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
-                  <span>設定から読み込み済み</span>
+                  <span>設定から読み込み済み（{configuredHolidays.length}件の休日）</span>
                 </div>
               )}
             </div>

@@ -151,6 +151,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
         setTenant(null);
         setPlan('light');
+        // ログアウト状態をセッションストレージに保存
+        sessionStorage.setItem('dev_logged_out', 'true');
         console.log('Logout successful (dev mode)');
         // ログインページにリダイレクト
         window.location.href = '/auth/login';
@@ -184,6 +186,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         // 開発環境ではモックデータを使用
         if (import.meta.env.DEV) {
+          // ログアウト状態をチェック
+          const isLoggedOut = sessionStorage.getItem('dev_logged_out') === 'true';
+          
+          if (isLoggedOut) {
+            console.log('Development mode - user is logged out');
+            if (mounted) {
+              setUser(null);
+              setTenant(null);
+              setPlan('light');
+              setLoading(false);
+            }
+            return;
+          }
+          
           console.log('Development mode - using mock tenant data');
           if (mounted) {
             setUser({

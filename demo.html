@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>サロン管理システム - デモ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    サロン管理システム
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    デモ版 - 実際のアプリケーションを表示するには開発サーバーの設定が必要です
+                </p>
+            </div>
+            
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">アプリケーションの起動方法</h3>
+                
+                <div class="space-y-4">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <p class="font-medium">1. ターミナルで以下を実行:</p>
+                        <code class="block mt-2 bg-gray-100 p-2 rounded text-sm">
+                            cd /Users/leadfive/Desktop/system/SMS/salon-light-plan<br>
+                            npm run dev
+                        </code>
+                    </div>
+                    
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <p class="font-medium">2. ブラウザでアクセス:</p>
+                        <p class="mt-2 text-sm">
+                            <a href="http://localhost:5173" class="text-blue-600 hover:underline">
+                                http://localhost:5173
+                            </a>
+                        </p>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-500 pl-4">
+                        <p class="font-medium">3. ログイン情報:</p>
+                        <p class="mt-2 text-sm">
+                            新規アカウントを作成するか、<br>
+                            既存のアカウントでログインしてください
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 rounded-lg p-4">
+                <p class="text-sm text-blue-800">
+                    <strong>注意:</strong> このシステムはSupabaseと連携しています。
+                    データベースのセットアップが完了していることを確認してください。
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

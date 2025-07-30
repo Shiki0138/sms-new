@@ -143,6 +143,8 @@ const LoginForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  // ログアウト状態をクリアしてダッシュボードに移動
+                  sessionStorage.removeItem('dev_logged_out');
                   window.location.href = '/dashboard';
                 }}
                 className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"

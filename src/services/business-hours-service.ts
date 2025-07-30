@@ -65,12 +65,12 @@ export class BusinessHoursService {
     }
 
     // 開発環境用のテナントIDの場合
-    if (tenantId === 'dev-tenant' || tenantId === '01HZTEST001') {
+    if (tenantId === 'dev-tenant' || tenantId === 'dev-tenant-id' || tenantId === '01HZTEST001') {
       console.warn(
-        '[BusinessHoursService] Development tenant ID detected, using default UUID'
+        '[BusinessHoursService] Development tenant ID detected, returning as-is for mock service'
       );
-      // 開発環境用のデフォルトUUID（初期データのテナントID）
-      return 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+      // モックサービスで処理されるため、そのまま返す
+      return tenantId;
     }
 
     console.error('[BusinessHoursService] Invalid tenant ID format:', tenantId);

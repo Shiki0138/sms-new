@@ -56,7 +56,7 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
           if (setting.endDate) {
             const start = new Date(setting.specificDate);
             const end = new Date(setting.endDate);
-            let current = new Date(start);
+            const current = new Date(start);
             current.setDate(current.getDate() + 1); // 開始日は既に追加されているので翌日から
             
             while (current <= end) {
@@ -70,7 +70,7 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
         const end = new Date();
         end.setMonth(end.getMonth() + 3);
         
-        let current = new Date(today);
+        const current = new Date(today);
         while (current <= end) {
           if (current.getDay() === setting.dayOfWeek) {
             holidays.push(new Date(current));

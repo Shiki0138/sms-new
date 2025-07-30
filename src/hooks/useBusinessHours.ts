@@ -5,6 +5,7 @@ import {
   HolidaySetting,
   CreateHolidayData,
 } from '../services/business-hours-service';
+import { MockBusinessHoursService } from '../services/mock-business-hours-service';
 
 interface UseBusinessHoursReturn {
   businessHours: BusinessHour[];
@@ -38,7 +39,10 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const service = new BusinessHoursService(tenantId);
+  // 開発環境ではモックサービスを使用
+  const service = import.meta.env.DEV && tenantId === 'dev-tenant-id' 
+    ? new MockBusinessHoursService(tenantId) as any
+    : new BusinessHoursService(tenantId);
 
   const fetchData = async () => {
     try {

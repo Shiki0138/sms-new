@@ -169,6 +169,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const getInitialSession = async () => {
       try {
         console.log('Getting initial session...');
+        
+        // 開発環境ではモックデータを使用
+        if (import.meta.env.DEV) {
+          console.log('Development mode - using mock tenant data');
+          if (mounted) {
+            setUser({
+              id: 'dev-user-id',
+              email: 'dev@example.com',
+              app_metadata: {},
+              user_metadata: {},
+              aud: 'authenticated',
+              created_at: new Date().toISOString(),
+            } as User);
+            
+            setTenant({
+              id: 'dev-tenant-id',
+              name: '開発用サロン',
+              plan: 'light',
+              phone_number: '03-1234-5678',
+              address: '東京都渋谷区',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+            
+            setLoading(false);
+          }
+          return;
+        }
+        
         const {
           data: { session },
           error,

@@ -41,8 +41,8 @@ const SettingsPage: React.FC = () => {
     | 'security'
   >('salon');
 
-  // 営業時間・休日設定
-  const effectiveTenantId = tenant?.id || authTenant?.id || '';
+  // 営業時間・休日設定 - 開発環境では固定IDを使用
+  const effectiveTenantId = tenant?.id || authTenant?.id || (import.meta.env.DEV ? 'dev-tenant-id' : '');
 
   // デバッグ用ログ
   React.useEffect(() => {

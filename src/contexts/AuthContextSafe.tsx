@@ -145,6 +145,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
 
       console.log('Logging out...');
+      
+      // 開発環境では直接ログインページにリダイレクト
+      if (import.meta.env.DEV) {
+        setUser(null);
+        setTenant(null);
+        setPlan('light');
+        console.log('Logout successful (dev mode)');
+        // ログインページにリダイレクト
+        window.location.href = '/auth/login';
+        return;
+      }
+      
       await supabaseAuth.signOut();
 
       setUser(null);

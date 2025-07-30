@@ -135,6 +135,22 @@ const LoginForm: React.FC = () => {
               </Link>
             </span>
           </div>
+          
+          {/* 開発環境用クイックログイン */}
+          {import.meta.env.DEV && (
+            <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+              <p className="text-sm text-yellow-800 mb-2">開発環境用</p>
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/dashboard';
+                }}
+                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                開発環境でログインせずに進む
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>

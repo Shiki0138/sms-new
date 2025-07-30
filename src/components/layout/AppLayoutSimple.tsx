@@ -127,14 +127,13 @@ const AppLayoutSimple: React.FC = () => {
                   </p>
                   <p className="text-xs text-gray-500">オーナー</p>
                 </div>
-                {!isDev && (
-                  <button
-                    onClick={logout}
-                    className="p-2 text-gray-400 hover:text-red-500 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-                  >
-                    <LogOut className="h-5 w-5" />
-                  </button>
-                )}
+                <button
+                  onClick={logout}
+                  className="p-2 text-gray-400 hover:text-red-500 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  title="ログアウト"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
               </div>
             </div>
           </div>
@@ -210,14 +209,13 @@ const AppLayoutSimple: React.FC = () => {
                 </p>
                 <p className="text-xs text-gray-500">サロンオーナー</p>
               </div>
-              {!isDev && (
-                <button
-                  onClick={logout}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
-              )}
+              <button
+                onClick={logout}
+                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                title="ログアウト"
+              >
+                <LogOut className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </div>

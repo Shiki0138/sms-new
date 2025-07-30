@@ -21,6 +21,8 @@ import MarketingPage from './pages/marketing/MarketingPage';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
+import AppLayout from './components/layout/AppLayoutSimple';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,17 +48,27 @@ function App() {
                 element={<ResetPasswordPage />}
               />
 
-              {/* 直接ルート（認証なし） */}
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/customers" element={<CustomersPage />} />
-              <Route path="/reservations" element={<ReservationsPage />} />
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route path="/marketing" element={<MarketingPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/design-board" element={<DesignBoardPage />} />
+              {/* 保護されたルート（サイドバー付き） */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="customers" element={<CustomersPage />} />
+                <Route path="reservations" element={<ReservationsPage />} />
+                <Route path="messages" element={<MessagesPage />} />
+                <Route path="marketing" element={<MarketingPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="design-board" element={<DesignBoardPage />} />
+                <Route index element={<Navigate to="/dashboard" replace />} />
+              </Route>
 
               {/* デフォルトリダイレクト */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </AuthProvider>
         </Router>

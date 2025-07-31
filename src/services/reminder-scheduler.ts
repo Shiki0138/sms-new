@@ -301,7 +301,7 @@ export class ReminderSchedulerService {
       
       if (availableChannel) {
         try {
-          await this.apiService.sendMessage(
+          await this.apiService.sendMessage({
             customer_id: customer.id,
             channel_type: channelType,
             message_type: 'text',

@@ -24,8 +24,8 @@ interface BusinessHoursProviderProps {
 
 export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ children }) => {
   const { tenant } = useAuth();
-  // 開発環境でtenantが存在しない場合はダミーIDを使用
-  const tenantId = tenant?.id || 'dev-tenant-id';
+  // 開発環境でtenantが存在しない場合は固定UUIDを使用
+  const tenantId = tenant?.id || '00000000-0000-0000-0000-000000000001';
   
   const {
     businessHours,

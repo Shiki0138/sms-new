@@ -102,7 +102,8 @@ const mockHolidays = [
 ];
 
 const ReservationsPageAdvanced: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // デバッグ用: 2024年7月に初期設定して動作確認
+  const [currentDate, setCurrentDate] = useState(new Date(2024, 6, 1)); // 2024年7月1日
   const [viewType, setViewType] = useState<ViewType>('week');
   
   // ビジネス時間・休日コンテキストを使用
@@ -201,46 +202,41 @@ const ReservationsPageAdvanced: React.FC = () => {
       return mockHolidays; // ローディング中はモックデータ
     }
     const holidays = getHolidayDates();
-    console.log('ReservationsPage - Got holidays from settings:', holidays);
+    console.log(`ReservationsPage - Got ${holidays.length} holidays from settings`);
     
-    // デバッグ: 取得した休日の詳細をログ出力
-    holidays.forEach((holiday, index) => {
-      console.log(`Holiday ${index + 1}:`, {
-        date: holiday,
-        dateString: format(holiday, 'yyyy-MM-dd'),
-        dayOfWeek: holiday.getDay(),
-        isValid: holiday instanceof Date && !isNaN(holiday.getTime())
+    // デバッグ: 最初と最後の休日のみログ出力
+    if (holidays.length > 0) {
+      console.log('Holiday range:', {
+        first: format(holidays[0], 'yyyy-MM-dd'),
+        last: format(holidays[holidays.length - 1], 'yyyy-MM-dd'),
+        mondays: holidays.filter(h => h.getDay() === 1).length,
+        tuesdays: holidays.filter(h => h.getDay() === 2).length
       });
-    });
+      
+      // 2024年7月の月曜日・火曜日の休日を確認
+      const july2024Holidays = holidays.filter(h => 
+        h.getFullYear() === 2024 && h.getMonth() === 6 && (h.getDay() === 1 || h.getDay() === 2)
+      );
+      console.log('July 2024 Mon/Tue holidays:', july2024Holidays.map(h => format(h, 'yyyy-MM-dd (E)')));
+    }
     
     return holidays.length > 0 ? holidays : mockHolidays; // 休日が設定されていない場合はモックデータを使用
   }, [getHolidayDates, businessHoursLoading]);
 
   // 休日チェック
   const isHoliday = (date: Date) => {
-    const dayOfWeek = date.getDay();
-    const dateString = format(date, 'yyyy-MM-dd');
-    
-    console.log(`Checking holiday for ${dateString} (dayOfWeek: ${dayOfWeek})`);
-    console.log('Available holidays:', configuredHolidays.map(h => format(h, 'yyyy-MM-dd')));
-    
     const isHolidayDate = configuredHolidays.some(holiday => {
       // 日付の比較を正確に行うため、時刻部分を除去して比較
       const holidayDateOnly = new Date(holiday.getFullYear(), holiday.getMonth(), holiday.getDate());
       const checkDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const matches = holidayDateOnly.getTime() === checkDateOnly.getTime();
-      
-      if (matches) {
-        console.log(`Holiday match found: ${format(holiday, 'yyyy-MM-dd')} matches ${dateString}`);
-      }
-      
-      return matches;
+      return holidayDateOnly.getTime() === checkDateOnly.getTime();
     });
     
-    if (isHolidayDate) {
-      console.log('✅ Holiday detected:', dateString);
-    } else {
-      console.log('❌ Not a holiday:', dateString);
+    // デバッグ用：月曜日・火曜日のみログ出力
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 1 || dayOfWeek === 2) {
+      const dateString = format(date, 'yyyy-MM-dd');
+      console.log(`Holiday check for ${dateString} (${dayOfWeek === 1 ? 'Monday' : 'Tuesday'}): ${isHolidayDate ? '✅ Holiday' : '❌ Not holiday'}`);
     }
     
     return isHolidayDate;
@@ -252,7 +248,6 @@ const ReservationsPageAdvanced: React.FC = () => {
     
     // まず休日チェック - 休日なら営業時間外
     if (isHoliday(date)) {
-      console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} is a holiday - not business time`);
       return false;
     }
     
@@ -262,7 +257,6 @@ const ReservationsPageAdvanced: React.FC = () => {
       : getBusinessHoursForDay(dayOfWeek) || mockBusinessHours[dayOfWeek];
     
     if (!businessHour?.isOpen) {
-      console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} (dayOfWeek: ${dayOfWeek}) is not open`);
       return false;
     }
     
@@ -271,7 +265,6 @@ const ReservationsPageAdvanced: React.FC = () => {
     const timeStr = format(time, 'HH:mm');
     const isWithinHours = timeStr >= businessHour.openTime && timeStr <= businessHour.closeTime;
     
-    console.log(`Business time check: ${format(date, 'yyyy-MM-dd')} ${timeStr} - within hours: ${isWithinHours}`);
     return isWithinHours;
   };
 

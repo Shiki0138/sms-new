@@ -66,21 +66,25 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
           }
         }
       } else if (setting.holidayType === 'weekly') {
-        // 過去1ヶ月から今後3ヶ月分の毎週の定休日を生成
+        // 過去1年から今後1年分の毎週の定休日を生成（より広い範囲をカバー）
         const start = new Date();
-        start.setMonth(start.getMonth() - 1); // 過去1ヶ月から開始
+        start.setFullYear(start.getFullYear() - 1); // 過去1年から開始
         
         const end = new Date();
-        end.setMonth(end.getMonth() + 3); // 今後3ヶ月まで
+        end.setFullYear(end.getFullYear() + 1); // 今後1年まで
         
         const current = new Date(start);
         while (current <= end) {
           if (current.getDay() === setting.dayOfWeek) {
             holidays.push(new Date(current));
-            console.log(`Weekly holiday added: ${current.toISOString().split('T')[0]} (dayOfWeek: ${setting.dayOfWeek})`);
+            // デバッグログを減らすため、最初と最後の日付のみログ出力
+            if (holidays.length === 1 || current.getTime() === end.getTime()) {
+              console.log(`Weekly holiday added: ${current.toISOString().split('T')[0]} (dayOfWeek: ${setting.dayOfWeek})`);
+            }
           }
           current.setDate(current.getDate() + 1);
         }
+        console.log(`Total ${holidays.filter(h => h.getDay() === setting.dayOfWeek).length} holidays added for dayOfWeek: ${setting.dayOfWeek}`);
       } else if (setting.holidayType === 'monthly') {
         // 毎月第n曜日の休日を生成
         if (setting.dayOfWeek !== undefined && setting.weekOfMonth) {
@@ -91,7 +95,7 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
             targetMonth.setMonth(targetMonth.getMonth() + monthOffset);
             
             // その月の最初の日を取得
-            const firstDayOfMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
+            // const firstDayOfMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth(), 1);
             
             // 第n週の該当曜日を計算
             let dayCount = 0;
@@ -143,10 +147,13 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
   );
 };
 
-export const useBusinessHoursContext = (): BusinessHoursContextType => {
+// Hook to use BusinessHours context
+function useBusinessHoursContext(): BusinessHoursContextType {
   const context = useContext(BusinessHoursContext);
   if (context === undefined) {
     throw new Error('useBusinessHoursContext must be used within a BusinessHoursProvider');
   }
   return context;
-};
+}
+
+export { BusinessHoursProvider, useBusinessHoursContext };

@@ -77,7 +77,7 @@ const AppLayoutSimple: React.FC = () => {
               </button>
             </div>
 
-            <nav className="flex-1 px-4 py-6 space-y-2">
+            <nav className="flex-1 px-4 py-6 space-y-2 main-navigation">
               {navigation.map((item) => {
                 const isActive = location.pathname.startsWith(item.href);
                 return (
@@ -159,7 +159,7 @@ const AppLayoutSimple: React.FC = () => {
             )}
           </div>
 
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="flex-1 px-4 py-6 space-y-2 main-navigation">
             {navigation.map((item) => {
               const isActive = location.pathname.startsWith(item.href);
               return (

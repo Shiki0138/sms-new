@@ -7,27 +7,179 @@
     font-family:
       'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo',
       sans-serif;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
     @apply bg-gray-50 text-gray-900;
+    overscroll-behavior-y: none;
+  }
+
+  /* Remove tap highlight on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent text selection on UI elements */
+  button, a {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 }
 
 @layer components {
   .btn-primary {
     @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply active:scale-95 transform min-h-[44px] touch-manipulation;
   }
 
   .btn-secondary {
     @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply active:scale-95 transform min-h-[44px] touch-manipulation;
   }
 
   .input-field {
     @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+    @apply min-h-[44px] text-base;
   }
 
   .card {
     @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+
+  /* Loading animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Skeleton loading effect */
+  .skeleton {
+    @apply relative overflow-hidden bg-gray-200;
+  }
+
+  .skeleton::after {
+    @apply absolute inset-0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.2) 20%,
+      rgba(255, 255, 255, 0.5) 60%,
+      rgba(255, 255, 255, 0)
+    );
+    animation: shimmer 2s infinite;
+    content: '';
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Touch-optimized areas */
+  .touch-target {
+    @apply min-w-[44px] min-h-[44px] flex items-center justify-center;
+  }
+
+  /* Safe area insets for notched devices */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+@layer utilities {
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .reduce-motion * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* Low-end device optimizations */
+  .low-end-device * {
+    animation-duration: 0.1s !important;
+    transition-duration: 0.1s !important;
+  }
+
+  .low-end-device .shadow-lg {
+    @apply shadow-md;
+  }
+
+  .low-end-device .backdrop-blur-sm {
+    backdrop-filter: none;
+    @apply bg-white/95;
+  }
+
+  /* Japanese-friendly typography */
+  .text-ja {
+    line-height: 1.7;
+    font-feature-settings: 'palt' 1;
+  }
+
+  /* Mobile-friendly interactions */
+  @media (hover: none) and (pointer: coarse) {
+    .hover\:scale-105:hover {
+      transform: scale(1);
+    }
+
+    .hover\:bg-gray-100:active {
+      @apply bg-gray-100;
+    }
+  }
+
+  /* Custom scrollbar for desktop */
+  @media (min-width: 1024px) {
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      @apply bg-gray-100;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      @apply bg-gray-400 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      @apply bg-gray-500;
+    }
   }
 }

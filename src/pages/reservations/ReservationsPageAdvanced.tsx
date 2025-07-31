@@ -102,8 +102,8 @@ const mockHolidays = [
 ];
 
 const ReservationsPageAdvanced: React.FC = () => {
-  // デバッグ用: 2024年7月に初期設定して動作確認
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 6, 1)); // 2024年7月1日
+  // 現在の日付で初期化（本番用に戻す）
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [viewType, setViewType] = useState<ViewType>('week');
   
   // ビジネス時間・休日コンテキストを使用

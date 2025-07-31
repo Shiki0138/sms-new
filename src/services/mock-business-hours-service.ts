@@ -42,6 +42,7 @@ export class MockBusinessHoursService {
 
   constructor(tenantId: string) {
     this.tenantId = tenantId;
+    console.log('[MockBusinessHoursService] Initialized with tenant ID:', tenantId);
   }
 
   async getBusinessHours(): Promise<BusinessHour[]> {
@@ -70,7 +71,32 @@ export class MockBusinessHoursService {
     if (stored) {
       return JSON.parse(stored);
     }
-    return [];
+    
+    // デフォルトの休日設定（月曜・火曜）
+    const defaultHolidays: HolidaySetting[] = [
+      {
+        id: 'default_monday',
+        tenantId: this.tenantId,
+        holidayType: 'weekly',
+        dayOfWeek: 1, // 月曜日
+        description: '毎週月曜日',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'default_tuesday',
+        tenantId: this.tenantId,
+        holidayType: 'weekly',
+        dayOfWeek: 2, // 火曜日
+        description: '毎週火曜日',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      }
+    ];
+    
+    // デフォルトをローカルストレージに保存
+    localStorage.setItem(HOLIDAYS_KEY, JSON.stringify(defaultHolidays));
+    return defaultHolidays;
   }
 
   async createDefaultBusinessHours(): Promise<void> {

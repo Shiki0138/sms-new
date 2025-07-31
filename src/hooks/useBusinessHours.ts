@@ -39,8 +39,12 @@ export function useBusinessHours(tenantId: string): UseBusinessHoursReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 開発環境ではモックサービスを使用
-  const service = import.meta.env.DEV && tenantId === 'dev-tenant-id' 
+  // 開発環境またはデフォルトテナントIDの場合はモックサービスを使用
+  const shouldUseMock = import.meta.env.DEV || 
+    tenantId === '00000000-0000-0000-0000-000000000001' ||
+    tenantId === 'dev-tenant-id';
+    
+  const service = shouldUseMock
     ? new MockBusinessHoursService(tenantId) as any
     : new BusinessHoursService(tenantId);
 

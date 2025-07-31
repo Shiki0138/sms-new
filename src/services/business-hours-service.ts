@@ -64,12 +64,18 @@ export class BusinessHoursService {
       return tenantId;
     }
 
-    // 開発環境用のテナントIDの場合
-    if (tenantId === 'dev-tenant' || tenantId === 'dev-tenant-id' || tenantId === '01HZTEST001') {
+    // 開発環境用のテナントIDまたはデフォルトUUIDの場合
+    if (tenantId === 'dev-tenant' || tenantId === 'dev-tenant-id' || tenantId === '01HZTEST001' || 
+        tenantId === '00000000-0000-0000-0000-000000000001') {
       console.warn(
-        '[BusinessHoursService] Development tenant ID detected, returning as-is for mock service'
+        '[BusinessHoursService] Development/default tenant ID detected:',
+        tenantId
       );
-      // モックサービスで処理されるため、そのまま返す
+      // デフォルトUUIDの場合は、UUID形式として処理を続ける
+      if (tenantId === '00000000-0000-0000-0000-000000000001') {
+        return tenantId;
+      }
+      // その他の開発用IDの場合はモックサービスで処理されるため、そのまま返す
       return tenantId;
     }
 
@@ -205,6 +211,7 @@ export class BusinessHoursService {
       }
 
       console.log('[getHolidaySettings] Fetched data:', data);
+      console.log('[getHolidaySettings] Data count:', data?.length || 0);
       return data?.map(this.mapDatabaseToHolidaySetting) || [];
     } catch (error) {
       console.error(

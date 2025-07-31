@@ -110,7 +110,9 @@ const ReservationsPageAdvanced: React.FC = () => {
   const { 
     getHolidayDates, 
     getBusinessHoursForDay,
-    loading: businessHoursLoading 
+    loading: businessHoursLoading,
+    holidaySettings,
+    error: businessHoursError
   } = useBusinessHoursContext();
 
   // ビュータイプ選択
@@ -197,10 +199,24 @@ const ReservationsPageAdvanced: React.FC = () => {
 
   // 設定から取得した休日データ
   const configuredHolidays = useMemo(() => {
+    // デバッグ情報を出力
+    console.log('ReservationsPage - Debug info:', {
+      loading: businessHoursLoading,
+      error: businessHoursError,
+      holidaySettings: holidaySettings,
+      settingsCount: holidaySettings?.length || 0
+    });
+
     if (businessHoursLoading) {
       console.log('ReservationsPage - Using mock holidays (loading)');
       return mockHolidays; // ローディング中はモックデータ
     }
+    
+    if (businessHoursError) {
+      console.error('ReservationsPage - Error loading business hours:', businessHoursError);
+      return mockHolidays;
+    }
+    
     const holidays = getHolidayDates();
     console.log(`ReservationsPage - Got ${holidays.length} holidays from settings`);
     
@@ -213,15 +229,17 @@ const ReservationsPageAdvanced: React.FC = () => {
         tuesdays: holidays.filter(h => h.getDay() === 2).length
       });
       
-      // 2024年7月の月曜日・火曜日の休日を確認
-      const july2024Holidays = holidays.filter(h => 
-        h.getFullYear() === 2024 && h.getMonth() === 6 && (h.getDay() === 1 || h.getDay() === 2)
+      // 現在表示中の月の月曜日・火曜日の休日を確認
+      const currentMonthHolidays = holidays.filter(h => 
+        h.getMonth() === currentDate.getMonth() && 
+        h.getFullYear() === currentDate.getFullYear() && 
+        (h.getDay() === 1 || h.getDay() === 2)
       );
-      console.log('July 2024 Mon/Tue holidays:', july2024Holidays.map(h => format(h, 'yyyy-MM-dd (E)')));
+      console.log('Current month Mon/Tue holidays:', currentMonthHolidays.map(h => format(h, 'yyyy-MM-dd (E)')));
     }
     
     return holidays.length > 0 ? holidays : mockHolidays; // 休日が設定されていない場合はモックデータを使用
-  }, [getHolidayDates, businessHoursLoading]);
+  }, [getHolidayDates, businessHoursLoading, businessHoursError, holidaySettings, currentDate]);
 
   // 休日チェック
   const isHoliday = (date: Date) => {

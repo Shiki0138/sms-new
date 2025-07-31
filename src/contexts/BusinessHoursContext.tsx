@@ -140,6 +140,18 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
     refreshData,
   };
 
+  // デバッグ用: コンテキストの状態を定期的にログ出力
+  React.useEffect(() => {
+    console.log('BusinessHoursContext state:', {
+      tenantId,
+      loading,
+      error,
+      businessHoursCount: businessHours.length,
+      holidaySettingsCount: holidaySettings.length,
+      holidaySettings: holidaySettings
+    });
+  }, [tenantId, loading, error, businessHours, holidaySettings]);
+
   return (
     <BusinessHoursContext.Provider value={value}>
       {children}

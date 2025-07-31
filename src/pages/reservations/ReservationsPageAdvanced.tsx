@@ -473,7 +473,7 @@ const ReservationsPageAdvanced: React.FC = () => {
               <div key={date.toISOString()} className="flex-1 min-w-0">
                 {/* 日付ヘッダー */}
                 <div
-                  className={`h-12 flex items-center justify-center border-b border-gray-200 font-medium ${
+                  className={`h-12 flex items-center justify-center border-b border-gray-200 font-medium relative ${
                     isTodayDate
                       ? 'bg-purple-100 text-purple-700'
                       : isHolidayDate || !isBusinessDay
@@ -485,6 +485,14 @@ const ReservationsPageAdvanced: React.FC = () => {
                     <div className="text-xs">{format(date, 'E', { locale: ja })}</div>
                     <div className="text-sm">{format(date, 'd')}</div>
                   </div>
+                  {/* 休日表示をヘッダーに追加 */}
+                  {(isHolidayDate || !isBusinessDay) && (
+                    <div className="absolute right-2">
+                      <span className="text-xs text-gray-500 bg-gray-200 px-1 rounded">
+                        休
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* 時間スロット */}
@@ -524,15 +532,6 @@ const ReservationsPageAdvanced: React.FC = () => {
                         {slotReservations.length === 0 && isBusinessSlot && (
                           <div className="absolute inset-1 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                             <Plus className="h-4 w-4 text-gray-400" />
-                          </div>
-                        )}
-                        
-                        {/* 休日表示 */}
-                        {isHolidaySlot && (
-                          <div className="absolute inset-1 flex items-center justify-center">
-                            <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
-                              休
-                            </span>
                           </div>
                         )}
                       </div>

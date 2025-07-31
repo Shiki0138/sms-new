@@ -148,12 +148,10 @@ export const BusinessHoursProvider: React.FC<BusinessHoursProviderProps> = ({ ch
 };
 
 // Hook to use BusinessHours context
-function useBusinessHoursContext(): BusinessHoursContextType {
+export function useBusinessHoursContext(): BusinessHoursContextType {
   const context = useContext(BusinessHoursContext);
   if (context === undefined) {
     throw new Error('useBusinessHoursContext must be used within a BusinessHoursProvider');
   }
   return context;
 }
-
-export { BusinessHoursProvider, useBusinessHoursContext };

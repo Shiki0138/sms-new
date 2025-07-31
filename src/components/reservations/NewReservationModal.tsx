@@ -21,7 +21,7 @@ const NewReservationModal: React.FC<NewReservationModalProps> = ({
   selectedDate = new Date(),
   selectedHour = 10,
 }) => {
-  const { data: customers } = useCustomers();
+  const { customers } = useCustomers();
   const createReservation = useCreateReservation();
   
   // 今月の予約数をチェック

@@ -263,10 +263,11 @@ export async function handleLineWebhook(event: any) {
 
     let channelId = existingChannel?.id;
 
+    let customerId: string | undefined;
+    
     // チャンネルが存在しない場合は作成
     if (!existingChannel) {
       // 顧客を検索または作成
-      let customerId;
       const { data: customer } = await supabase
         .from('customers')
         .select('*')

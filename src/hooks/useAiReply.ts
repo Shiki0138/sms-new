@@ -1,6 +1,6 @@
 // AI返信機能のカスタムフック
 import { useState, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { 
   AiSuggestion, 
@@ -92,7 +92,7 @@ export function useAiReply(options: UseAiReplyOptions = {}) {
             date: new Date(v.start_time).toLocaleDateString('ja-JP'),
             menu: v.menu_content,
           })),
-          preferences: thread.customer.notes,
+          preferences: undefined, // Customer preferences not available in thread
         },
         salon_context: salonContext,
       };

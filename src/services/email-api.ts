@@ -336,7 +336,7 @@ ${reservation.salonName}
         sender_id: 'customer1@example.com',
         sender_name: '田中美咲',
         content: '来週の予約をお願いしたいのですが、空いている時間はありますでしょうか？',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 1800000).toISOString(), // 30分前
         is_read: false,
@@ -351,7 +351,7 @@ ${reservation.salonName}
         sender_id: 'customer2@example.com',
         sender_name: '佐藤花子',
         content: '先日はありがとうございました。次回の予約もお願いします。',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 3600000).toISOString(), // 1時間前
         is_read: false,
@@ -366,7 +366,7 @@ ${reservation.salonName}
         sender_id: 'customer3@example.com',
         sender_name: '山田太郎',
         content: 'ヘアカットの料金について教えてください。',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 7200000).toISOString(), // 2時間前
         is_read: true,

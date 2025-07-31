@@ -9,7 +9,7 @@ import { useCustomers } from '../../hooks/useCustomers';
 
 const CustomersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: customers, isLoading } = useCustomers(searchTerm);
+  const { customers, isLoading } = useCustomers(searchTerm);
 
   return (
     <div className="p-6">

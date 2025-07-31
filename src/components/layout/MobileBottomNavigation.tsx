@@ -15,7 +15,7 @@ import {
   ChatBubbleOvalLeftEllipsisIcon as ChatBubbleOvalLeftEllipsisIconSolid,
   Cog6ToothIcon as Cog6ToothIconSolid,
 } from '@heroicons/react/24/solid';
-import { useMessages } from '../../hooks/useMessages';
+import { useMessageThreads } from '../../hooks/useMessages';
 import { useReservations } from '../../hooks/useReservations';
 
 interface NavItem {
@@ -28,11 +28,11 @@ interface NavItem {
 
 export default function MobileBottomNavigation() {
   const location = useLocation();
-  const { messages } = useMessages();
+  const messagesQuery = useMessageThreads();
   const { reservations } = useReservations();
 
   // 未読メッセージ数を計算
-  const unreadMessagesCount = messages?.filter(m => !m.is_read && m.direction === 'received').length || 0;
+  const unreadMessagesCount = messagesQuery.data?.reduce((count, thread) => count + thread.unread_count, 0) || 0;
 
   // 今日の予約数を計算
   const today = new Date();

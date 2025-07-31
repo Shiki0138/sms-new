@@ -87,7 +87,7 @@ export class ReminderSchedulerService {
         message_template: `{{customer_name}}様、来週{{date}}{{time}}からのご予約のお知らせです💄
 施術内容：{{menu}}
 何かご不明な点がございましたらお気軽にご連絡ください🌟`,
-        send_channels: ['line', 'instagram', 'email'] as const,
+        send_channels: ['line', 'instagram', 'email'] as ('line' | 'instagram' | 'email')[],
         send_time: '10:00',
         is_active: true,
       },
@@ -97,7 +97,7 @@ export class ReminderSchedulerService {
         message_template: `{{customer_name}}様、{{date}}{{time}}からのご予約が近づいてまいりました✨
 楽しみにお待ちしております😊
 当日は5分前にお越しいただけますと幸いです🕐`,
-        send_channels: ['line', 'instagram', 'email'] as const,
+        send_channels: ['line', 'instagram', 'email'] as ('line' | 'instagram' | 'email')[],
         send_time: '18:00',
         is_active: true,
       },
@@ -107,7 +107,7 @@ export class ReminderSchedulerService {
         message_template: `{{customer_name}}様、昨日はご来店いただきありがとうございました💕
 仕上がりはいかがでしょうか？
 お気に入りいただけましたら、ぜひSNSでシェアしてくださいね📸✨`,
-        send_channels: ['line', 'instagram', 'email'] as const,
+        send_channels: ['line', 'instagram', 'email'] as ('line' | 'instagram' | 'email')[],
         send_time: '15:00',
         is_active: true,
       },
@@ -119,7 +119,7 @@ export class ReminderSchedulerService {
 そろそろメンテナンスの時期かもしれません✨
 {{campaign_info}}
 ご予約お待ちしております😊`,
-        send_channels: ['line', 'instagram', 'email'] as const,
+        send_channels: ['line', 'instagram', 'email'] as ('line' | 'instagram' | 'email')[],
         send_time: '11:00',
         is_active: false, // デフォルトは無効
       },
@@ -301,7 +301,7 @@ export class ReminderSchedulerService {
       
       if (availableChannel) {
         try {
-          await this.apiService.sendMessage({
+          await this.apiService.sendMessage(
             customer_id: customer.id,
             channel_type: channelType,
             message_type: 'text',

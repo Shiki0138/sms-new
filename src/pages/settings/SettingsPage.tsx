@@ -384,7 +384,7 @@ const SettingsPage: React.FC = () => {
           </Card>
 
           {/* 利用状況 */}
-          <PlanUsageCard />
+          <PlanUsageCard tenantId={effectiveTenantId} />
 
           {/* プランアップグレード案内 */}
           <Card>

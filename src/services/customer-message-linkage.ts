@@ -261,7 +261,12 @@ export class CustomerMessageLinkageService {
 
       if (error) throw error;
 
-      return channels || [];
+      return (channels || []).map(channel => ({
+        channelType: channel.channel_type,
+        channelId: channel.channel_id,
+        channelName: channel.channel_name,
+        isActive: channel.is_active,
+      }));
     } catch (error) {
       console.error('Error getting customer channels:', error);
       return [];

@@ -57,8 +57,16 @@ export default function HolidaySettingsCard({
   const [activeTab, setActiveTab] = useState<'business_hours' | 'holidays'>('business_hours');
   const [isAddingHoliday, setIsAddingHoliday] = useState(false);
   const [editingHoliday, setEditingHoliday] = useState<string | null>(null);
-  const [newHoliday, setNewHoliday] = useState({
-    holidayType: 'weekly' as const,
+  const [newHoliday, setNewHoliday] = useState<{
+    holidayType: 'weekly' | 'monthly' | 'specific_date';
+    dayOfWeek: number;
+    weekOfMonth: number;
+    specificDate: string;
+    endDate: string;
+    description: string;
+    isActive: boolean;
+  }>({
+    holidayType: 'weekly',
     dayOfWeek: 0,
     weekOfMonth: 1,
     specificDate: '',

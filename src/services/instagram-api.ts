@@ -158,7 +158,7 @@ export class InstagramApiService {
             sender_id: messaging.sender.id,
             sender_name: messaging.sender.username || 'Instagram User',
             content: messaging.message.text || '',
-            message_type: 'text',
+            message_type: 'received' as MessageType,
             direction: 'incoming',
             created_at: new Date(messaging.timestamp).toISOString(),
             is_read: false,
@@ -196,7 +196,7 @@ export class InstagramApiService {
         sender_id: 'ig_user_1',
         sender_name: '田中美咲',
         content: 'こんにちは！来週の予約は可能でしょうか？',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 1800000).toISOString(), // 30分前
         is_read: false,
@@ -207,7 +207,7 @@ export class InstagramApiService {
         sender_id: 'ig_user_2',
         sender_name: 'beauty_lover_2024',
         content: 'ヘアカラーの料金について教えてください 💇‍♀️',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 3600000).toISOString(), // 1時間前
         is_read: false,
@@ -218,7 +218,7 @@ export class InstagramApiService {
         sender_id: 'ig_user_3',
         sender_name: 'salon_regular',
         content: '先日はありがとうございました！とても満足です ✨',
-        message_type: 'text',
+        message_type: 'received' as MessageType,
         direction: 'incoming',
         created_at: new Date(Date.now() - 7200000).toISOString(), // 2時間前
         is_read: true,

@@ -76,12 +76,13 @@ const touchButtonVariants = cva(
 );
 
 export interface TouchOptimizedButtonProps
-  extends Omit<HTMLMotionProps<'button'>, 'size'>,
+  extends Omit<HTMLMotionProps<'button'>, 'size' | 'children'>,
     VariantProps<typeof touchButtonVariants> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   hapticFeedback?: boolean;
+  children?: React.ReactNode;
 }
 
 const TouchOptimizedButton = React.forwardRef<

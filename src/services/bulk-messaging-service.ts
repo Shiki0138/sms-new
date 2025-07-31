@@ -401,16 +401,15 @@ export class BulkMessagingService {
           // メッセージ内容をパーソナライズ
           const personalizedContent = this.personalizeMessage(message.content, customer);
           
-          await this.apiService.sendMessage({
-            customer_id: customer.id,
-            channel_type: channelType,
-            message_type: 'text',
-            content: personalizedContent,
-            channel_specific_data: {
-              channel_id: channel.channel_id,
+          await this.apiService.sendMessage(
+            channelType,
+            channel.channel_id,
+            personalizedContent,
+            {
               subject: message.subject, // メール用
-            },
-          });
+              messageType: 'text',
+            }
+          );
           
           return channelType;
         } catch (error) {

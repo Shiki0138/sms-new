@@ -11,7 +11,7 @@ import { useCustomers } from '../../hooks/useCustomers';
 const NewCustomerPage: React.FC = () => {
   const navigate = useNavigate();
   const createCustomer = useCreateCustomer();
-  const { data: customers } = useCustomers();
+  const { customers } = useCustomers();
   
   const [formData, setFormData] = useState({
     name: '',

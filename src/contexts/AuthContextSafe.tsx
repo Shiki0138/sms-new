@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase, supabaseAuth } from '../lib/supabase';
+import { supabase, supabaseAuth } from '../lib/supabase-safe';
 import { AuthContextType, Tenant, PlanType } from '../types/auth';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
 
       console.log('Logging out...');
-      
+
       // 開発環境では直接ログインページにリダイレクト
       if (import.meta.env.DEV) {
         setUser(null);
@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         window.location.href = '/auth/login';
         return;
       }
-      
+
       await supabaseAuth.signOut();
 
       setUser(null);
@@ -183,12 +183,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const getInitialSession = async () => {
       try {
         console.log('Getting initial session...');
-        
+
         // 開発環境ではモックデータを使用
         if (import.meta.env.DEV) {
           // ログアウト状態をチェック
-          const isLoggedOut = sessionStorage.getItem('dev_logged_out') === 'true';
-          
+          const isLoggedOut =
+            sessionStorage.getItem('dev_logged_out') === 'true';
+
           if (isLoggedOut) {
             console.log('Development mode - user is logged out');
             if (mounted) {
@@ -199,7 +200,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
             return;
           }
-          
+
           console.log('Development mode - using mock tenant data');
           if (mounted) {
             setUser({
@@ -210,7 +211,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               aud: 'authenticated',
               created_at: new Date().toISOString(),
             } as User);
-            
+
             setTenant({
               id: 'dev-tenant-id',
               name: '開発用サロン',
@@ -220,12 +221,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             });
-            
+
             setLoading(false);
           }
           return;
         }
-        
+
         const {
           data: { session },
           error,

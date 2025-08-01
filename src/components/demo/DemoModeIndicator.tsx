@@ -1,29 +1,26 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, X } from 'lucide-react';
+import { X, PlayCircle } from 'lucide-react';
 
 interface DemoModeIndicatorProps {
   onExit: () => void;
 }
 
-export const DemoModeIndicator: React.FC<DemoModeIndicatorProps> = ({ onExit }) => {
+export const DemoModeIndicator: React.FC<DemoModeIndicatorProps> = ({
+  onExit,
+}) => {
   return (
-    <motion.div
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -100, opacity: 0 }}
-      className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
-    >
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center space-x-3">
-        <Sparkles className="h-5 w-5" />
-        <span className="font-medium">デモモードで体験中</span>
+    <div className="fixed top-0 left-0 right-0 bg-purple-600 text-white p-2 text-center z-40">
+      <div className="max-w-7xl mx-auto flex items-center justify-center space-x-3">
+        <PlayCircle className="h-4 w-4" />
+        <span className="text-sm font-medium">デモモードで実行中です</span>
         <button
           onClick={onExit}
-          className="ml-2 p-1 hover:bg-white/20 rounded-full transition-colors"
+          className="ml-4 px-3 py-1 bg-purple-700 hover:bg-purple-800 rounded text-xs flex items-center space-x-1"
         >
-          <X className="h-4 w-4" />
+          <X className="h-3 w-3" />
+          <span>終了</span>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };

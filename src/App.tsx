@@ -13,16 +13,30 @@ import { Suspense, lazy, useState } from 'react';
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const SignupPage = lazy(() => import('./pages/auth/SignupPage'));
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'));
-const DashboardPage = lazy(() => import('./pages/DashboardPageSimple'));
-const CustomersPage = lazy(() => import('./pages/customers/CustomersPageAdvanced'));
-const ReservationsPage = lazy(() => import('./pages/reservations/ReservationsPageAdvanced'));
+// Try to load the dashboard, fallback to ultra-safe version if there's an error
+const DashboardPage = lazy(() =>
+  import('./pages/DashboardPageSimple').catch((error) => {
+    console.error('Failed to load DashboardPageSimple:', error);
+    return import('./pages/DashboardPageUltraSafe');
+  })
+);
+const CustomersPage = lazy(
+  () => import('./pages/customers/CustomersPageAdvanced')
+);
+const ReservationsPage = lazy(
+  () => import('./pages/reservations/ReservationsPageAdvanced')
+);
 const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
 const MessagesPage = lazy(() => import('./pages/messages/MessagesPage'));
 const DesignBoardPage = lazy(() => import('./pages/DesignBoardPage'));
 const MarketingPage = lazy(() => import('./pages/marketing/MarketingPage'));
-const BulkMessagingPage = lazy(() => import('./pages/marketing/BulkMessagingPage'));
+const BulkMessagingPage = lazy(
+  () => import('./pages/marketing/BulkMessagingPage')
+);
 const BillingPage = lazy(() => import('./pages/billing/BillingPage'));
-const AdvancedReportsPage = lazy(() => import('./pages/reports/AdvancedReportsPage'));
+const AdvancedReportsPage = lazy(
+  () => import('./pages/reports/AdvancedReportsPage')
+);
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
@@ -34,13 +48,15 @@ import { PageLoading } from './components/common/LoadingStates';
 import { DemoModeIndicator } from './components/demo/DemoModeIndicator';
 import { useDemo } from './hooks/useDemo';
 import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
+import EnvironmentCheck from './components/EnvironmentCheck';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: unknown) => {
         // ネットワークエラーの場合は再試行
-        if (error?.message?.includes('NetworkError')) {
+        const err = error as { message?: string };
+        if (err?.message?.includes('NetworkError')) {
           return failureCount < 3;
         }
         return failureCount < 1;
@@ -54,7 +70,7 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const { isDemoMode, demoData, initializeDemo, exitDemo } = useDemo();
+  const { isDemoMode, initializeDemo, exitDemo } = useDemo();
   usePerformanceOptimization();
 
   // デモモードの自動開始（URLパラメータで制御）
@@ -67,94 +83,115 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <AuthProvider>
-            <BusinessHoursProvider>
-              {/* グローバルコンポーネント */}
-              <OfflineIndicator />
-              {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
-              <OnboardingOverlay />
-              
-              <Suspense fallback={<PageLoading page="dashboard" />}>
-                <Routes>
-                  {/* 認証ページ */}
-                  <Route path="/auth/login" element={<LoginPage />} />
-                  <Route path="/auth/signup" element={<SignupPage />} />
-                  <Route
-                    path="/auth/reset-password"
-                    element={<ResetPasswordPage />}
-                  />
+      <EnvironmentCheck>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <AuthProvider>
+              <BusinessHoursProvider>
+                {/* グローバルコンポーネント */}
+                <OfflineIndicator />
+                {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
+                <OnboardingOverlay />
 
-                  {/* 保護されたルート（サイドバー付き） - 開発環境では認証をバイパス */}
-                  <Route element={<AppLayout />}>
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/customers" element={<CustomersPage />} />
-                    <Route path="/reservations" element={<ReservationsPage />} />
-                    <Route path="/messages" element={<MessagesPage />} />
-                    <Route path="/marketing" element={<MarketingPage />} />
-                    <Route path="/marketing/bulk-messaging" element={<BulkMessagingPage />} />
-                    <Route path="/billing" element={<BillingPage />} />
-                    <Route path="/reports/advanced" element={<AdvancedReportsPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/design-board" element={<DesignBoardPage />} />
-                  </Route>
+                <Suspense fallback={<PageLoading page="dashboard" />}>
+                  <Routes>
+                    {/* 認証ページ */}
+                    <Route path="/auth/login" element={<LoginPage />} />
+                    <Route path="/auth/signup" element={<SignupPage />} />
+                    <Route
+                      path="/auth/reset-password"
+                      element={<ResetPasswordPage />}
+                    />
 
-                  {/* デフォルトリダイレクト */}
-                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                </Routes>
-              </Suspense>
-            </BusinessHoursProvider>
-          </AuthProvider>
-        </Router>
-        
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-              borderRadius: '12px',
-              padding: '16px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#4ade80',
-                secondary: '#fff',
-              },
+                    {/* 保護されたルート（サイドバー付き） - 開発環境では認証をバイパス */}
+                    <Route element={<AppLayout />}>
+                      <Route
+                        path="/"
+                        element={<Navigate to="/dashboard" replace />}
+                      />
+                      <Route path="/dashboard" element={<DashboardPage />} />
+                      <Route path="/customers" element={<CustomersPage />} />
+                      <Route
+                        path="/reservations"
+                        element={<ReservationsPage />}
+                      />
+                      <Route path="/messages" element={<MessagesPage />} />
+                      <Route path="/marketing" element={<MarketingPage />} />
+                      <Route
+                        path="/marketing/bulk-messaging"
+                        element={<BulkMessagingPage />}
+                      />
+                      <Route path="/billing" element={<BillingPage />} />
+                      <Route
+                        path="/reports/advanced"
+                        element={<AdvancedReportsPage />}
+                      />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route
+                        path="/design-board"
+                        element={<DesignBoardPage />}
+                      />
+                    </Route>
+
+                    {/* デフォルトリダイレクト */}
+                    <Route
+                      path="*"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
+                  </Routes>
+                </Suspense>
+              </BusinessHoursProvider>
+            </AuthProvider>
+          </Router>
+
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
               style: {
-                background: '#065f46',
+                background: '#363636',
+                color: '#fff',
+                borderRadius: '12px',
+                padding: '16px',
               },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+              success: {
+                iconTheme: {
+                  primary: '#4ade80',
+                  secondary: '#fff',
+                },
+                style: {
+                  background: '#065f46',
+                },
               },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+                style: {
+                  background: '#991b1b',
+                },
+              },
+            }}
+          />
+
+          <Sonner
+            position="bottom-right"
+            richColors
+            expand={true}
+            theme="light"
+            toastOptions={{
+              duration: 4000,
+              className: 'sonner-toast',
               style: {
-                background: '#991b1b',
+                borderRadius: '12px',
+                boxShadow:
+                  '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
               },
-            },
-          }}
-        />
-        
-        <Sonner
-          position="bottom-right"
-          richColors
-          expand={true}
-          theme="light"
-          toastOptions={{
-            duration: 4000,
-            className: 'sonner-toast',
-            style: {
-              borderRadius: '12px',
-              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-            },
-          }}
-        />
-      </QueryClientProvider>
+            }}
+          />
+        </QueryClientProvider>
+      </EnvironmentCheck>
     </ErrorBoundary>
   );
 }

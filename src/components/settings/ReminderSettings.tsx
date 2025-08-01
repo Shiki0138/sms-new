@@ -14,6 +14,7 @@ import { ReminderSetting, ReminderType, ChannelType } from '../../types/message'
 import { animations, salonTheme } from '../../styles/design-system';
 import { getReminderService } from '../../services/reminder-service';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../../hooks/useAuth';
 
 // リマインダータイプの表示設定
 const REMINDER_CONFIG: Record<ReminderType, {
@@ -91,6 +92,7 @@ const CHANNEL_CONFIG: Record<ChannelType, {
 };
 
 export default function ReminderSettings() {
+  const { tenant } = useAuth();
   const [settings, setSettings] = useState<ReminderSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -105,7 +107,7 @@ export default function ReminderSettings() {
   const loadSettings = async () => {
     try {
       const reminderService = getReminderService();
-      const data = await reminderService.getReminderSettings('current_tenant_id'); // TODO: 実際のテナントID
+      const data = await reminderService.getReminderSettings(tenant?.id || '');
       setSettings(data);
     } catch (error) {
       console.error('Error loading reminder settings:', error);

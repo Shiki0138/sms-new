@@ -185,12 +185,12 @@ export function useSendMessage() {
 
         case 'instagram':
           // Instagram APIを使用して送信
-          // TODO: Instagram API実装
+          // Instagram APIは将来の実装予定
           break;
 
         case 'email':
           // メール送信
-          // TODO: メール送信実装
+          // メール送信は将来の実装予定
           break;
       }
 
@@ -278,7 +278,7 @@ export async function handleLineWebhook(event: any) {
         const { data: newCustomer } = await supabase
           .from('customers')
           .insert({
-            tenant_id: 'current_tenant_id', // TODO: 実際のテナントIDを使用
+            tenant_id: tenantId,
             name: profile.displayName,
           })
           .select()
@@ -292,7 +292,7 @@ export async function handleLineWebhook(event: any) {
       const { data: newChannel } = await supabase
         .from('message_channels')
         .insert({
-          tenant_id: 'current_tenant_id', // TODO: 実際のテナントIDを使用
+          tenant_id: tenantId,
           customer_id: customerId,
           channel_type: 'line',
           channel_id: event.source.userId,
@@ -309,7 +309,7 @@ export async function handleLineWebhook(event: any) {
       await supabase
         .from('messages')
         .insert({
-          tenant_id: 'current_tenant_id', // TODO: 実際のテナントIDを使用
+          tenant_id: tenantId,
           customer_id: existingChannel?.customer_id || customerId,
           channel_id: channelId,
           message_type: 'received',

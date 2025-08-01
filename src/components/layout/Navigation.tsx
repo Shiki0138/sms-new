@@ -9,6 +9,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   CreditCardIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import { Link, useLocation } from 'react-router-dom';
 import { animations } from '../../styles/design-system';
@@ -36,6 +37,16 @@ const navigation = [
     name: 'メッセージ',
     href: '/messages',
     icon: ChatBubbleLeftRightIcon,
+  },
+  {
+    name: '料金・支払い',
+    href: '/billing',
+    icon: CreditCardIcon,
+  },
+  {
+    name: '高度な分析',
+    href: '/reports/advanced',
+    icon: ChartBarIcon,
   },
   {
     name: '設定',

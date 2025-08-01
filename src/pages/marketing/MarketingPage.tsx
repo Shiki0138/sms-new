@@ -7,7 +7,11 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   Cog6ToothIcon,
+  BellIcon,
+  DocumentTextIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ReminderSchedulerService } from '../../services/reminder-scheduler';
 import { BulkMessagingService } from '../../services/bulk-messaging-service';
@@ -21,6 +25,7 @@ type ActiveTab = 'bulk_message' | 'reminders' | 'history' | 'analytics';
 
 export default function MarketingPage() {
   const { tenant } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<ActiveTab>('bulk_message');
   const [reminderService, setReminderService] = useState<ReminderSchedulerService | null>(null);
   const [bulkService, setBulkService] = useState<BulkMessagingService | null>(null);
@@ -226,16 +231,116 @@ export default function MarketingPage() {
         transition={animations.spring.gentle}
       >
         {activeTab === 'bulk_message' && bulkService && (
-          <BulkMessageComposer
-            tenantId={tenant?.id || ''}
-            onMessageSent={(messageId) => {
-              console.log('Message sent:', messageId);
-              // 統計を再読込
-              if (reminderService && bulkService) {
-                loadStats(reminderService, bulkService);
-              }
-            }}
-          />
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/marketing/bulk-messaging')}
+                className="p-4 border border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <MegaphoneIcon className="h-5 w-5 text-primary-600" />
+                      <h3 className="font-medium text-gray-900">キャンペーン管理</h3>
+                    </div>
+                    <p className="text-sm text-gray-600">実行中: {stats.active_campaigns}件</p>
+                  </div>
+                  <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                </div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/marketing/bulk-messaging?tab=reminders')}
+                className="p-4 border border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <BellIcon className="h-5 w-5 text-purple-600" />
+                      <h3 className="font-medium text-gray-900">自動リマインダー</h3>
+                    </div>
+                    <p className="text-sm text-gray-600">待機中: {stats.pending_reminders}件</p>
+                  </div>
+                  <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                </div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/marketing/bulk-messaging?tab=templates')}
+                className="p-4 border border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <DocumentTextIcon className="h-5 w-5 text-orange-600" />
+                      <h3 className="font-medium text-gray-900">テンプレート</h3>
+                    </div>
+                    <p className="text-sm text-gray-600">再利用可能なメッセージ</p>
+                  </div>
+                  <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                </div>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/marketing/bulk-messaging?tab=preferences')}
+                className="p-4 border border-gray-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="text-left">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <UserGroupIcon className="h-5 w-5 text-green-600" />
+                      <h3 className="font-medium text-gray-900">顧客設定</h3>
+                    </div>
+                    <p className="text-sm text-gray-600">配信設定を管理</p>
+                  </div>
+                  <ArrowRightIcon className="h-4 w-4 text-gray-400 group-hover:text-primary-600 transition-colors" />
+                </div>
+              </motion.button>
+            </div>
+
+            {/* Advanced Features Banner */}
+            <Card className="bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
+                    <MegaphoneIcon className="h-6 w-6 text-primary-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-primary-900">高度な一斉配信機能</h3>
+                    <p className="text-sm text-primary-700">セグメント配信、スケジュール予約、配信分析など</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate('/marketing/bulk-messaging')}
+                  className="whitespace-nowrap"
+                >
+                  詳細を見る
+                  <ArrowRightIcon className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </Card>
+
+            {/* Quick Message Composer */}
+            <BulkMessageComposer
+              tenantId={tenant?.id || ''}
+              onMessageSent={(messageId) => {
+                console.log('Message sent:', messageId);
+                // 統計を再読込
+                if (reminderService && bulkService) {
+                  loadStats(reminderService, bulkService);
+                }
+              }}
+            />
+          </div>
         )}
 
         {activeTab === 'reminders' && (

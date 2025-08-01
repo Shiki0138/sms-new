@@ -20,6 +20,9 @@ const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
 const MessagesPage = lazy(() => import('./pages/messages/MessagesPage'));
 const DesignBoardPage = lazy(() => import('./pages/DesignBoardPage'));
 const MarketingPage = lazy(() => import('./pages/marketing/MarketingPage'));
+const BulkMessagingPage = lazy(() => import('./pages/marketing/BulkMessagingPage'));
+const BillingPage = lazy(() => import('./pages/billing/BillingPage'));
+const AdvancedReportsPage = lazy(() => import('./pages/reports/AdvancedReportsPage'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
@@ -91,6 +94,9 @@ function App() {
                     <Route path="/reservations" element={<ReservationsPage />} />
                     <Route path="/messages" element={<MessagesPage />} />
                     <Route path="/marketing" element={<MarketingPage />} />
+                    <Route path="/marketing/bulk-messaging" element={<BulkMessagingPage />} />
+                    <Route path="/billing" element={<BillingPage />} />
+                    <Route path="/reports/advanced" element={<AdvancedReportsPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/design-board" element={<DesignBoardPage />} />
                   </Route>

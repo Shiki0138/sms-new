@@ -26,6 +26,10 @@ import HolidaySettingsCard from '../../components/settings/HolidaySettingsCard';
 import PlanUsageCard from '../../components/common/PlanUsageCard';
 import { useBusinessHours } from '../../hooks/useBusinessHours';
 import { useBusinessHoursContext } from '../../contexts/BusinessHoursContext';
+import StaffRegistrationCard from '../../components/staff/StaffRegistrationCard';
+import StaffSchedulingCard from '../../components/staff/StaffSchedulingCard';
+import { useStaff } from '../../hooks/useStaff';
+import { CreateStaffData, UpdateStaffData } from '../../services/staff-service';
 
 const SettingsPage: React.FC = () => {
   const { user, tenant: authTenant } = useAuth();
@@ -35,6 +39,7 @@ const SettingsPage: React.FC = () => {
     | 'salon'
     | 'plan'
     | 'account'
+    | 'staff'
     | 'api'
     | 'reminders'
     | 'business_hours'
@@ -65,6 +70,16 @@ const SettingsPage: React.FC = () => {
   
   // コンテキストからrefreshData関数を取得
   const { refreshData: refreshContextData } = useBusinessHoursContext();
+
+  // スタッフ管理
+  const {
+    staff,
+    createStaff,
+    updateStaff,
+    deleteStaff,
+    loading: staffLoading,
+    refreshStaff,
+  } = useStaff(effectiveTenantId);
 
   // サロン情報
   const [salonData, setSalonData] = useState({
@@ -146,6 +161,7 @@ const SettingsPage: React.FC = () => {
     { id: 'salon', label: 'サロン情報', icon: Store },
     { id: 'plan', label: 'プラン・利用状況', icon: Crown },
     { id: 'account', label: 'アカウント', icon: User },
+    { id: 'staff', label: 'スタッフ管理', icon: User },
     { id: 'api', label: 'API連携', icon: LinkIcon },
     { id: 'reminders', label: 'リマインダー', icon: Bell },
     { id: 'business_hours', label: '営業時間・休日', icon: Calendar },
@@ -176,6 +192,7 @@ const SettingsPage: React.FC = () => {
                       | 'salon'
                       | 'plan'
                       | 'account'
+                      | 'staff'
                       | 'api'
                       | 'reminders'
                       | 'business_hours'
@@ -265,9 +282,8 @@ const SettingsPage: React.FC = () => {
                   クイックアクション
                 </h3>
                 <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={() => alert('メニュー管理機能は準備中です')}
+                  <Link
+                    to="/services"
                     className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center">
@@ -282,10 +298,9 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
                     <ExternalLink className="h-4 w-4 text-gray-400" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => alert('売上レポート機能は準備中です')}
+                  </Link>
+                  <Link
+                    to="/reports/advanced"
                     className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center">
@@ -300,7 +315,7 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
                     <ExternalLink className="h-4 w-4 text-gray-400" />
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -626,6 +641,51 @@ const SettingsPage: React.FC = () => {
             }
           }}
         />
+      )}
+
+      {/* スタッフ管理タブ */}
+      {activeTab === 'staff' && (
+        <div className="space-y-6">
+          <StaffRegistrationCard
+            staff={staff.map(s => ({
+              id: s.id,
+              name: s.name,
+              email: s.email,
+              phone: s.phone,
+              position: s.position,
+              color: s.color,
+              isActive: s.isActive,
+              createdAt: s.createdAt,
+            }))}
+            onAddStaff={async (staffData) => {
+              const result = await createStaff(staffData as CreateStaffData);
+              if (result.success) {
+                await refreshStaff();
+              }
+            }}
+            onUpdateStaff={async (id, staffData) => {
+              const result = await updateStaff(id, staffData as UpdateStaffData);
+              if (result.success) {
+                await refreshStaff();
+              }
+            }}
+            onDeleteStaff={async (id) => {
+              const result = await deleteStaff(id);
+              if (result.success) {
+                await refreshStaff();
+              }
+            }}
+            maxStaff={3}
+          />
+          
+          {/* スタッフスケジュール管理 */}
+          {staff.length > 0 && (
+            <StaffSchedulingCard
+              tenantId={effectiveTenantId}
+              staff={staff}
+            />
+          )}
+        </div>
       )}
 
       {/* セキュリティタブ */}

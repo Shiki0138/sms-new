@@ -10,7 +10,11 @@ export type ReminderType =
   | 'pre_visit_1day' 
   | 'post_visit_24hours' 
   | 'post_visit_1week' 
-  | 'post_visit_1month';
+  | 'post_visit_1month'
+  | 'no_show_prevention'
+  | 'service_maintenance'
+  | 'seasonal_care'
+  | 'loyalty_milestone';
 export type IntegrationType = 'line' | 'instagram' | 'google_calendar' | 'hot_pepper';
 
 // メッセージチャンネル
@@ -264,4 +268,200 @@ export interface MessageListResponse {
   messages: Message[];
   pagination: MessagePagination;
   filters_applied: MessageFilter;
+}
+
+// 自動リマインダーシステム用の追加型定義
+
+// リマインダー配信ルール
+export interface ReminderDeliveryRules {
+  business_hours_only: boolean;
+  skip_holidays: boolean;
+  preferred_time: string;
+  min_advance_hours?: number;
+  max_retries?: number;
+  retry_interval_hours?: number;
+}
+
+// リマインダー顧客フィルター
+export interface ReminderCustomerFilters {
+  customer_types?: ('new' | 'regular' | 'vip')[];
+  min_price?: number;
+  max_price?: number;
+  service_categories?: string[];
+  visit_count_min?: number;
+  visit_count_max?: number;
+}
+
+// 拡張リマインダー設定
+export interface EnhancedReminderSetting {
+  id: string;
+  tenant_id: string;
+  reminder_type: ReminderType;
+  label: string;
+  description: string;
+  is_enabled: boolean;
+  timing_value: number;
+  timing_unit: 'hours' | 'days' | 'weeks';
+  message_template: string;
+  send_via_channels: ChannelType[];
+  delivery_rules: ReminderDeliveryRules;
+  customer_filters?: ReminderCustomerFilters;
+  priority: 'high' | 'medium' | 'low';
+  retry_config: {
+    max_retries: number;
+    retry_interval_hours: number;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+// スケジュールされたリマインダー
+export interface ScheduledReminder {
+  id: string;
+  tenant_id: string;
+  customer_id: string;
+  reservation_id: string;
+  reminder_type: ReminderType;
+  scheduled_at: string;
+  status: 'scheduled' | 'processing' | 'sent' | 'failed' | 'cancelled';
+  priority: 'high' | 'medium' | 'low';
+  metadata: {
+    setting_id: string;
+    channels: ChannelType[];
+    template: string;
+    retry_count?: number;
+    manual?: boolean;
+    custom_message?: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+// リマインダー配信ログ
+export interface ReminderDeliveryLog {
+  id: string;
+  tenant_id: string;
+  reminder_id: string;
+  channel_type: ChannelType;
+  attempt_number: number;
+  delivery_status: DeliveryStatus;
+  response_data: Record<string, any>;
+  error_details?: string;
+  processing_time_ms: number;
+  delivered_at: string;
+}
+
+// リマインダー分析データ
+export interface ReminderAnalytics {
+  overview: {
+    total_scheduled: number;
+    total_sent: number;
+    delivery_rate: number;
+    open_rate: number;
+    action_rate: number;
+  };
+  business_impact: {
+    no_shows_prevented: number;
+    revenue_saved: number;
+    rebookings_generated: number;
+    customer_satisfaction_improvement: number;
+  };
+  by_type: Array<{
+    type: ReminderType;
+    sent: number;
+    opened: number;
+    actioned: number;
+    effectiveness: number;
+  }>;
+  optimization_suggestions: string[];
+  period: {
+    start: string;
+    end: string;
+  };
+}
+
+// リマインダー効果測定
+export interface ReminderEffectiveness {
+  reminder_id: string;
+  delivery_status: DeliveryStatus;
+  opened: boolean;
+  clicked: boolean;
+  action_taken: 'confirmed' | 'rescheduled' | 'cancelled' | 'no_action';
+  response_time_hours?: number;
+  business_impact: {
+    no_show_prevented: boolean;
+    rebooking_achieved: boolean;
+    revenue_impact: number;
+  };
+}
+
+// リマインダージョブ
+export interface ReminderJob {
+  id: string;
+  tenant_id: string;
+  job_type: 'scheduler' | 'sender' | 'analyzer' | 'cleanup';
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  schedule_expression?: string; // cron expression
+  last_run_at?: string;
+  next_run_at?: string;
+  run_count: number;
+  error_count: number;
+  config: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+// リマインダーテンプレート
+export interface ReminderTemplate {
+  id: string;
+  tenant_id: string;
+  name: string;
+  reminder_type: ReminderType;
+  category: 'standard' | 'seasonal' | 'promotional' | 'emergency';
+  template_content: string;
+  channel_type: ChannelType;
+  variables: string[]; // available template variables
+  conditions?: Record<string, any>; // when to use this template
+  usage_count: number;
+  effectiveness_rating: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// リマインダー手動送信リクエスト
+export interface ManualReminderRequest {
+  customer_id: string;
+  reservation_id: string;
+  reminder_type: ReminderType;
+  channels: ChannelType[];
+  scheduled_at?: string;
+  custom_message?: string;
+  priority?: 'high' | 'medium' | 'low';
+}
+
+// リマインダーダッシュボード統計
+export interface ReminderDashboardStats {
+  today: {
+    scheduled: number;
+    sent: number;
+    pending: number;
+    failed: number;
+  };
+  this_week: {
+    total_sent: number;
+    delivery_rate: number;
+    open_rate: number;
+    action_rate: number;
+  };
+  trends: {
+    no_show_reduction: number;
+    customer_satisfaction: number;
+    revenue_impact: number;
+  };
+  upcoming: Array<{
+    reminder_type: ReminderType;
+    count: number;
+    next_scheduled: string;
+  }>;
 }

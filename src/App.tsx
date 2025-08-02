@@ -70,6 +70,8 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  console.log('App.tsx: App component rendering...');
+  
   const { isDemoMode, initializeDemo, exitDemo } = useDemo();
   usePerformanceOptimization();
 
@@ -80,6 +82,8 @@ function App() {
       initializeDemo();
     }
   });
+  
+  console.log('App.tsx: isDemoMode:', isDemoMode);
 
   return (
     <ErrorBoundary>

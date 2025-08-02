@@ -29,14 +29,16 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error('ErrorBoundary: Uncaught error:', error, errorInfo);
 
     // Log error details for debugging
-    console.error('Component Stack:', errorInfo.componentStack);
+    console.error('ErrorBoundary: Component Stack:', errorInfo.componentStack);
+    console.error('ErrorBoundary: Error message:', error.message);
+    console.error('ErrorBoundary: Error stack:', error.stack);
 
     // Check if this is a Supabase configuration error
     if (error.message?.includes('Missing Supabase environment variables')) {
-      console.warn('Supabase not configured. Running in offline mode.');
+      console.warn('ErrorBoundary: Supabase not configured. Running in offline mode.');
     }
   }
 

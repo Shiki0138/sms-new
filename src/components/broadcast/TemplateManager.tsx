@@ -371,7 +371,7 @@ export default function TemplateManager({
 こんにちは！"
                   />
                   <div className="mt-2 text-xs text-gray-500">
-                    利用可能な変数: {{'{'}customer_name{'}'}} {{'{'}salon_name{'}'}} {{'{'}contact_info{'}'}
+                    利用可能な変数: {'{'}customer_name{'}'} {'{'}salon_name{'}'} {'{'}contact_info{'}'}
                   </div>
                 </div>
 

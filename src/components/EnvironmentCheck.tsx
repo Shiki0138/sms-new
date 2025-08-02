@@ -6,9 +6,15 @@ interface EnvironmentCheckProps {
 }
 
 const EnvironmentCheck: React.FC<EnvironmentCheckProps> = ({ children }) => {
+  console.log('EnvironmentCheck: Checking environment...');
+  
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   const isDevelopment = import.meta.env.DEV;
+
+  console.log('EnvironmentCheck: supabaseUrl:', supabaseUrl ? 'Set' : 'Not set');
+  console.log('EnvironmentCheck: supabaseAnonKey:', supabaseAnonKey ? 'Set' : 'Not set');
+  console.log('EnvironmentCheck: isDevelopment:', isDevelopment);
 
   const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
 

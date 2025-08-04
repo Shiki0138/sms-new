@@ -8,14 +8,16 @@ console.log('main.tsx: Starting application...');
 // Add global error handler
 window.addEventListener('error', (event) => {
   console.error('Global error:', event.error);
-  // Prevent the default error handling
-  event.preventDefault();
+  console.error('Error message:', event.message);
+  console.error('Error filename:', event.filename);
+  console.error('Error line:', event.lineno);
+  console.error('Error column:', event.colno);
+  // Don't prevent default to see full error in console
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
-  // Prevent the default error handling
-  event.preventDefault();
+  // Don't prevent default to see full error in console
 });
 
 // Ensure root element exists

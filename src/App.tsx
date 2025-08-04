@@ -73,23 +73,24 @@ const queryClient = new QueryClient({
 function App() {
   console.log('App.tsx: App component rendering...');
   
-  const { isDemoMode, initializeDemo, exitDemo } = useDemo();
-  usePerformanceOptimization();
+  try {
+    const { isDemoMode, initializeDemo, exitDemo } = useDemo();
+    usePerformanceOptimization();
 
-  // デモモードの自動開始（URLパラメータで制御）
-  useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('demo') === 'true') {
-      initializeDemo();
-    }
-  });
-  
-  console.log('App.tsx: isDemoMode:', isDemoMode);
+    // デモモードの自動開始（URLパラメータで制御）
+    useState(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') === 'true') {
+        initializeDemo();
+      }
+    });
+    
+    console.log('App.tsx: isDemoMode:', isDemoMode);
 
-  return (
-    <ErrorBoundary>
-      <EnvironmentCheck>
-        <QueryClientProvider client={queryClient}>
+    return (
+      <ErrorBoundary>
+        <EnvironmentCheck>
+          <QueryClientProvider client={queryClient}>
           <Router>
             <AuthProvider>
               <BusinessHoursProvider>
@@ -198,10 +199,21 @@ function App() {
               },
             }}
           />
-        </QueryClientProvider>
-      </EnvironmentCheck>
-    </ErrorBoundary>
-  );
+          </QueryClientProvider>
+        </EnvironmentCheck>
+      </ErrorBoundary>
+    );
+  } catch (error) {
+    console.error('App.tsx: Fatal error in App component:', error);
+    return (
+      <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+        <h1>Application Error</h1>
+        <p>An error occurred while initializing the application.</p>
+        <pre>{error instanceof Error ? error.message : String(error)}</pre>
+        <button onClick={() => window.location.reload()}>Reload Page</button>
+      </div>
+    );
+  }
 }
 
 export default App;

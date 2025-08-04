@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Page</title>
+</head>
+<body>
+    <h1>Debug Information</h1>
+    <div id="debug-info"></div>
+    
+    <script type="module">
+        const debugInfo = document.getElementById('debug-info');
+        
+        // Check if root element exists
+        const rootElement = document.getElementById('root');
+        debugInfo.innerHTML += `<p>Root element exists: ${rootElement ? 'Yes' : 'No'}</p>`;
+        
+        // Try to load the main script manually
+        try {
+            debugInfo.innerHTML += '<p>Attempting to load main.tsx...</p>';
+            import('/src/main.tsx').then(() => {
+                debugInfo.innerHTML += '<p>main.tsx loaded successfully!</p>';
+            }).catch(err => {
+                debugInfo.innerHTML += `<p>Error loading main.tsx: ${err.message}</p>`;
+                console.error('Import error:', err);
+            });
+        } catch (err) {
+            debugInfo.innerHTML += `<p>Immediate error: ${err.message}</p>`;
+            console.error('Immediate error:', err);
+        }
+        
+        // Log all scripts
+        const scripts = document.querySelectorAll('script');
+        debugInfo.innerHTML += `<p>Number of scripts: ${scripts.length}</p>`;
+        scripts.forEach((script, index) => {
+            debugInfo.innerHTML += `<p>Script ${index}: ${script.src || 'inline'}</p>`;
+        });
+    </script>
+</body>
+</html>

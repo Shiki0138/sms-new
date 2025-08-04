@@ -37,6 +37,7 @@ const BillingPage = lazy(() => import('./pages/billing/BillingPage'));
 const AdvancedReportsPage = lazy(
   () => import('./pages/reports/AdvancedReportsPage')
 );
+const TestPage = lazy(() => import('./pages/TestPage'));
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
@@ -137,6 +138,9 @@ function App() {
                       />
                     </Route>
 
+                    {/* テストページ */}
+                    <Route path="/test" element={<TestPage />} />
+                    
                     {/* デフォルトリダイレクト */}
                     <Route
                       path="*"

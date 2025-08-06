@@ -7,7 +7,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { Toaster as Sonner } from 'sonner';
-import { Suspense, lazy, useState, useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 
 // 遅延読み込みでパフォーマンス最適化（エラーハンドリング付き）
 const LoginPage = lazy(() => import('./pages/auth/LoginPage').catch(() => import('./pages/auth/LoginPage')));

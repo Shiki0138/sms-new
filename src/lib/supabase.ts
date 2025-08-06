@@ -3,17 +3,26 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Check for environment variables
+const hasSupabaseConfig = Boolean(supabaseUrl && supabaseAnonKey);
+
+if (!hasSupabaseConfig) {
+  console.warn('Missing Supabase environment variables - running in demo mode');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-  },
-});
+// Create Supabase client with fallback for demo mode
+export const supabase = hasSupabaseConfig
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+      },
+    })
+  : null; // Fallback for demo mode
+
+// Demo mode flag
+export const isDemoMode = !hasSupabaseConfig;
 
 // Database helper functions
 export const supabaseAuth = {
@@ -38,7 +47,7 @@ export const supabaseAuth = {
       if (!authData.user) throw new Error('ユーザー作成に失敗しました');
 
       // 少し待機（認証が完了するまで）
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 2. テナント作成（新しいテーブル構造に合わせて修正）
       const { data: tenantData, error: tenantError } = await supabase
@@ -50,8 +59,8 @@ export const supabaseAuth = {
           settings: {
             business_name: tenantName,
             business_type: 'beauty_salon',
-            timezone: 'Asia/Tokyo'
-          }
+            timezone: 'Asia/Tokyo',
+          },
         })
         .select()
         .single();
@@ -81,16 +90,14 @@ export const supabaseAuth = {
 
       // 4. 初期のプラン使用状況を作成
       const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
-      const { error: usageError } = await supabase
-        .from('plan_usage')
-        .insert({
-          tenant_id: tenantData.id,
-          month: currentMonth,
-          customers_count: 0,
-          reservations_count: 0,
-          messages_sent: 0,
-          ai_replies_count: 0,
-        });
+      const { error: usageError } = await supabase.from('plan_usage').insert({
+        tenant_id: tenantData.id,
+        month: currentMonth,
+        customers_count: 0,
+        reservations_count: 0,
+        messages_sent: 0,
+        ai_replies_count: 0,
+      });
 
       if (usageError) {
         console.error('プラン使用状況の初期化エラー:', usageError);

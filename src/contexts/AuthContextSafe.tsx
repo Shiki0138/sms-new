@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import { supabase, supabaseAuth } from '../lib/supabase-safe';
+import { supabase, supabaseAuth } from '../lib/supabase';
 import { AuthContextType, Tenant, PlanType } from '../types/auth';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -24,6 +24,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Fetching tenant info for user:', userId);
 
       // 新しいスキーマに対応: usersテーブルから情報を取得
+      if (!supabase) {
+        console.log('Supabase not configured');
+        return;
+      }
+      
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select(
@@ -227,6 +232,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
 
+        if (!supabase) {
+          console.log('Development mode - using mock tenant data');
+          if (mounted) {
+            setUser({
+              id: 'dev-user-id',
+              email: 'dev@example.com',
+              app_metadata: {},
+              user_metadata: {},
+              aud: 'authenticated',
+              created_at: new Date().toISOString(),
+            } as User);
+
+            setTenant({
+              id: 'dev-tenant-id',
+              name: '開発用サロン',
+              plan: 'light',
+              phone_number: '03-1234-5678',
+              address: '東京都渋谷区',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+
+            setLoading(false);
+          }
+          return;
+        }
+
         const {
           data: { session },
           error,
@@ -259,37 +291,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getInitialSession();
 
     // 認証状態変更の監視
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!mounted) return;
+    let subscription: { unsubscribe: () => void } | null = null;
+    
+    if (supabase?.auth?.onAuthStateChange) {
+      const {
+        data: { subscription: authSubscription },
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (!mounted) return;
 
-      console.log('Auth state change:', event, session?.user?.id);
+        console.log('Auth state change:', event, session?.user?.id);
 
-      try {
-        if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user);
-          await fetchTenantInfo(session.user.id);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setTenant(null);
-          setPlan('light');
+        try {
+          if (event === 'SIGNED_IN' && session?.user) {
+            setUser(session.user);
+            await fetchTenantInfo(session.user.id);
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            setTenant(null);
+            setPlan('light');
+          }
+        } catch (err) {
+          console.error('Auth state change error:', err);
+          if (mounted) {
+            setError('認証状態の更新に失敗しました');
+          }
+        } finally {
+          if (mounted) {
+            setLoading(false);
+          }
         }
-      } catch (err) {
-        console.error('Auth state change error:', err);
-        if (mounted) {
-          setError('認証状態の更新に失敗しました');
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    });
+      });
+      
+      subscription = authSubscription;
+    }
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
   }, []);
 

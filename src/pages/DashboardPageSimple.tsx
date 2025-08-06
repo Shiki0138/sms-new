@@ -24,43 +24,47 @@ import { useDemo } from '../hooks/useDemo';
 const DashboardPageSimple: React.FC = () => {
   const { hasSeenOnboarding, startOnboarding } = useOnboarding();
   const { isDemoMode, demoData, initializeDemo } = useDemo();
-  
+
   // モックデータで表示を安定化（デモモードの場合はデモデータを使用）
   const mockUser = { email: 'demo@salon.com' };
 
-  const mockCustomers = isDemoMode && demoData.customers.length > 0 
-    ? demoData.customers 
-    : Array.from({ length: 25 }, (_, i) => ({
-        id: i + 1,
-        name: `顧客${i + 1}`,
-        email: `customer${i + 1}@example.com`,
-      }));
+  const mockCustomers =
+    isDemoMode && demoData.customers.length > 0
+      ? demoData.customers
+      : Array.from({ length: 3 }, (_, i) => ({
+          id: i + 1,
+          name: `顧客${i + 1}`,
+          email: `customer${i + 1}@example.com`,
+        }));
 
-  const mockTodayReservations = isDemoMode && demoData.reservations.length > 0
-    ? demoData.reservations.filter(r => r.date === format(new Date(), 'yyyy-MM-dd'))
-    : [
-        {
-          id: 1,
-          customer: { name: '田中花子' },
-          menu_content: 'カット&カラー',
-          start_time: new Date().toISOString(),
-          price: 8500,
-        },
-        {
-          id: 2,
-          customer: { name: '佐藤美咲' },
-          menu_content: 'パーマ&トリートメント',
-          start_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-          price: 12000,
-        },
-        {
-          id: 3,
-          customer: { name: '山田太郎' },
-          menu_content: 'メンズカット',
-          start_time: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
-          price: 4500,
-        },
-      ];
+  const mockTodayReservations =
+    isDemoMode && demoData.reservations.length > 0
+      ? demoData.reservations.filter(
+          (r) => r.date === format(new Date(), 'yyyy-MM-dd')
+        )
+      : [
+          {
+            id: 1,
+            customer: { name: '田中花子' },
+            menu_content: 'カット&カラー',
+            start_time: new Date().toISOString(),
+            price: 8500,
+          },
+          {
+            id: 2,
+            customer: { name: '佐藤美咲' },
+            menu_content: 'パーマ&トリートメント',
+            start_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+            price: 12000,
+          },
+          {
+            id: 3,
+            customer: { name: '山田太郎' },
+            menu_content: 'メンズカット',
+            start_time: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(),
+            price: 4500,
+          },
+        ];
 
   const mockMonthReservations = Array.from({ length: 35 }, (_, i) => ({
     id: i + 1,
@@ -113,10 +117,12 @@ const DashboardPageSimple: React.FC = () => {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 ダッシュボード
               </h1>
-              <p className="text-gray-600 mt-1">ようこそ、{mockUser.email}さん</p>
+              <p className="text-gray-600 mt-1">
+                ようこそ、{mockUser.email}さん
+              </p>
             </div>
           </div>
-          
+
           {/* ヘルプボタン */}
           <div className="flex items-center space-x-2">
             {!isDemoMode && (
@@ -140,7 +146,7 @@ const DashboardPageSimple: React.FC = () => {
 
         {/* 美容室らしい装飾ライン */}
         <div className="mt-4 h-1 bg-gradient-to-r from-purple-200 via-blue-200 to-green-200 rounded-full" />
-        
+
         {/* 初回ユーザー向けウェルカムメッセージ */}
         {!hasSeenOnboarding && (
           <motion.div
@@ -151,7 +157,9 @@ const DashboardPageSimple: React.FC = () => {
             <div className="flex items-start space-x-3">
               <Sparkles className="h-6 w-6 text-purple-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">サロン管理システムへようこそ！</h3>
+                <h3 className="font-semibold text-gray-900">
+                  サロン管理システムへようこそ！
+                </h3>
                 <p className="text-gray-600 text-sm mt-1">
                   初めてご利用の方は、使い方ガイドをご覧いただくことをおすすめします。
                   基本的な操作方法をわかりやすくご案内いたします。

@@ -3,16 +3,16 @@ import { supabase } from './supabase';
 
 export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
   light: {
-    customers: 100,
-    monthlyReservations: 50,
-    staffAccounts: 1,
-    dataRetentionMonths: 3,
+    customers: 10000,
+    monthlyReservations: 5000,
+    staffAccounts: 100,
+    dataRetentionMonths: 120,
   },
   standard: {
-    customers: 1000,
-    monthlyReservations: 500,
-    staffAccounts: 5,
-    dataRetentionMonths: 12,
+    customers: 10000,
+    monthlyReservations: 5000,
+    staffAccounts: 100,
+    dataRetentionMonths: 120,
   },
   premium: {
     customers: Infinity,
@@ -55,11 +55,10 @@ export const checkPlanLimits = async (
 
     case 'monthlyReservations': {
       const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
-      const nextMonth = new Date(
-        new Date(currentMonth).getTime() + 32 * 24 * 60 * 60 * 1000
-      )
-        .toISOString()
-        .slice(0, 7) + '-01';
+      const nextMonth =
+        new Date(new Date(currentMonth).getTime() + 32 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .slice(0, 7) + '-01';
 
       const { count: reservationCount, error: reservationError } =
         await supabase

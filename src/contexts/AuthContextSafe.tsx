@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('Supabase not configured');
         return;
       }
-      
+
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select(
@@ -196,8 +196,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             setTenant({
               id: 'dev-tenant-id',
-              name: '開発用サロン',
-              plan: 'light',
+              name: 'SMS',
+              plan: 'premium',
               phone_number: '03-1234-5678',
               address: '東京都渋谷区',
               created_at: new Date().toISOString(),
@@ -242,7 +242,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // 認証状態変更の監視
     let subscription: { unsubscribe: () => void } | null = null;
-    
+
     if (supabase?.auth?.onAuthStateChange) {
       const {
         data: { subscription: authSubscription },
@@ -271,7 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }
       });
-      
+
       subscription = authSubscription;
     }
 

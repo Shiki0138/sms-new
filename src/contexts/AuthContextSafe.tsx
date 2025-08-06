@@ -209,22 +209,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return;
         }
 
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+        if (supabase) {
+          const {
+            data: { session },
+            error,
+          } = await supabase.auth.getSession();
 
-        if (error) {
-          console.error('Session error:', error);
-          throw error;
-        }
+          if (error) {
+            console.error('Session error:', error);
+            throw error;
+          }
 
-        if (session?.user && mounted) {
-          console.log('Initial session found:', session.user.id);
-          setUser(session.user);
-          await fetchTenantInfo(session.user.id);
+          if (session?.user && mounted) {
+            console.log('Initial session found:', session.user.id);
+            setUser(session.user);
+            await fetchTenantInfo(session.user.id);
+          } else {
+            console.log('No initial session found');
+          }
         } else {
-          console.log('No initial session found');
+          console.log('Supabase not configured - skipping session check');
         }
       } catch (err) {
         console.error('Error getting initial session:', err);

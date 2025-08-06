@@ -27,6 +27,11 @@ export const isDemoMode = !hasSupabaseConfig;
 // Database helper functions
 export const supabaseAuth = {
   signIn: async (email: string, password: string) => {
+    if (!supabase) {
+      throw new Error(
+        'Supabase is not configured. Please set environment variables.'
+      );
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -37,6 +42,11 @@ export const supabaseAuth = {
 
   signUp: async (email: string, password: string, tenantName: string) => {
     try {
+      if (!supabase) {
+        throw new Error(
+          'Supabase is not configured. Please set environment variables.'
+        );
+      }
       // 1. ユーザー作成
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -133,11 +143,21 @@ export const supabaseAuth = {
   },
 
   signOut: async () => {
+    if (!supabase) {
+      throw new Error(
+        'Supabase is not configured. Please set environment variables.'
+      );
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
   },
 
   getCurrentUser: async () => {
+    if (!supabase) {
+      throw new Error(
+        'Supabase is not configured. Please set environment variables.'
+      );
+    }
     const {
       data: { user },
       error,

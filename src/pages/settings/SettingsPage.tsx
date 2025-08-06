@@ -11,6 +11,7 @@ import {
   Crown,
   Star,
   Calendar,
+  MessageCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Card from '../../components/ui/Card';
@@ -311,6 +312,23 @@ const SettingsPage: React.FC = () => {
                         </div>
                         <div className="text-xs text-gray-500">
                           売上データの分析・確認
+                        </div>
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-gray-400" />
+                  </Link>
+                  <Link
+                    to="/settings/line"
+                    className="w-full flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center">
+                      <MessageCircle className="h-5 w-5 text-green-600 mr-3" />
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          LINE Bot連携
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          LINEでの顧客とのやりとりを設定
                         </div>
                       </div>
                     </div>

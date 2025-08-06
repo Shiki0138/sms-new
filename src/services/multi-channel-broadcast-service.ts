@@ -1073,7 +1073,7 @@ export class MultiChannelBroadcastService {
 
   private async getCustomerVisitCount(customerId: string, period: string): Promise<number> {
     const now = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
 
     switch (period) {
       case 'week':

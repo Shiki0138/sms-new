@@ -136,23 +136,14 @@ const LoginForm: React.FC = () => {
             </span>
           </div>
           
-          {/* 開発環境用クイックログイン */}
-          {import.meta.env.DEV && (
-            <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <p className="text-sm text-yellow-800 mb-2">開発環境用</p>
-              <button
-                type="button"
-                onClick={() => {
-                  // ログアウト状態をクリアしてダッシュボードに移動
-                  sessionStorage.removeItem('dev_logged_out');
-                  window.location.href = '/dashboard';
-                }}
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              >
-                開発環境でログインせずに進む
-              </button>
-            </div>
-          )}
+          {/* 実際のユーザー向けの案内 */}
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800 mb-2">初めてご利用の方へ</p>
+            <p className="text-xs text-blue-700">
+              美容サロン管理システムをご利用いただくには、アカウントの新規登録が必要です。
+              登録は無料で、すぐに使い始めることができます。
+            </p>
+          </div>
         </form>
       </div>
     </div>

@@ -448,7 +448,7 @@ export class BulkMessagingService {
     const preferredStart = parseISO(`2000-01-01T${preference.preferred_time_start}`);
     const preferredEnd = parseISO(`2000-01-01T${preference.preferred_time_end}`);
     
-    let optimalTime = new Date(baseTime);
+    const optimalTime = new Date(baseTime);
     const baseHour = optimalTime.getHours();
     const baseMinute = optimalTime.getMinutes();
     
@@ -480,7 +480,7 @@ export class BulkMessagingService {
       customers.forEach(c => customerMap.set(c.id, c));
     }
 
-    let customers = Array.from(customerMap.values());
+    const customers = Array.from(customerMap.values());
 
     // Apply additional filters if provided
     if (filters) {

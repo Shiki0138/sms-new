@@ -43,6 +43,12 @@ const SettingsPage = lazy(() =>
   }))
 );
 
+const LineIntegrationPage = lazy(() => 
+  import('./pages/settings/LineIntegrationPage').catch(() => ({
+    default: () => <div className="p-6">LINE連携ページの読み込みに失敗しました</div>
+  }))
+);
+
 const MessagesPage = lazy(() => 
   import('./pages/messages/MessagesPage').catch(() => ({
     default: () => <div className="p-6">メッセージページの読み込みに失敗しました</div>
@@ -216,6 +222,11 @@ function App() {
                       <Route path="/settings" element={
                         <PageErrorBoundary pageName="設定">
                           <SettingsPage />
+                        </PageErrorBoundary>
+                      } />
+                      <Route path="/settings/line" element={
+                        <PageErrorBoundary pageName="LINE連携設定">
+                          <LineIntegrationPage />
                         </PageErrorBoundary>
                       } />
                       <Route

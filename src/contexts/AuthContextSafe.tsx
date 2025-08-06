@@ -151,18 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('Logging out...');
 
-      // 開発環境では直接ログインページにリダイレクト
-      if (import.meta.env.DEV) {
-        setUser(null);
-        setTenant(null);
-        setPlan('light');
-        // ログアウト状態をセッションストレージに保存
-        sessionStorage.setItem('dev_logged_out', 'true');
-        console.log('Logout successful (dev mode)');
-        // ログインページにリダイレクト
-        window.location.href = '/auth/login';
-        return;
-      }
+      // Supabaseからのサインアウトを実行
 
       await supabaseAuth.signOut();
 
@@ -189,48 +178,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log('Getting initial session...');
 
-        // 開発環境ではモックデータを使用
-        if (import.meta.env.DEV) {
-          // ログアウト状態をチェック
-          const isLoggedOut =
-            sessionStorage.getItem('dev_logged_out') === 'true';
-
-          if (isLoggedOut) {
-            console.log('Development mode - user is logged out');
-            if (mounted) {
-              setUser(null);
-              setTenant(null);
-              setPlan('light');
-              setLoading(false);
-            }
-            return;
-          }
-
-          console.log('Development mode - using mock tenant data');
-          if (mounted) {
-            setUser({
-              id: 'dev-user-id',
-              email: 'dev@example.com',
-              app_metadata: {},
-              user_metadata: {},
-              aud: 'authenticated',
-              created_at: new Date().toISOString(),
-            } as User);
-
-            setTenant({
-              id: 'dev-tenant-id',
-              name: '開発用サロン',
-              plan: 'light',
-              phone_number: '03-1234-5678',
-              address: '東京都渋谷区',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            });
-
-            setLoading(false);
-          }
-          return;
-        }
+        // 本番環境では常にSupabaseを使用
+        // 開発環境でもSupabaseによる認証を推奨
+        console.log('Using Supabase authentication...');
 
         if (!supabase) {
           console.log('Development mode - using mock tenant data');

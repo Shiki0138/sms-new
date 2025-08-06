@@ -7,37 +7,83 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { Toaster as Sonner } from 'sonner';
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy, useState, useEffect } from 'react';
 
-// 遅延読み込みでパフォーマンス最適化
-const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const SignupPage = lazy(() => import('./pages/auth/SignupPage'));
-const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'));
-// Try to load the dashboard, fallback to ultra-safe version if there's an error
-const DashboardPage = lazy(() =>
-  import('./pages/DashboardPageSimple').catch((error) => {
-    console.error('Failed to load DashboardPageSimple:', error);
-    return import('./pages/DashboardPageUltraSafe');
+// 遅延読み込みでパフォーマンス最適化（エラーハンドリング付き）
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').catch(() => import('./pages/auth/LoginPage')));
+const SignupPage = lazy(() => import('./pages/auth/SignupPage').catch(() => import('./pages/auth/SignupPage')));
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').catch(() => import('./pages/auth/ResetPasswordPage')));
+
+// ダッシュボード（安全なラッパー使用）
+const DashboardPage = lazy(() => import('./pages/DashboardPageSafeWrapper'));
+
+// 各ページの安全な読み込み
+const CustomersPage = lazy(() => 
+  import('./pages/customers/CustomersPageAdvanced').catch((error) => {
+    console.error('Failed to load CustomersPageAdvanced:', error);
+    // フォールバック: シンプルバージョンを試す
+    return import('./pages/customers/CustomersPageSimple').catch(() => {
+      // それも失敗したら基本的なエラーページ
+      return { default: () => <div className="p-6">顧客ページの読み込みに失敗しました</div> };
+    });
   })
 );
-const CustomersPage = lazy(
-  () => import('./pages/customers/CustomersPageAdvanced')
+
+const ReservationsPage = lazy(() => 
+  import('./pages/reservations/ReservationsPageAdvanced').catch(() => 
+    import('./pages/reservations/ReservationsPageSimple').catch(() => ({
+      default: () => <div className="p-6">予約ページの読み込みに失敗しました</div>
+    }))
+  )
 );
-const ReservationsPage = lazy(
-  () => import('./pages/reservations/ReservationsPageAdvanced')
+
+const SettingsPage = lazy(() => 
+  import('./pages/settings/SettingsPage').catch(() => ({
+    default: () => <div className="p-6">設定ページの読み込みに失敗しました</div>
+  }))
 );
-const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
-const MessagesPage = lazy(() => import('./pages/messages/MessagesPage'));
-const DesignBoardPage = lazy(() => import('./pages/DesignBoardPage'));
-const MarketingPage = lazy(() => import('./pages/marketing/MarketingPage'));
-const BulkMessagingPage = lazy(
-  () => import('./pages/marketing/BulkMessagingPage')
+
+const MessagesPage = lazy(() => 
+  import('./pages/messages/MessagesPage').catch(() => ({
+    default: () => <div className="p-6">メッセージページの読み込みに失敗しました</div>
+  }))
 );
-const BillingPage = lazy(() => import('./pages/billing/BillingPage'));
-const AdvancedReportsPage = lazy(
-  () => import('./pages/reports/AdvancedReportsPage')
+
+const DesignBoardPage = lazy(() => 
+  import('./pages/DesignBoardPage').catch(() => ({
+    default: () => <div className="p-6">デザインボードの読み込みに失敗しました</div>
+  }))
 );
-const TestPage = lazy(() => import('./pages/TestPage'));
+
+const MarketingPage = lazy(() => 
+  import('./pages/marketing/MarketingPage').catch(() => ({
+    default: () => <div className="p-6">マーケティングページの読み込みに失敗しました</div>
+  }))
+);
+
+const BulkMessagingPage = lazy(() => 
+  import('./pages/marketing/BulkMessagingPage').catch(() => ({
+    default: () => <div className="p-6">一斉送信ページの読み込みに失敗しました</div>
+  }))
+);
+
+const BillingPage = lazy(() => 
+  import('./pages/billing/BillingPage').catch(() => ({
+    default: () => <div className="p-6">請求ページの読み込みに失敗しました</div>
+  }))
+);
+
+const AdvancedReportsPage = lazy(() => 
+  import('./pages/reports/AdvancedReportsPage').catch(() => ({
+    default: () => <div className="p-6">レポートページの読み込みに失敗しました</div>
+  }))
+);
+
+const TestPage = lazy(() => 
+  import('./pages/TestPage').catch(() => ({
+    default: () => <div className="p-6">テストページの読み込みに失敗しました</div>
+  }))
+);
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
@@ -50,6 +96,7 @@ import { DemoModeIndicator } from './components/demo/DemoModeIndicator';
 import { useDemo } from './hooks/useDemo';
 import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
 import EnvironmentCheck from './components/EnvironmentCheck';
+import PageErrorBoundary from './components/PageErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,7 +112,7 @@ const queryClient = new QueryClient({
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5分間はキャッシュを使用
-      cacheTime: 10 * 60 * 1000, // 10分間キャッシュを保持
+      gcTime: 10 * 60 * 1000, // 10分間キャッシュを保持
     },
   },
 });
@@ -73,17 +120,19 @@ const queryClient = new QueryClient({
 function App() {
   console.log('App.tsx: App component rendering...');
   
+  // Hooks must be called unconditionally at the top level
+  const { isDemoMode, initializeDemo, exitDemo } = useDemo();
+  usePerformanceOptimization();
+  
+  // Use useEffect instead of useState for side effects
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === 'true') {
+      initializeDemo();
+    }
+  }, [initializeDemo]);
+  
   try {
-    const { isDemoMode, initializeDemo, exitDemo } = useDemo();
-    usePerformanceOptimization();
-
-    // デモモードの自動開始（URLパラメータで制御）
-    useState(() => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('demo') === 'true') {
-        initializeDemo();
-      }
-    });
     
     console.log('App.tsx: isDemoMode:', isDemoMode);
 
@@ -115,27 +164,67 @@ function App() {
                         path="/"
                         element={<Navigate to="/dashboard" replace />}
                       />
-                      <Route path="/dashboard" element={<DashboardPage />} />
-                      <Route path="/customers" element={<CustomersPage />} />
+                      <Route path="/dashboard" element={
+                        <PageErrorBoundary pageName="ダッシュボード">
+                          <DashboardPage />
+                        </PageErrorBoundary>
+                      } />
+                      <Route path="/customers" element={
+                        <PageErrorBoundary pageName="顧客管理">
+                          <CustomersPage />
+                        </PageErrorBoundary>
+                      } />
                       <Route
                         path="/reservations"
-                        element={<ReservationsPage />}
+                        element={
+                          <PageErrorBoundary pageName="予約管理">
+                            <ReservationsPage />
+                          </PageErrorBoundary>
+                        }
                       />
-                      <Route path="/messages" element={<MessagesPage />} />
-                      <Route path="/marketing" element={<MarketingPage />} />
+                      <Route path="/messages" element={
+                        <PageErrorBoundary pageName="メッセージ">
+                          <MessagesPage />
+                        </PageErrorBoundary>
+                      } />
+                      <Route path="/marketing" element={
+                        <PageErrorBoundary pageName="マーケティング">
+                          <MarketingPage />
+                        </PageErrorBoundary>
+                      } />
                       <Route
                         path="/marketing/bulk-messaging"
-                        element={<BulkMessagingPage />}
+                        element={
+                          <PageErrorBoundary pageName="一斉送信">
+                            <BulkMessagingPage />
+                          </PageErrorBoundary>
+                        }
                       />
-                      <Route path="/billing" element={<BillingPage />} />
+                      <Route path="/billing" element={
+                        <PageErrorBoundary pageName="請求管理">
+                          <BillingPage />
+                        </PageErrorBoundary>
+                      } />
                       <Route
                         path="/reports/advanced"
-                        element={<AdvancedReportsPage />}
+                        element={
+                          <PageErrorBoundary pageName="レポート">
+                            <AdvancedReportsPage />
+                          </PageErrorBoundary>
+                        }
                       />
-                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/settings" element={
+                        <PageErrorBoundary pageName="設定">
+                          <SettingsPage />
+                        </PageErrorBoundary>
+                      } />
                       <Route
                         path="/design-board"
-                        element={<DesignBoardPage />}
+                        element={
+                          <PageErrorBoundary pageName="デザインボード">
+                            <DesignBoardPage />
+                          </PageErrorBoundary>
+                        }
                       />
                     </Route>
 

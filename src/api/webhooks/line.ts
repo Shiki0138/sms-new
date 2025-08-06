@@ -25,17 +25,32 @@ function validateSignature(body: string, signature: string, channelSecret: strin
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // セキュリティヘッダーを追加
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // 署名検証
-    const signature = req.headers['x-line-signature'] as string;
-    const channelSecret = process.env.LINE_CHANNEL_SECRET!;
-    const body = JSON.stringify(req.body);
+    // 必須環境変数チェック
+    const channelSecret = process.env.LINE_CHANNEL_SECRET;
+    if (!channelSecret) {
+      console.error('LINE_CHANNEL_SECRET not configured');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
 
+    // 署名検証（本番環境では必須）
+    const signature = req.headers['x-line-signature'] as string;
+    if (!signature) {
+      return res.status(400).json({ error: 'Missing signature header' });
+    }
+
+    const body = JSON.stringify(req.body);
     if (!validateSignature(body, signature, channelSecret)) {
+      console.warn('Invalid LINE webhook signature detected');
       return res.status(401).json({ error: 'Invalid signature' });
     }
 

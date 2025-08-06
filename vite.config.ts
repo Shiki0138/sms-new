@@ -9,10 +9,16 @@ export default defineConfig({
     global: 'globalThis',
   },
   server: {
-    host: true, // 0.0.0.0でリッスン
+    host: process.env.NODE_ENV === 'production' ? false : '127.0.0.1', // セキュリティ強化: 本番では外部アクセス禁止
     port: 5173,
     strictPort: false, // ポートが使用中の場合は別のポートを使用
     open: true, // ブラウザを自動的に開く
+    cors: {
+      origin: process.env.VITE_ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    }
   },
   preview: {
     host: true,

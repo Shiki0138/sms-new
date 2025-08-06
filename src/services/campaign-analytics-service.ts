@@ -71,9 +71,9 @@ export interface NoShowAnalytics {
   
   reminder_effectiveness: {
     pre_visit_reminders: {
-      7_days_before: { sent: number; no_show_rate: number };
-      3_days_before: { sent: number; no_show_rate: number };
-      1_day_before: { sent: number; no_show_rate: number };
+      seven_days_before: { sent: number; no_show_rate: number };
+      three_days_before: { sent: number; no_show_rate: number };
+      one_day_before: { sent: number; no_show_rate: number };
     };
     optimal_reminder_sequence: string[];
   };
@@ -689,9 +689,9 @@ export class CampaignAnalyticsService {
     return {
       reduction_rate: reductionRate,
       pre_visit_reminders: {
-        7_days_before: { sent: 150, no_show_rate: 0.08 },
-        3_days_before: { sent: 200, no_show_rate: 0.06 },
-        1_day_before: { sent: 180, no_show_rate: 0.04 },
+        seven_days_before: { sent: 150, no_show_rate: 0.08 },
+        three_days_before: { sent: 200, no_show_rate: 0.06 },
+        one_day_before: { sent: 180, no_show_rate: 0.04 },
       },
       optimal_reminder_sequence: ['3日前確認', '1日前最終確認'],
     };

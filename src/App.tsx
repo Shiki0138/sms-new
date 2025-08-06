@@ -9,85 +9,121 @@ import { Toaster } from 'react-hot-toast';
 import { Toaster as Sonner } from 'sonner';
 import { Suspense, lazy, useEffect } from 'react';
 
+console.log('=== App.tsx: Loading App component ===');
+
 // 遅延読み込みでパフォーマンス最適化（エラーハンドリング付き）
-const LoginPage = lazy(() => import('./pages/auth/LoginPage').catch(() => import('./pages/auth/LoginPage')));
-const SignupPage = lazy(() => import('./pages/auth/SignupPage').catch(() => import('./pages/auth/SignupPage')));
-const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').catch(() => import('./pages/auth/ResetPasswordPage')));
+const LoginPage = lazy(() =>
+  import('./pages/auth/LoginPage').catch(() => import('./pages/auth/LoginPage'))
+);
+const SignupPage = lazy(() =>
+  import('./pages/auth/SignupPage').catch(
+    () => import('./pages/auth/SignupPage')
+  )
+);
+const ResetPasswordPage = lazy(() =>
+  import('./pages/auth/ResetPasswordPage').catch(
+    () => import('./pages/auth/ResetPasswordPage')
+  )
+);
 
 // ダッシュボード（安全なラッパー使用）
 const DashboardPage = lazy(() => import('./pages/DashboardPageSafeWrapper'));
 
 // 各ページの安全な読み込み
-const CustomersPage = lazy(() => 
+const CustomersPage = lazy(() =>
   import('./pages/customers/CustomersPageAdvanced').catch((error) => {
     console.error('Failed to load CustomersPageAdvanced:', error);
     // フォールバック: シンプルバージョンを試す
     return import('./pages/customers/CustomersPageSimple').catch(() => {
       // それも失敗したら基本的なエラーページ
-      return { default: () => <div className="p-6">顧客ページの読み込みに失敗しました</div> };
+      return {
+        default: () => (
+          <div className="p-6">顧客ページの読み込みに失敗しました</div>
+        ),
+      };
     });
   })
 );
 
-const ReservationsPage = lazy(() => 
-  import('./pages/reservations/ReservationsPageAdvanced').catch(() => 
+const ReservationsPage = lazy(() =>
+  import('./pages/reservations/ReservationsPageAdvanced').catch(() =>
     import('./pages/reservations/ReservationsPageSimple').catch(() => ({
-      default: () => <div className="p-6">予約ページの読み込みに失敗しました</div>
+      default: () => (
+        <div className="p-6">予約ページの読み込みに失敗しました</div>
+      ),
     }))
   )
 );
 
-const SettingsPage = lazy(() => 
+const SettingsPage = lazy(() =>
   import('./pages/settings/SettingsPage').catch(() => ({
-    default: () => <div className="p-6">設定ページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">設定ページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const LineIntegrationPage = lazy(() => 
+const LineIntegrationPage = lazy(() =>
   import('./pages/settings/LineIntegrationPage').catch(() => ({
-    default: () => <div className="p-6">LINE連携ページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">LINE連携ページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const MessagesPage = lazy(() => 
+const MessagesPage = lazy(() =>
   import('./pages/messages/MessagesPage').catch(() => ({
-    default: () => <div className="p-6">メッセージページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">メッセージページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const DesignBoardPage = lazy(() => 
+const DesignBoardPage = lazy(() =>
   import('./pages/DesignBoardPage').catch(() => ({
-    default: () => <div className="p-6">デザインボードの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">デザインボードの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const MarketingPage = lazy(() => 
+const MarketingPage = lazy(() =>
   import('./pages/marketing/MarketingPage').catch(() => ({
-    default: () => <div className="p-6">マーケティングページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">マーケティングページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const BulkMessagingPage = lazy(() => 
+const BulkMessagingPage = lazy(() =>
   import('./pages/marketing/BulkMessagingPage').catch(() => ({
-    default: () => <div className="p-6">一斉送信ページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">一斉送信ページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const BillingPage = lazy(() => 
+const BillingPage = lazy(() =>
   import('./pages/billing/BillingPage').catch(() => ({
-    default: () => <div className="p-6">請求ページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">請求ページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const AdvancedReportsPage = lazy(() => 
+const AdvancedReportsPage = lazy(() =>
   import('./pages/reports/AdvancedReportsPage').catch(() => ({
-    default: () => <div className="p-6">レポートページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">レポートページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
-const TestPage = lazy(() => 
+const TestPage = lazy(() =>
   import('./pages/TestPage').catch(() => ({
-    default: () => <div className="p-6">テストページの読み込みに失敗しました</div>
+    default: () => (
+      <div className="p-6">テストページの読み込みに失敗しました</div>
+    ),
   }))
 );
 
@@ -125,11 +161,11 @@ const queryClient = new QueryClient({
 
 function App() {
   console.log('App.tsx: App component rendering...');
-  
+
   // Hooks must be called unconditionally at the top level
   const { isDemoMode, initializeDemo, exitDemo } = useDemo();
   usePerformanceOptimization();
-  
+
   // Use useEffect instead of useState for side effects
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -137,168 +173,188 @@ function App() {
       initializeDemo();
     }
   }, [initializeDemo]);
-  
+
   try {
-    
     console.log('App.tsx: isDemoMode:', isDemoMode);
 
     return (
       <ErrorBoundary>
         <EnvironmentCheck>
           <QueryClientProvider client={queryClient}>
-          <Router>
-            <AuthProvider>
-              <BusinessHoursProvider>
-                {/* グローバルコンポーネント */}
-                <OfflineIndicator />
-                {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
-                <OnboardingOverlay />
+            <Router>
+              <AuthProvider>
+                <BusinessHoursProvider>
+                  {/* グローバルコンポーネント */}
+                  <OfflineIndicator />
+                  {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
+                  <OnboardingOverlay />
 
-                <Suspense fallback={<PageLoading page="dashboard" />}>
-                  <Routes>
-                    {/* 認証ページ */}
-                    <Route path="/auth/login" element={<LoginPage />} />
-                    <Route path="/auth/signup" element={<SignupPage />} />
-                    <Route
-                      path="/auth/reset-password"
-                      element={<ResetPasswordPage />}
-                    />
-
-                    {/* 保護されたルート（サイドバー付き） - 開発環境では認証をバイパス */}
-                    <Route element={<AppLayout />}>
+                  <Suspense fallback={<PageLoading page="dashboard" />}>
+                    <Routes>
+                      {/* 認証ページ */}
+                      <Route path="/auth/login" element={<LoginPage />} />
+                      <Route path="/auth/signup" element={<SignupPage />} />
                       <Route
-                        path="/"
+                        path="/auth/reset-password"
+                        element={<ResetPasswordPage />}
+                      />
+
+                      {/* 保護されたルート（サイドバー付き） - 開発環境では認証をバイパス */}
+                      <Route element={<AppLayout />}>
+                        <Route
+                          path="/"
+                          element={<Navigate to="/dashboard" replace />}
+                        />
+                        <Route
+                          path="/dashboard"
+                          element={
+                            <PageErrorBoundary pageName="ダッシュボード">
+                              <DashboardPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/customers"
+                          element={
+                            <PageErrorBoundary pageName="顧客管理">
+                              <CustomersPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/reservations"
+                          element={
+                            <PageErrorBoundary pageName="予約管理">
+                              <ReservationsPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/messages"
+                          element={
+                            <PageErrorBoundary pageName="メッセージ">
+                              <MessagesPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/marketing"
+                          element={
+                            <PageErrorBoundary pageName="マーケティング">
+                              <MarketingPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/marketing/bulk-messaging"
+                          element={
+                            <PageErrorBoundary pageName="一斉送信">
+                              <BulkMessagingPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/billing"
+                          element={
+                            <PageErrorBoundary pageName="請求管理">
+                              <BillingPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/reports/advanced"
+                          element={
+                            <PageErrorBoundary pageName="レポート">
+                              <AdvancedReportsPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/settings"
+                          element={
+                            <PageErrorBoundary pageName="設定">
+                              <SettingsPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/settings/line"
+                          element={
+                            <PageErrorBoundary pageName="LINE連携設定">
+                              <LineIntegrationPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                        <Route
+                          path="/design-board"
+                          element={
+                            <PageErrorBoundary pageName="デザインボード">
+                              <DesignBoardPage />
+                            </PageErrorBoundary>
+                          }
+                        />
+                      </Route>
+
+                      {/* テストページ */}
+                      <Route path="/test" element={<TestPage />} />
+
+                      {/* デフォルトリダイレクト */}
+                      <Route
+                        path="*"
                         element={<Navigate to="/dashboard" replace />}
                       />
-                      <Route path="/dashboard" element={
-                        <PageErrorBoundary pageName="ダッシュボード">
-                          <DashboardPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route path="/customers" element={
-                        <PageErrorBoundary pageName="顧客管理">
-                          <CustomersPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route
-                        path="/reservations"
-                        element={
-                          <PageErrorBoundary pageName="予約管理">
-                            <ReservationsPage />
-                          </PageErrorBoundary>
-                        }
-                      />
-                      <Route path="/messages" element={
-                        <PageErrorBoundary pageName="メッセージ">
-                          <MessagesPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route path="/marketing" element={
-                        <PageErrorBoundary pageName="マーケティング">
-                          <MarketingPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route
-                        path="/marketing/bulk-messaging"
-                        element={
-                          <PageErrorBoundary pageName="一斉送信">
-                            <BulkMessagingPage />
-                          </PageErrorBoundary>
-                        }
-                      />
-                      <Route path="/billing" element={
-                        <PageErrorBoundary pageName="請求管理">
-                          <BillingPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route
-                        path="/reports/advanced"
-                        element={
-                          <PageErrorBoundary pageName="レポート">
-                            <AdvancedReportsPage />
-                          </PageErrorBoundary>
-                        }
-                      />
-                      <Route path="/settings" element={
-                        <PageErrorBoundary pageName="設定">
-                          <SettingsPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route path="/settings/line" element={
-                        <PageErrorBoundary pageName="LINE連携設定">
-                          <LineIntegrationPage />
-                        </PageErrorBoundary>
-                      } />
-                      <Route
-                        path="/design-board"
-                        element={
-                          <PageErrorBoundary pageName="デザインボード">
-                            <DesignBoardPage />
-                          </PageErrorBoundary>
-                        }
-                      />
-                    </Route>
+                    </Routes>
+                  </Suspense>
+                </BusinessHoursProvider>
+              </AuthProvider>
+            </Router>
 
-                    {/* テストページ */}
-                    <Route path="/test" element={<TestPage />} />
-                    
-                    {/* デフォルトリダイレクト */}
-                    <Route
-                      path="*"
-                      element={<Navigate to="/dashboard" replace />}
-                    />
-                  </Routes>
-                </Suspense>
-              </BusinessHoursProvider>
-            </AuthProvider>
-          </Router>
-
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-                borderRadius: '12px',
-                padding: '16px',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#4ade80',
-                  secondary: '#fff',
-                },
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 3000,
                 style: {
-                  background: '#065f46',
+                  background: '#363636',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  padding: '16px',
                 },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff',
+                success: {
+                  iconTheme: {
+                    primary: '#4ade80',
+                    secondary: '#fff',
+                  },
+                  style: {
+                    background: '#065f46',
+                  },
                 },
-                style: {
-                  background: '#991b1b',
+                error: {
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#fff',
+                  },
+                  style: {
+                    background: '#991b1b',
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
 
-          <Sonner
-            position="bottom-right"
-            richColors
-            expand={true}
-            theme="light"
-            toastOptions={{
-              duration: 4000,
-              className: 'sonner-toast',
-              style: {
-                borderRadius: '12px',
-                boxShadow:
-                  '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-              },
-            }}
-          />
+            <Sonner
+              position="bottom-right"
+              richColors
+              expand={true}
+              theme="light"
+              toastOptions={{
+                duration: 4000,
+                className: 'sonner-toast',
+                style: {
+                  borderRadius: '12px',
+                  boxShadow:
+                    '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                },
+              }}
+            />
           </QueryClientProvider>
         </EnvironmentCheck>
       </ErrorBoundary>

@@ -23,7 +23,13 @@ export function usePlanLimits(tenantId: string): UsePlanLimitsReturn {
   const [planStatus, setPlanStatus] = useState<PlanStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [warnings, setWarnings] = useState<any[]>([]);
+  const [warnings, setWarnings] = useState<
+    Array<{
+      type: 'warning' | 'error';
+      message: string;
+      category: 'customers' | 'reservations' | 'staff';
+    }>
+  >([]);
 
   const service = new PlanLimitService(tenantId);
 
@@ -54,7 +60,10 @@ export function usePlanLimits(tenantId: string): UsePlanLimitsReturn {
     await fetchPlanStatus();
   };
 
-  const canAddCustomer = async (): Promise<{ allowed: boolean; reason?: string }> => {
+  const canAddCustomer = async (): Promise<{
+    allowed: boolean;
+    reason?: string;
+  }> => {
     try {
       return await service.canAddCustomer();
     } catch (err) {
@@ -63,7 +72,10 @@ export function usePlanLimits(tenantId: string): UsePlanLimitsReturn {
     }
   };
 
-  const canAddReservation = async (): Promise<{ allowed: boolean; reason?: string }> => {
+  const canAddReservation = async (): Promise<{
+    allowed: boolean;
+    reason?: string;
+  }> => {
     try {
       return await service.canAddReservation();
     } catch (err) {
@@ -72,7 +84,10 @@ export function usePlanLimits(tenantId: string): UsePlanLimitsReturn {
     }
   };
 
-  const canAddStaff = async (): Promise<{ allowed: boolean; reason?: string }> => {
+  const canAddStaff = async (): Promise<{
+    allowed: boolean;
+    reason?: string;
+  }> => {
     try {
       return await service.canAddStaff();
     } catch (err) {
@@ -83,15 +98,20 @@ export function usePlanLimits(tenantId: string): UsePlanLimitsReturn {
 
   useEffect(() => {
     fetchPlanStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantId]);
 
   // 定期的にプラン状況を更新（5分ごと）
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchPlanStatus();
-    }, 5 * 60 * 1000); // 5分
+    const interval = setInterval(
+      () => {
+        fetchPlanStatus();
+      },
+      5 * 60 * 1000
+    ); // 5分
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantId]);
 
   return {

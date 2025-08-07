@@ -14,8 +14,9 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { animations } from '../../styles/design-system';
 import PlanLimitWarning from './PlanLimitWarning';
-import { usePlanLimits } from '../../hooks/usePlanLimits';
+// import { usePlanLimits } from '../../hooks/usePlanLimits';
 import { useAuth } from '../../hooks/useAuth';
+import { usePlanLimitsSafe } from '../../hooks/usePlanLimitsSafe';
 
 const navigation = [
   {
@@ -62,10 +63,12 @@ interface NavigationProps {
 export default function Navigation({ className = '' }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { tenant } = useAuth();
+  // const { tenant } = useAuth(); // 一時的にコメントアウト
 
-  // プラン制限管理
-  const { planStatus, warnings } = usePlanLimits(tenant?.id || '');
+  // プラン制限管理（セーフバージョンを使用）
+  // const planLimitsData = usePlanLimitsSafe(); // 一時的にコメントアウト
+  const planStatus = null; // 一時的に無効化
+  const warnings = []; // 一時的に無効化
 
   const handleUpgrade = () => {
     console.log('プランアップグレード処理');

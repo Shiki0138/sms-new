@@ -130,6 +130,7 @@ const TestPage = lazy(() =>
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
 import { BusinessHoursProvider } from './contexts/BusinessHoursContext';
+import { PlanLimitsProvider } from './contexts/PlanLimitsContext';
 import AppLayout from './components/layout/AppLayoutSimple';
 import OnboardingOverlay from './components/onboarding/OnboardingOverlay';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
@@ -183,11 +184,12 @@ function App() {
           <QueryClientProvider client={queryClient}>
             <Router>
               <AuthProvider>
-                <BusinessHoursProvider>
-                  {/* グローバルコンポーネント */}
-                  <OfflineIndicator />
-                  {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
-                  <OnboardingOverlay />
+                <PlanLimitsProvider>
+                  <BusinessHoursProvider>
+                    {/* グローバルコンポーネント */}
+                    <OfflineIndicator />
+                    {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
+                    <OnboardingOverlay />
 
                   <Suspense fallback={<PageLoading page="dashboard" />}>
                     <Routes>
@@ -305,7 +307,8 @@ function App() {
                       />
                     </Routes>
                   </Suspense>
-                </BusinessHoursProvider>
+                  </BusinessHoursProvider>
+                </PlanLimitsProvider>
               </AuthProvider>
             </Router>
 

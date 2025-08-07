@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
 import { ApiService } from '../services/api-service';
 import { toast } from 'sonner';
 
+// 型定義
 interface PlanLimits {
   customers: number;
   monthlyReservations: number;
@@ -22,32 +22,17 @@ interface PlanUsage {
 }
 
 interface PlanLimitsContextType {
-  // ライトプラン制限
   limits: PlanLimits;
-  
-  // 現在の使用状況
   usage: PlanUsage;
-  
-  // 制限チェック関数
   checkCustomerLimit: () => Promise<boolean>;
   checkReservationLimit: () => Promise<boolean>;
   checkStaffLimit: () => Promise<boolean>;
   checkAiReplyLimit: () => Promise<boolean>;
   checkMessageLimit: () => Promise<boolean>;
-  
-  // 制限到達時の処理
   showUpgradeModal: (limitType: string) => void;
-  
-  // 使用率計算
   getUsagePercentage: (type: keyof PlanUsage) => number;
-  
-  // 使用状況を更新
   refreshUsage: () => Promise<void>;
-  
-  // 使用状況をインクリメント
   incrementUsage: (type: keyof PlanUsage, amount?: number) => Promise<void>;
-  
-  // ローディング状態
   isLoading: boolean;
 }
 
@@ -60,7 +45,30 @@ const LIGHT_PLAN_LIMITS: PlanLimits = {
   monthlyMessages: 200,
 };
 
-const PlanLimitsContext = createContext<PlanLimitsContextType | undefined>(undefined);
+// デフォルト値
+const defaultContextValue: PlanLimitsContextType = {
+  limits: LIGHT_PLAN_LIMITS,
+  usage: {
+    customers: 0,
+    monthlyReservations: 0,
+    staffAccounts: 0,
+    monthlyAiReplies: 0,
+    monthlyMessages: 0,
+  },
+  checkCustomerLimit: async () => true,
+  checkReservationLimit: async () => true,
+  checkStaffLimit: async () => true,
+  checkAiReplyLimit: async () => true,
+  checkMessageLimit: async () => true,
+  showUpgradeModal: () => {},
+  getUsagePercentage: () => 0,
+  refreshUsage: async () => {},
+  incrementUsage: async () => {},
+  isLoading: false,
+};
+
+// コンテキストをデフォルト値で初期化
+const PlanLimitsContext = createContext<PlanLimitsContextType>(defaultContextValue);
 
 export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { tenant } = useAuth();
@@ -73,73 +81,40 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     monthlyMessages: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [upgradeModalType, setUpgradeModalType] = useState<string | null>(null);
 
   // 使用状況を取得
   const fetchUsage = useCallback(async () => {
-    if (!tenant?.id) return;
+    if (!tenant?.id) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      // APIサービスから現在の使用状況を取得
-      const currentUsage = await ApiService.getCurrentPlanUsage(tenant.id);
-      
-      // 実際の顧客数とスタッフ数を取得
-      const customerCount = await ApiService.getCustomerCount(tenant.id);
-      const staffCount = await ApiService.getStaffCount(tenant.id);
+      // エラーハンドリングを強化
+      const [currentUsage, customerCount, staffCount] = await Promise.all([
+        ApiService.getCurrentPlanUsage(tenant.id).catch(() => ({})),
+        ApiService.getCustomerCount(tenant.id).catch(() => 0),
+        ApiService.getStaffCount(tenant.id).catch(() => 0),
+      ]);
 
       setUsage({
         customers: customerCount,
-        monthlyReservations: currentUsage.reservations_count || 0,
+        monthlyReservations: currentUsage?.reservations_count || 0,
         staffAccounts: staffCount,
-        monthlyAiReplies: currentUsage.ai_replies_count || 0,
-        monthlyMessages: currentUsage.messages_sent || 0,
+        monthlyAiReplies: currentUsage?.ai_replies_count || 0,
+        monthlyMessages: currentUsage?.messages_sent || 0,
       });
     } catch (error) {
       console.error('Error fetching usage:', error);
-      toast.error('使用状況の取得に失敗しました');
+      // エラーでもアプリを継続できるようにする
+    } finally {
+      setIsLoading(false);
     }
   }, [tenant?.id]);
 
   useEffect(() => {
-    fetchUsage().finally(() => setIsLoading(false));
+    fetchUsage();
   }, [fetchUsage]);
-
-  // リアルタイム更新の設定
-  useEffect(() => {
-    if (!tenant?.id) return;
-
-    const subscription = supabase
-      .channel(`plan_usage_${tenant.id}`)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'customers',
-        filter: `tenant_id=eq.${tenant.id}`,
-      }, fetchUsage)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'reservations',
-        filter: `tenant_id=eq.${tenant.id}`,
-      }, fetchUsage)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'plan_usage',
-        filter: `tenant_id=eq.${tenant.id}`,
-      }, fetchUsage)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'staff',
-        filter: `tenant_id=eq.${tenant.id}`,
-      }, fetchUsage)
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [tenant?.id, fetchUsage]);
 
   const checkCustomerLimit = useCallback(async (): Promise<boolean> => {
     await fetchUsage();
@@ -167,8 +142,6 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [usage.monthlyMessages, limits.monthlyMessages, fetchUsage]);
 
   const showUpgradeModal = useCallback((limitType: string) => {
-    setUpgradeModalType(limitType);
-    // ここでモーダルを表示する処理を実装
     const event = new CustomEvent('showPlanLimitModal', { 
       detail: { limitType } 
     });
@@ -194,14 +167,6 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (!tenant?.id) return;
 
     try {
-      // プラン使用ログに記録
-      await supabase.from('plan_usage_logs').insert({
-        tenant_id: tenant.id,
-        usage_type: type,
-        usage_count: amount,
-        created_at: new Date().toISOString(),
-      });
-
       // ローカルの状態を更新
       setUsage(prev => ({
         ...prev,
@@ -243,10 +208,19 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
+// エラーを投げずにデフォルト値を返すバージョン
 export const usePlanLimits = () => {
-  const context = useContext(PlanLimitsContext);
-  if (!context) {
-    throw new Error('usePlanLimits must be used within a PlanLimitsProvider');
+  try {
+    const context = useContext(PlanLimitsContext);
+    // contextがundefinedでもデフォルト値を返す
+    if (!context) {
+      console.warn('usePlanLimits: Using default values (not wrapped in PlanLimitsProvider)');
+      return defaultContextValue;
+    }
+    return context;
+  } catch {
+    // コンポーネント外で呼ばれた場合
+    console.warn('usePlanLimits: Called outside of React component');
+    return defaultContextValue;
   }
-  return context;
 };

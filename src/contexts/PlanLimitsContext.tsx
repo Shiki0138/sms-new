@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { ApiService } from '../services/api-service';
 import { toast } from 'sonner';
@@ -68,9 +68,18 @@ const defaultContextValue: PlanLimitsContextType = {
 };
 
 // コンテキストをデフォルト値で初期化
-const PlanLimitsContext = createContext<PlanLimitsContextType>(defaultContextValue);
+export const PlanLimitsContext = createContext<PlanLimitsContextType>(defaultContextValue);
 
-export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// グローバル変数でコンテキスト値を保持（本番環境でのエラー回避）
+let globalContextValue: PlanLimitsContextType = defaultContextValue;
+
+// ウィンドウオブジェクトにもアタッチ（ビルド最適化対策）
+if (typeof window !== 'undefined') {
+  (window as any).__planLimitsContext = defaultContextValue;
+}
+
+// Provider用のメモ化されたコンポーネント
+export const PlanLimitsProvider = React.memo<{ children: React.ReactNode }>(({ children }) => {
   const { tenant } = useAuth();
   const [limits] = useState<PlanLimits>(LIGHT_PLAN_LIMITS);
   const [usage, setUsage] = useState<PlanUsage>({
@@ -81,6 +90,14 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     monthlyMessages: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const isMountedRef = useRef(true);
+
+  // クリーンアップ時にフラグを設定
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // 使用状況を取得
   const fetchUsage = useCallback(async () => {
@@ -97,18 +114,23 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         ApiService.getStaffCount(tenant.id).catch(() => 0),
       ]);
 
-      setUsage({
-        customers: customerCount,
-        monthlyReservations: currentUsage?.reservations_count || 0,
-        staffAccounts: staffCount,
-        monthlyAiReplies: currentUsage?.ai_replies_count || 0,
-        monthlyMessages: currentUsage?.messages_sent || 0,
-      });
+      // マウントされている場合のみ状態を更新
+      if (isMountedRef.current) {
+        setUsage({
+          customers: customerCount,
+          monthlyReservations: currentUsage?.reservations_count || 0,
+          staffAccounts: staffCount,
+          monthlyAiReplies: currentUsage?.ai_replies_count || 0,
+          monthlyMessages: currentUsage?.messages_sent || 0,
+        });
+      }
     } catch (error) {
       console.error('Error fetching usage:', error);
       // エラーでもアプリを継続できるようにする
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [tenant?.id]);
 
@@ -201,26 +223,85 @@ export const PlanLimitsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isLoading,
   };
 
+  // グローバル変数に値を保存（本番環境でのエラー回避）
+  useEffect(() => {
+    globalContextValue = value;
+    // ウィンドウオブジェクトにも保存
+    if (typeof window !== 'undefined') {
+      (window as any).__planLimitsContext = value;
+    }
+  }, [value]);
+
   return (
     <PlanLimitsContext.Provider value={value}>
       {children}
     </PlanLimitsContext.Provider>
   );
-};
+});
+
+PlanLimitsProvider.displayName = 'PlanLimitsProvider';
 
 // エラーを投げずにデフォルト値を返すバージョン
 export const usePlanLimits = () => {
   try {
     const context = useContext(PlanLimitsContext);
-    // contextがundefinedでもデフォルト値を返す
+    
+    // contextがundefinedの場合、グローバル値を確認
     if (!context) {
+      // ウィンドウオブジェクトから取得を試みる
+      if (typeof window !== 'undefined' && (window as any).__planLimitsContext) {
+        console.warn('usePlanLimits: Using window context value');
+        return (window as any).__planLimitsContext;
+      }
+      
+      // 本番環境でのビルド最適化によるエラーを回避
+      if (typeof globalContextValue !== 'undefined' && globalContextValue !== defaultContextValue) {
+        console.warn('usePlanLimits: Using global context value');
+        return globalContextValue;
+      }
+      
       console.warn('usePlanLimits: Using default values (not wrapped in PlanLimitsProvider)');
       return defaultContextValue;
     }
+    
     return context;
-  } catch {
+  } catch (error) {
     // コンポーネント外で呼ばれた場合
-    console.warn('usePlanLimits: Called outside of React component');
+    console.warn('usePlanLimits: Called outside of React component', error);
+    
+    // ウィンドウオブジェクトから取得を試みる
+    if (typeof window !== 'undefined' && (window as any).__planLimitsContext) {
+      return (window as any).__planLimitsContext;
+    }
+    
+    // グローバル値が利用可能な場合はそれを返す
+    if (typeof globalContextValue !== 'undefined' && globalContextValue !== defaultContextValue) {
+      return globalContextValue;
+    }
+    
     return defaultContextValue;
   }
 };
+
+// 安全なコンテキスト取得関数
+export const getPlanLimitsContext = (): PlanLimitsContextType => {
+  // ウィンドウオブジェクトから取得を試みる
+  if (typeof window !== 'undefined' && (window as any).__planLimitsContext) {
+    return (window as any).__planLimitsContext;
+  }
+  
+  if (typeof globalContextValue !== 'undefined' && globalContextValue !== defaultContextValue) {
+    return globalContextValue;
+  }
+  return defaultContextValue;
+};
+
+// イベントリスナーを設定（グローバルアクセス用）
+if (typeof window !== 'undefined') {
+  window.addEventListener('getPlanLimits', (event: Event) => {
+    const customEvent = event as CustomEvent;
+    if (customEvent.detail && typeof customEvent.detail === 'object') {
+      customEvent.detail.planLimits = getPlanLimitsContext();
+    }
+  });
+}

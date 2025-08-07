@@ -130,7 +130,8 @@ const TestPage = lazy(() =>
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContextSafe';
 import { BusinessHoursProvider } from './contexts/BusinessHoursContext';
-import { PlanLimitsProvider } from './contexts/PlanLimitsContext';
+import { PlanLimitsProviderWrapper } from './components/providers/PlanLimitsProviderWrapper';
+import { StrictMode } from 'react';
 import AppLayout from './components/layout/AppLayoutSimple';
 import OnboardingOverlay from './components/onboarding/OnboardingOverlay';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
@@ -182,10 +183,11 @@ function App() {
       <ErrorBoundary>
         <EnvironmentCheck>
           <QueryClientProvider client={queryClient}>
-            <Router>
-              <AuthProvider>
-                <PlanLimitsProvider>
-                  <BusinessHoursProvider>
+            <StrictMode>
+              <Router>
+                <AuthProvider>
+                  <PlanLimitsProviderWrapper>
+                    <BusinessHoursProvider>
                     {/* グローバルコンポーネント */}
                     <OfflineIndicator />
                     {isDemoMode && <DemoModeIndicator onExit={exitDemo} />}
@@ -307,10 +309,11 @@ function App() {
                       />
                     </Routes>
                   </Suspense>
-                  </BusinessHoursProvider>
-                </PlanLimitsProvider>
-              </AuthProvider>
-            </Router>
+                    </BusinessHoursProvider>
+                  </PlanLimitsProviderWrapper>
+                </AuthProvider>
+              </Router>
+            </StrictMode>
 
             <Toaster
               position="top-right"

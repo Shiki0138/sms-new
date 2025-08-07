@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { Customer } from '../types/customer';
 import { useAuth } from './useAuth';
-import { usePlanLimits } from '../contexts/PlanLimitsContext';
+import { usePlanLimitsSafe } from './usePlanLimitsSafe';
 import { usePlanUsage } from './usePlanUsage';
 import { toast } from 'sonner';
 
@@ -27,7 +27,9 @@ export interface UpdateCustomerInput extends Partial<CreateCustomerInput> {
 export const useCustomers = (searchTerm: string = '') => {
   const { tenant } = useAuth();
   const queryClient = useQueryClient();
-  const { checkCustomerLimit, showUpgradeModal } = usePlanLimits();
+  const planLimits = usePlanLimitsSafe();
+  const checkCustomerLimit = planLimits?.checkCustomerLimit || (async () => true);
+  const showUpgradeModal = planLimits?.showUpgradeModal || (() => {});
   const { updateCustomerCount } = usePlanUsage();
   const isDev = import.meta.env.DEV;
 

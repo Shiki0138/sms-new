@@ -1,0 +1,556 @@
+/* Salon Lumière - Premium Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@200;300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+:root {
+    /* Premium Color Palette - 洗練された美容サロンカラー */
+    --primary-nude: #E8DDD4;
+    --primary-rose: #D4A5A5;
+    --primary-mauve: #C89FA3;
+    --primary-taupe: #A8877A;
+    
+    --accent-champagne: #F7E7CE;
+    --accent-pearl: #F8F6F3;
+    --accent-blush: #FFE0E6;
+    --accent-sage: #C4C9C0;
+    
+    --neutral-charcoal: #2C2C2C;
+    --neutral-stone: #5A5651;
+    --neutral-ash: #8B8680;
+    --neutral-cream: #FAF7F4;
+    
+    /* グラデーション */
+    --gradient-premium: linear-gradient(135deg, #E8DDD4 0%, #D4A5A5 50%, #C89FA3 100%);
+    --gradient-subtle: linear-gradient(180deg, #FAF7F4 0%, #F8F6F3 100%);
+    --gradient-accent: linear-gradient(135deg, #F7E7CE 0%, #FFE0E6 100%);
+    
+    /* Typography */
+    --font-display: 'Cormorant Garamond', serif;
+    --font-primary: 'Montserrat', sans-serif;
+    --font-japanese: 'Noto Sans JP', sans-serif;
+    
+    /* Spacing & Sizing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    --space-xxl: 4rem;
+    
+    /* Shadows - 柔らかく上品な影 */
+    --shadow-soft: 0 2px 20px rgba(92, 86, 81, 0.08);
+    --shadow-medium: 0 5px 30px rgba(92, 86, 81, 0.12);
+    --shadow-large: 0 15px 40px rgba(92, 86, 81, 0.15);
+    --shadow-glow: 0 0 30px rgba(212, 165, 165, 0.2);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 30px;
+    --radius-round: 50%;
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-japanese);
+    background-color: var(--neutral-cream);
+    color: var(--neutral-charcoal);
+    line-height: 1.6;
+    overflow-x: hidden;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+}
+
+/* Elegant Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+/* Navbar - 洗練されたナビゲーション */
+.navbar {
+    background: rgba(248, 246, 243, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(232, 221, 212, 0.3);
+    padding: var(--space-md) var(--space-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.brand-name {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--primary-mauve);
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: 0.1em;
+}
+
+.brand-tagline {
+    font-family: var(--font-primary);
+    font-size: 0.75rem;
+    color: var(--neutral-ash);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-top: 0.2rem;
+}
+
+/* Navigation Menu */
+.nav-menu {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--neutral-stone);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-xl);
+    transition: var(--transition-smooth);
+    position: relative;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.nav-link:hover {
+    color: var(--primary-mauve);
+    background: rgba(212, 165, 165, 0.1);
+}
+
+.nav-link.active {
+    color: var(--neutral-cream);
+    background: var(--primary-mauve);
+}
+
+.nav-link .icon {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* User Section */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+#userName {
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    color: var(--neutral-stone);
+    font-weight: 500;
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid var(--primary-rose);
+    color: var(--primary-rose);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-xl);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    letter-spacing: 0.05em;
+}
+
+.logout-btn:hover {
+    background: var(--primary-rose);
+    color: white;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: var(--space-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Page Header - エレガントなヘッダー */
+.page-header {
+    margin-bottom: var(--space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.page-header h1 {
+    color: var(--neutral-charcoal);
+    font-weight: 300;
+}
+
+.page-header p {
+    color: var(--neutral-ash);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    margin-top: var(--space-xs);
+}
+
+/* Premium Button Styles */
+.btn-primary {
+    background: var(--gradient-premium);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-xl);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: var(--shadow-soft);
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Stats Grid - 美しい統計カード */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-premium);
+    opacity: 0.8;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.stat-card.pink::before { background: var(--primary-rose); }
+.stat-card.gold::before { background: var(--accent-champagne); }
+.stat-card.purple::before { background: var(--primary-mauve); }
+.stat-card.blue::before { background: var(--accent-sage); }
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-sm);
+    opacity: 0.8;
+}
+
+.stat-content h3 {
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neutral-ash);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+}
+
+.stat-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--neutral-charcoal);
+    line-height: 1;
+}
+
+.stat-label {
+    font-family: var(--font-japanese);
+    font-size: 0.9rem;
+    color: var(--neutral-ash);
+    margin-left: var(--space-xs);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* Premium Card Style */
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+}
+
+.card h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--neutral-charcoal);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid rgba(232, 221, 212, 0.3);
+}
+
+/* Schedule List - エレガントなスケジュール表示 */
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.schedule-item {
+    background: var(--gradient-subtle);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition-smooth);
+    border: 1px solid transparent;
+}
+
+.schedule-item:hover {
+    border-color: var(--primary-rose);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Staff List - スタッフステータス */
+.staff-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.staff-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    transition: var(--transition-smooth);
+}
+
+.staff-item:hover {
+    background: var(--gradient-subtle);
+}
+
+.staff-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-round);
+    background: var(--gradient-premium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+.staff-info {
+    flex: 1;
+}
+
+.staff-name {
+    font-family: var(--font-primary);
+    font-weight: 500;
+    color: var(--neutral-charcoal);
+    font-size: 0.95rem;
+}
+
+.staff-status {
+    font-size: 0.85rem;
+    color: var(--neutral-ash);
+}
+
+/* Premium Table Design */
+.table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-soft);
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    border-bottom: 2px solid var(--primary-nude);
+}
+
+.data-table th {
+    text-align: left;
+    padding: var(--space-md);
+    font-family: var(--font-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--neutral-ash);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.data-table td {
+    padding: var(--space-md);
+    font-size: 0.95rem;
+    color: var(--neutral-charcoal);
+    border-bottom: 1px solid rgba(232, 221, 212, 0.2);
+}
+
+.data-table tbody tr {
+    transition: var(--transition-smooth);
+}
+
+.data-table tbody tr:hover {
+    background: var(--gradient-subtle);
+}
+
+/* Search Bar - 洗練された検索バー */
+.search-bar {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.search-bar input {
+    flex: 1;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid rgba(232, 221, 212, 0.3);
+    border-radius: var(--radius-xl);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    background: white;
+    transition: var(--transition-smooth);
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--primary-rose);
+    box-shadow: 0 0 0 3px rgba(212, 165, 165, 0.1);
+}
+
+.search-bar select {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid rgba(232, 221, 212, 0.3);
+    border-radius: var(--radius-xl);
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.page:not(.active) {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: var(--space-lg);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-wrap: wrap;
+        padding: var(--space-md);
+    }
+    
+    .nav-menu {
+        order: 3;
+        width: 100%;
+        margin-top: var(--space-md);
+        justify-content: space-between;
+        overflow-x: auto;
+    }
+    
+    .nav-link {
+        font-size: 0.8rem;
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+}

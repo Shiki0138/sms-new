@@ -1,0 +1,53 @@
+{
+  "name": "salon-lumiere",
+  "version": "1.0.0",
+  "description": "Salon Lumière - Professional Beauty Salon Management System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server-simple.js",
+    "start:full": "node src/server-new.js",
+    "dev": "nodemon src/server-simple.js",
+    "dev:full": "nodemon src/server-new.js",
+    "init-db": "node scripts/init-db.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "build": "echo 'Build successful'",
+    "lint": "eslint src/",
+    "typecheck": "echo 'Type checking not applicable for vanilla JS'",
+    "vercel-build": "npm install"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "winston": "^3.10.0",
+    "pg": "^8.11.3",
+    "sequelize": "^6.35.2",
+    "moment": "^2.30.1",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.2",
+    "puppeteer": "^21.7.0",
+    "csv-writer": "^1.6.0",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.2",
+    "eslint": "^8.55.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["salon", "management", "booking", "spa", "appointments"],
+  "author": "SMS Team",
+  "license": "MIT"
+}

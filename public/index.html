@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Lumière - Premium Salon Management</title>
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/premium-styles.css">
+</head>
+<body>
+    <!-- ログイン画面（一時的に非表示） -->
+    <div id="loginScreen" class="login-container" style="display: none;">
+        <!-- ログイン機能は後で実装 -->
+    </div>
+
+    <!-- メインアプリケーション -->
+    <div id="mainApp" class="app-container">
+        <!-- ナビゲーションバー -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h2 class="brand-name">Salon Lumière</h2>
+                <span class="brand-tagline">Premium Salon Management</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active" data-page="dashboard">
+                    <i class="icon">📊</i> ダッシュボード
+                </a>
+                <a href="#" class="nav-link" data-page="customers">
+                    <i class="icon">👥</i> 顧客管理
+                </a>
+                <a href="#" class="nav-link" data-page="appointments">
+                    <i class="icon">📅</i> 予約管理
+                </a>
+                <a href="#" class="nav-link" data-page="services">
+                    <i class="icon">✂️</i> サービス管理
+                </a>
+                <a href="#" class="nav-link" data-page="staff">
+                    <i class="icon">👩‍💼</i> スタッフ管理
+                </a>
+            </div>
+            <div class="nav-user">
+                <span id="userName">管理者</span>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </nav>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content" id="mainContent">
+            <!-- ダッシュボード -->
+            <div id="dashboardPage" class="page active">
+                <div class="page-header">
+                    <h1>ダッシュボード</h1>
+                    <p>本日の営業状況</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card pink">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <h3>総顧客数</h3>
+                            <p class="stat-number" id="totalCustomers">-</p>
+                            <span class="stat-label">名</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card gold">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <h3>本日の予約</h3>
+                            <p class="stat-number" id="todayAppointments">-</p>
+                            <span class="stat-label">件</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card purple">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>今月の売上</h3>
+                            <p class="stat-number" id="monthlyRevenue">-</p>
+                            <span class="stat-label">円</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card blue">
+                        <div class="stat-icon">👩‍💼</div>
+                        <div class="stat-content">
+                            <h3>稼働スタッフ</h3>
+                            <p class="stat-number" id="activeStaff">-</p>
+                            <span class="stat-label">名</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h2>本日の予約</h2>
+                        <div id="todaySchedule" class="schedule-list">
+                            <!-- 予約リストがここに表示されます -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>スタッフ状況</h2>
+                        <div id="staffStatus" class="staff-list">
+                            <!-- スタッフ状況がここに表示されます -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 顧客管理ページ -->
+            <div id="customersPage" class="page">
+                <div class="page-header">
+                    <h1>顧客管理</h1>
+                    <button class="btn-primary" id="addCustomerBtn">
+                        <i>➕</i> 新規顧客登録
+                    </button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="customerSearch" placeholder="名前、電話番号、メールで検索...">
+                    <select id="customerFilter">
+                        <option value="">全て</option>
+                        <option value="VIP">VIP</option>
+                        <option value="常連">常連</option>
+                        <option value="新規">新規</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>顧客名</th>
+                                <th>電話番号</th>
+                                <th>メール</th>
+                                <th>最終来店</th>
+                                <th>来店回数</th>
+                                <th>ステータス</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <!-- 顧客データがここに表示されます -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- その他のページも同様に実装 -->
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

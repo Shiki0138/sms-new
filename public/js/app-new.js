@@ -1,0 +1,868 @@
+// Global variables
+let currentUser = null;
+let authToken = null;
+let calendar = null;
+
+// API base URL
+const API_BASE = '/api';
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    setupEventListeners();
+});
+
+// Check authentication
+function checkAuth() {
+    authToken = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
+    const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
+    
+    if (!authToken || !userStr) {
+        window.location.href = '/login-new.html';
+        return;
+    }
+    
+    try {
+        currentUser = JSON.parse(userStr);
+        updateUserInfo();
+        loadDashboard();
+    } catch (error) {
+        console.error('Auth error:', error);
+        logout();
+    }
+}
+
+// Update user info in UI
+function updateUserInfo() {
+    document.getElementById('userName').textContent = currentUser.name;
+    document.getElementById('salonName').textContent = currentUser.salonName;
+    document.getElementById('userPlan').textContent = currentUser.planType.toUpperCase();
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = item.dataset.page;
+            navigateToPage(page);
+        });
+    });
+    
+    // Add buttons
+    document.getElementById('addCustomerBtn')?.addEventListener('click', showAddCustomerModal);
+    document.getElementById('addAppointmentBtn')?.addEventListener('click', showAddAppointmentModal);
+    document.getElementById('addSaleBtn')?.addEventListener('click', showAddSaleModal);
+    
+    // Search
+    document.getElementById('customerSearch')?.addEventListener('input', searchCustomers);
+    
+    // Forms
+    document.getElementById('profileForm')?.addEventListener('submit', updateProfile);
+}
+
+// Navigate to page
+function navigateToPage(page) {
+    // Update nav
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.page === page);
+    });
+    
+    // Update pages
+    document.querySelectorAll('.page').forEach(pageEl => {
+        pageEl.classList.toggle('active', pageEl.id === page);
+    });
+    
+    // Load page data
+    switch(page) {
+        case 'dashboard':
+            loadDashboard();
+            break;
+        case 'customers':
+            loadCustomers();
+            break;
+        case 'appointments':
+            loadAppointments();
+            break;
+        case 'sales':
+            loadSales();
+            break;
+        case 'records':
+            loadRecords();
+            break;
+        case 'settings':
+            loadSettings();
+            break;
+    }
+}
+
+// API request helper
+async function apiRequest(endpoint, options = {}) {
+    const defaultOptions = {
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+        }
+    };
+    
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...defaultOptions,
+        ...options,
+        headers: {
+            ...defaultOptions.headers,
+            ...options.headers
+        }
+    });
+    
+    if (response.status === 401) {
+        logout();
+        throw new Error('Unauthorized');
+    }
+    
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'API request failed');
+    }
+    
+    return response.json();
+}
+
+// Load dashboard
+async function loadDashboard() {
+    try {
+        const data = await apiRequest('/dashboard/summary');
+        
+        // Update stats
+        document.getElementById('todayAppointments').textContent = data.today.appointmentCount;
+        document.getElementById('todaySales').textContent = data.today.sales.total.toLocaleString();
+        document.getElementById('totalCustomers').textContent = data.customers.total;
+        document.getElementById('monthlySales').textContent = data.thisMonth.sales.total.toLocaleString();
+        
+        // Update today's schedule
+        const scheduleHtml = data.today.appointments.length > 0
+            ? data.today.appointments.map(apt => `
+                <div class="schedule-item">
+                    <span class="time">${apt.startTime}</span>
+                    <span class="customer">${apt.customer.lastName} ${apt.customer.firstName}</span>
+                    <span class="status">${getStatusBadge(apt.status)}</span>
+                </div>
+            `).join('')
+            : '<p class="empty-state">本日の予約はありません</p>';
+        
+        document.getElementById('todaySchedule').innerHTML = scheduleHtml;
+        
+        // Update recent customers
+        const customersHtml = data.customers.recent.length > 0
+            ? data.customers.recent.map(customer => `
+                <div class="customer-item">
+                    <span>${customer.lastName} ${customer.firstName}</span>
+                    <span class="date">${formatDate(customer.createdAt)}</span>
+                </div>
+            `).join('')
+            : '<p class="empty-state">データがありません</p>';
+        
+        document.getElementById('recentCustomers').innerHTML = customersHtml;
+    } catch (error) {
+        console.error('Dashboard load error:', error);
+        showError('ダッシュボードの読み込みに失敗しました');
+    }
+}
+
+// Load customers
+async function loadCustomers() {
+    try {
+        const data = await apiRequest('/customers');
+        
+        const tbody = document.getElementById('customerTableBody');
+        if (data.customers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">顧客データがありません</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = data.customers.map(customer => `
+            <tr>
+                <td>${customer.lastName} ${customer.firstName}</td>
+                <td>${customer.lastNameKana || ''} ${customer.firstNameKana || ''}</td>
+                <td>${customer.phoneNumber}</td>
+                <td>${customer.lastVisitDate ? formatDate(customer.lastVisitDate) : '-'}</td>
+                <td>${customer.visitCount}回</td>
+                <td>
+                    <button class="btn btn-sm" onclick="viewCustomer('${customer.id}')">詳細</button>
+                    <button class="btn btn-sm" onclick="editCustomer('${customer.id}')">編集</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Customers load error:', error);
+        showError('顧客データの読み込みに失敗しました');
+    }
+}
+
+// Load appointments
+async function loadAppointments() {
+    try {
+        // Initialize calendar if not already initialized
+        if (!calendar && window.AppointmentCalendar) {
+            calendar = new AppointmentCalendar('appointmentCalendar', {
+                view: 'month',
+                onDateClick: (date) => {
+                    showAddAppointmentModal(date);
+                },
+                onAppointmentClick: (appointment) => {
+                    showAppointmentDetail(appointment);
+                }
+            });
+            
+            // Make calendar globally accessible
+            window.calendar = calendar;
+        }
+    } catch (error) {
+        console.error('Appointments load error:', error);
+        showError('予約データの読み込みに失敗しました');
+    }
+}
+
+// Load sales
+async function loadSales() {
+    try {
+        const data = await apiRequest('/sales');
+        
+        document.getElementById('salesCount').textContent = `${data.summary.totalSales}件`;
+        document.getElementById('salesTotal').textContent = data.summary.totalAmount.toLocaleString();
+        
+        const tbody = document.getElementById('salesTableBody');
+        if (data.sales.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">売上データがありません</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = data.sales.map(sale => `
+            <tr>
+                <td>${formatDate(sale.saleDate)}</td>
+                <td>${sale.customer ? `${sale.customer.lastName} ${sale.customer.firstName}` : '-'}</td>
+                <td>${sale.items.map(item => item.name).join(', ')}</td>
+                <td>¥${parseFloat(sale.totalAmount).toLocaleString()}</td>
+                <td>${getPaymentMethod(sale.paymentMethod)}</td>
+                <td>
+                    <button class="btn btn-sm" onclick="viewSale('${sale.id}')">詳細</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Sales load error:', error);
+        showError('売上データの読み込みに失敗しました');
+    }
+}
+
+// Load records
+async function loadRecords() {
+    // TODO: Implement medical records
+    console.log('Loading records...');
+}
+
+// Load settings
+async function loadSettings() {
+    try {
+        const data = await apiRequest('/settings');
+        const setting = data.setting;
+        
+        // Update profile form
+        document.getElementById('settingsName').value = currentUser.name;
+        document.getElementById('settingsSalonName').value = currentUser.salonName;
+        document.getElementById('settingsPhone').value = currentUser.phoneNumber;
+        
+        // Update plan info
+        document.getElementById('currentPlan').textContent = getPlanName(currentUser.planType);
+        document.getElementById('trialEnd').textContent = formatDate(currentUser.trialEndsAt);
+        
+        // Update business hours
+        updateBusinessHoursUI(setting.businessHours);
+        
+        // Update holidays
+        updateHolidaysUI(setting.holidays, setting.temporaryClosures);
+    } catch (error) {
+        console.error('Settings load error:', error);
+        showError('設定の読み込みに失敗しました');
+    }
+}
+
+// Update business hours UI
+function updateBusinessHoursUI(businessHours) {
+    const container = document.getElementById('businessHours');
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const dayNames = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日', '日曜日'];
+    
+    let html = '<form id="businessHoursForm">';
+    
+    days.forEach((day, index) => {
+        const hours = businessHours?.[day] || { open: '09:00', close: '19:00', isOpen: true };
+        html += `
+            <div class="day-hours">
+                <label>
+                    <input type="checkbox" name="${day}_isOpen" ${hours.isOpen ? 'checked' : ''}>
+                    ${dayNames[index]}
+                </label>
+                <div class="time-inputs ${!hours.isOpen ? 'disabled' : ''}">
+                    <input type="time" name="${day}_open" value="${hours.open}" ${!hours.isOpen ? 'disabled' : ''}>
+                    <span>〜</span>
+                    <input type="time" name="${day}_close" value="${hours.close}" ${!hours.isOpen ? 'disabled' : ''}>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '<button type="submit" class="btn btn-primary">営業時間を保存</button></form>';
+    
+    container.innerHTML = html;
+    
+    // Add event listeners
+    document.getElementById('businessHoursForm').addEventListener('submit', saveBusinessHours);
+    
+    // Toggle time inputs based on checkbox
+    days.forEach(day => {
+        const checkbox = document.querySelector(`input[name="${day}_isOpen"]`);
+        checkbox.addEventListener('change', (e) => {
+            const timeInputs = e.target.closest('.day-hours').querySelector('.time-inputs');
+            const inputs = timeInputs.querySelectorAll('input');
+            
+            if (e.target.checked) {
+                timeInputs.classList.remove('disabled');
+                inputs.forEach(input => input.disabled = false);
+            } else {
+                timeInputs.classList.add('disabled');
+                inputs.forEach(input => input.disabled = true);
+            }
+        });
+    });
+}
+
+// Update holidays UI
+function updateHolidaysUI(holidays = [], temporaryClosures = []) {
+    const container = document.createElement('div');
+    container.className = 'card';
+    container.innerHTML = `
+        <h3>休日・休業日設定</h3>
+        <div class="holidays-section">
+            <h4>定休日</h4>
+            <div id="regularHolidays">
+                ${holidays.map(date => `
+                    <div class="holiday-item">
+                        <span>${formatDate(date)}</span>
+                        <button class="btn btn-sm" onclick="removeHoliday('${date}')">削除</button>
+                    </div>
+                `).join('') || '<p>定休日が設定されていません</p>'}
+            </div>
+            <button class="btn btn-sm" onclick="addHoliday()">定休日を追加</button>
+        </div>
+        
+        <div class="closures-section">
+            <h4>臨時休業日</h4>
+            <div id="temporaryClosures">
+                ${temporaryClosures.map((closure, index) => `
+                    <div class="closure-item">
+                        <span>${formatDate(closure.startDate)} 〜 ${formatDate(closure.endDate)}</span>
+                        ${closure.reason ? `<span class="closure-reason">${closure.reason}</span>` : ''}
+                        <button class="btn btn-sm" onclick="removeClosure(${index})">削除</button>
+                    </div>
+                `).join('') || '<p>臨時休業日が設定されていません</p>'}
+            </div>
+            <button class="btn btn-sm" onclick="addClosure()">臨時休業日を追加</button>
+        </div>
+    `;
+    
+    // Insert after business hours
+    const settingsSections = document.querySelector('.settings-sections');
+    const businessHoursCard = document.querySelector('.settings-sections .card:nth-child(2)');
+    businessHoursCard.insertAdjacentElement('afterend', container);
+}
+
+// Save business hours
+async function saveBusinessHours(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const businessHours = {};
+    
+    days.forEach(day => {
+        businessHours[day] = {
+            isOpen: formData.get(`${day}_isOpen`) === 'on',
+            open: formData.get(`${day}_open`) || '09:00',
+            close: formData.get(`${day}_close`) || '19:00'
+        };
+    });
+    
+    try {
+        await apiRequest('/settings/business-hours', {
+            method: 'PUT',
+            body: JSON.stringify({ businessHours })
+        });
+        
+        showSuccess('営業時間を更新しました');
+        
+        // Update calendar if available
+        if (window.calendar) {
+            window.calendar.loadSettings();
+        }
+    } catch (error) {
+        showError(error.message);
+    }
+}
+
+// Holiday management functions
+window.addHoliday = () => {
+    const content = `
+        <form id="holidayForm">
+            <div class="form-group">
+                <label>定休日</label>
+                <input type="date" name="holidayDate" required>
+            </div>
+            <button type="submit" class="btn btn-primary">追加</button>
+        </form>
+    `;
+    
+    showModal('定休日を追加', content);
+    
+    document.getElementById('holidayForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        try {
+            const data = await apiRequest('/settings');
+            const holidays = data.setting.holidays || [];
+            holidays.push(formData.get('holidayDate'));
+            
+            await apiRequest('/settings/holidays', {
+                method: 'PUT',
+                body: JSON.stringify({ holidays })
+            });
+            
+            closeModal();
+            loadSettings();
+            showSuccess('定休日を追加しました');
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+};
+
+window.removeHoliday = async (date) => {
+    if (!confirm('この定休日を削除しますか？')) return;
+    
+    try {
+        const data = await apiRequest('/settings');
+        const holidays = data.setting.holidays?.filter(h => h !== date) || [];
+        
+        await apiRequest('/settings/holidays', {
+            method: 'PUT',
+            body: JSON.stringify({ holidays })
+        });
+        
+        loadSettings();
+        showSuccess('定休日を削除しました');
+    } catch (error) {
+        showError(error.message);
+    }
+};
+
+window.addClosure = () => {
+    const content = `
+        <form id="closureForm">
+            <div class="form-group">
+                <label>開始日</label>
+                <input type="date" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label>終了日</label>
+                <input type="date" name="endDate" required>
+            </div>
+            <div class="form-group">
+                <label>理由（任意）</label>
+                <input type="text" name="reason" placeholder="例：設備メンテナンス">
+            </div>
+            <button type="submit" class="btn btn-primary">追加</button>
+        </form>
+    `;
+    
+    showModal('臨時休業日を追加', content);
+    
+    document.getElementById('closureForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        try {
+            const data = await apiRequest('/settings');
+            const closures = data.setting.temporaryClosures || [];
+            closures.push({
+                startDate: formData.get('startDate'),
+                endDate: formData.get('endDate'),
+                reason: formData.get('reason')
+            });
+            
+            await apiRequest('/settings/closures', {
+                method: 'PUT',
+                body: JSON.stringify({ closures })
+            });
+            
+            closeModal();
+            loadSettings();
+            showSuccess('臨時休業日を追加しました');
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+};
+
+window.removeClosure = async (index) => {
+    if (!confirm('この臨時休業日を削除しますか？')) return;
+    
+    try {
+        const data = await apiRequest('/settings');
+        const closures = data.setting.temporaryClosures || [];
+        closures.splice(index, 1);
+        
+        await apiRequest('/settings/closures', {
+            method: 'PUT',
+            body: JSON.stringify({ closures })
+        });
+        
+        loadSettings();
+        showSuccess('臨時休業日を削除しました');
+    } catch (error) {
+        showError(error.message);
+    }
+};
+
+// Update profile
+async function updateProfile(e) {
+    e.preventDefault();
+    
+    try {
+        const data = await apiRequest('/auth/profile', {
+            method: 'PUT',
+            body: JSON.stringify({
+                name: document.getElementById('settingsName').value,
+                salonName: document.getElementById('settingsSalonName').value,
+                phoneNumber: document.getElementById('settingsPhone').value
+            })
+        });
+        
+        currentUser = data.user;
+        localStorage.setItem('salon_user', JSON.stringify(currentUser));
+        updateUserInfo();
+        showSuccess('プロフィールを更新しました');
+    } catch (error) {
+        console.error('Profile update error:', error);
+        showError('プロフィールの更新に失敗しました');
+    }
+}
+
+// Modal functions
+function showModal(title, content) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = content;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+// Appointment modal
+function showAddAppointmentModal(date = null) {
+    const selectedDate = date ? date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    const selectedTime = date ? `${String(date.getHours()).padStart(2, '0')}:00` : '10:00';
+    
+    const content = `
+        <form id="appointmentForm">
+            <div class="form-group">
+                <label>顧客</label>
+                <select name="customerId" id="appointmentCustomer" required>
+                    <option value="">顧客を選択してください</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>予約日</label>
+                <input type="date" name="appointmentDate" value="${selectedDate}" required>
+            </div>
+            <div class="form-group">
+                <label>開始時刻</label>
+                <input type="time" name="startTime" value="${selectedTime}" required>
+            </div>
+            <div class="form-group">
+                <label>終了時刻</label>
+                <input type="time" name="endTime" value="${String(parseInt(selectedTime) + 1).padStart(2, '0')}:00" required>
+            </div>
+            <div class="form-group">
+                <label>サービス</label>
+                <div id="servicesList">
+                    <div class="service-item">
+                        <input type="text" name="serviceName[]" placeholder="サービス名" required>
+                        <input type="number" name="servicePrice[]" placeholder="価格" required>
+                        <button type="button" class="btn btn-sm" onclick="removeService(this)">削除</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm" onclick="addService()">サービス追加</button>
+            </div>
+            <div class="form-group">
+                <label>備考</label>
+                <textarea name="notes" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">予約登録</button>
+        </form>
+    `;
+    
+    showModal('新規予約', content);
+    
+    // Load customers
+    loadCustomersForSelect();
+    
+    document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Build services array
+        const services = [];
+        const serviceNames = formData.getAll('serviceName[]');
+        const servicePrices = formData.getAll('servicePrice[]');
+        
+        for (let i = 0; i < serviceNames.length; i++) {
+            if (serviceNames[i]) {
+                services.push({
+                    name: serviceNames[i],
+                    price: parseInt(servicePrices[i]) || 0
+                });
+            }
+        }
+        
+        const appointmentData = {
+            customerId: formData.get('customerId'),
+            appointmentDate: formData.get('appointmentDate'),
+            startTime: formData.get('startTime'),
+            endTime: formData.get('endTime'),
+            services: services,
+            notes: formData.get('notes'),
+            totalAmount: services.reduce((sum, s) => sum + s.price, 0)
+        };
+        
+        try {
+            await apiRequest('/appointments', {
+                method: 'POST',
+                body: JSON.stringify(appointmentData)
+            });
+            
+            closeModal();
+            
+            // Reload calendar if available
+            if (window.calendar) {
+                window.calendar.loadAppointments();
+            }
+            
+            showSuccess('予約を登録しました');
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+}
+
+async function loadCustomersForSelect() {
+    try {
+        const data = await apiRequest('/customers');
+        const select = document.getElementById('appointmentCustomer');
+        
+        select.innerHTML = '<option value="">顧客を選択してください</option>' +
+            data.customers.map(customer => 
+                `<option value="${customer.id}">${customer.lastName} ${customer.firstName}</option>`
+            ).join('');
+    } catch (error) {
+        console.error('Load customers error:', error);
+    }
+}
+
+window.addService = () => {
+    const servicesList = document.getElementById('servicesList');
+    const newService = document.createElement('div');
+    newService.className = 'service-item';
+    newService.innerHTML = `
+        <input type="text" name="serviceName[]" placeholder="サービス名" required>
+        <input type="number" name="servicePrice[]" placeholder="価格" required>
+        <button type="button" class="btn btn-sm" onclick="removeService(this)">削除</button>
+    `;
+    servicesList.appendChild(newService);
+};
+
+window.removeService = (button) => {
+    button.parentElement.remove();
+};
+
+// Customer modal
+function showAddCustomerModal() {
+    const content = `
+        <form id="customerForm">
+            <div class="form-group">
+                <label>姓</label>
+                <input type="text" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label>名</label>
+                <input type="text" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label>姓（カナ）</label>
+                <input type="text" name="lastNameKana">
+            </div>
+            <div class="form-group">
+                <label>名（カナ）</label>
+                <input type="text" name="firstNameKana">
+            </div>
+            <div class="form-group">
+                <label>電話番号</label>
+                <input type="tel" name="phoneNumber" required>
+            </div>
+            <div class="form-group">
+                <label>メールアドレス</label>
+                <input type="email" name="email">
+            </div>
+            <button type="submit" class="btn btn-primary">登録</button>
+        </form>
+    `;
+    
+    showModal('新規顧客登録', content);
+    
+    document.getElementById('customerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        try {
+            await apiRequest('/customers', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            
+            closeModal();
+            loadCustomers();
+            showSuccess('顧客を登録しました');
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+}
+
+// Utility functions
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ja-JP');
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        scheduled: '<span class="badge badge-info">予定</span>',
+        confirmed: '<span class="badge badge-success">確定</span>',
+        completed: '<span class="badge badge-secondary">完了</span>',
+        cancelled: '<span class="badge badge-danger">キャンセル</span>'
+    };
+    return badges[status] || status;
+}
+
+function getPaymentMethod(method) {
+    const methods = {
+        cash: '現金',
+        credit_card: 'クレジットカード',
+        debit_card: 'デビットカード',
+        electronic_money: '電子マネー',
+        bank_transfer: '銀行振込',
+        other: 'その他'
+    };
+    return methods[method] || method;
+}
+
+function getPlanName(plan) {
+    const plans = {
+        light: 'ライトプラン',
+        standard: 'スタンダードプラン',
+        premium: 'プレミアムプラン'
+    };
+    return plans[plan] || plan;
+}
+
+function showSuccess(message) {
+    // TODO: Implement toast notification
+    alert(message);
+}
+
+function showError(message) {
+    // TODO: Implement toast notification
+    alert('エラー: ' + message);
+}
+
+function logout() {
+    localStorage.removeItem('salon_token');
+    localStorage.removeItem('salon_user');
+    sessionStorage.removeItem('salon_token');
+    sessionStorage.removeItem('salon_user');
+    window.location.href = '/login-new.html';
+}
+
+// Global functions for onclick handlers
+window.viewCustomer = (id) => {
+    window.location.href = `/customer-detail.html?id=${id}`;
+};
+
+window.editCustomer = (id) => {
+    window.location.href = `/customer-edit.html?id=${id}`;
+};
+
+window.viewSale = (id) => {
+    console.log('View sale:', id);
+    // TODO: Implement
+};
+
+window.showAppointmentDetail = (appointment) => {
+    const content = `
+        <div class="appointment-detail">
+            <div class="form-group">
+                <label>顧客名</label>
+                <p>${appointment.customer?.lastName || ''} ${appointment.customer?.firstName || ''}</p>
+            </div>
+            <div class="form-group">
+                <label>日時</label>
+                <p>${formatDate(appointment.appointmentDate)} ${appointment.startTime} - ${appointment.endTime}</p>
+            </div>
+            <div class="form-group">
+                <label>サービス</label>
+                <p>${appointment.services?.map(s => s.name).join(', ') || '-'}</p>
+            </div>
+            <div class="form-group">
+                <label>ステータス</label>
+                <p>${getStatusLabel(appointment.status)}</p>
+            </div>
+            ${appointment.notes ? `
+                <div class="form-group">
+                    <label>備考</label>
+                    <p>${appointment.notes}</p>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    showModal('予約詳細', content);
+};
+
+window.getStatusLabel = (status) => {
+    const labels = {
+        scheduled: '予定',
+        confirmed: '確定',
+        in_progress: '進行中',
+        completed: '完了',
+        cancelled: 'キャンセル',
+        no_show: '無断キャンセル'
+    };
+    return labels[status] || status;
+};
+
+window.closeModal = closeModal;

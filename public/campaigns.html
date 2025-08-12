@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャンペーン - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/campaigns.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Salon Lumière</h1>
+                <p id="salonName">Loading...</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>ダッシュボード</span>
+                </a>
+                <a href="/messages.html" class="nav-item">
+                    <span class="icon">💬</span>
+                    <span>メッセージ</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="icon">📢</span>
+                    <span>キャンペーン</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <span id="userPlan" class="plan-badge">Light</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </aside>
+        
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="page-header">
+                <h2>キャンペーン管理</h2>
+                <button class="btn btn-primary" onclick="createCampaign()">
+                    <span>➕</span> 新規キャンペーン
+                </button>
+            </div>
+            
+            <!-- キャンペーンタイプ選択 -->
+            <div class="campaign-types">
+                <div class="type-card" onclick="createCampaign('reminder')">
+                    <div class="type-icon">⏰</div>
+                    <h3>リマインダー</h3>
+                    <p>予約リマインドや定期メンテナンスのお知らせ</p>
+                </div>
+                <div class="type-card" onclick="createCampaign('campaign')">
+                    <div class="type-icon">🎉</div>
+                    <h3>キャンペーン</h3>
+                    <p>特別オファーや新サービスの告知</p>
+                </div>
+                <div class="type-card" onclick="createCampaign('holiday')">
+                    <div class="type-icon">📅</div>
+                    <h3>休業案内</h3>
+                    <p>定休日や臨時休業のお知らせ</p>
+                </div>
+                <div class="type-card" onclick="createCampaign('reengagement')">
+                    <div class="type-icon">💝</div>
+                    <h3>再来店促進</h3>
+                    <p>しばらく来店されていないお客様へのアプローチ</p>
+                </div>
+            </div>
+            
+            <!-- アクティブなキャンペーン -->
+            <div class="campaigns-section">
+                <h3>実行中のキャンペーン</h3>
+                <div class="campaigns-grid" id="activeCampaigns">
+                    <!-- アクティブなキャンペーンがここに表示されます -->
+                </div>
+            </div>
+            
+            <!-- 予定されたキャンペーン -->
+            <div class="campaigns-section">
+                <h3>予定されたキャンペーン</h3>
+                <div class="campaigns-grid" id="scheduledCampaigns">
+                    <!-- 予定されたキャンペーンがここに表示されます -->
+                </div>
+            </div>
+            
+            <!-- 過去のキャンペーン -->
+            <div class="campaigns-section">
+                <h3>過去のキャンペーン</h3>
+                <div class="campaigns-grid" id="pastCampaigns">
+                    <!-- 過去のキャンペーンがここに表示されます -->
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- モーダル -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="modalTitle">タイトル</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- モーダルコンテンツ -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/campaigns.js"></script>
+</body>
+</html>

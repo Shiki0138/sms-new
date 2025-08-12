@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>SMS - ログイン</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h2 class="text-2xl font-semibold text-center mb-6">SMS ログイン</h2>
+            
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+                <p class="text-sm">デモアカウント：</p>
+                <p class="text-sm font-mono">Email: admin@salon.com</p>
+                <p class="text-sm font-mono">Pass: admin123</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        メールアドレス
+                    </label>
+                    <input type="email" id="email" required 
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" 
+                        placeholder="admin@salon.com"
+                        value="admin@salon.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        パスワード
+                    </label>
+                    <input type="password" id="password" required 
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" 
+                        placeholder="admin123"
+                        value="admin123">
+                </div>
+                
+                <div id="errorMessage" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+                
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600">
+                    ログイン
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-sm text-gray-600">
+                <p>※ これはデモシステムです</p>
+                <p>※ パスワードリセットは管理者にお問い合わせください</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabaseからのリダイレクトをハンドル
+        if (window.location.hash) {
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('ログインに失敗しました');
+                }
+                
+                const data = await response.json();
+                localStorage.setItem('sms_token', data.token);
+                localStorage.setItem('sms_user', JSON.stringify(data.user));
+                
+                // ダッシュボードへリダイレクト
+                window.location.href = '/';
+            } catch (error) {
+                errorDiv.textContent = error.message || 'ログインエラーが発生しました';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

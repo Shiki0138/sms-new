@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メッセージ - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/messages.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Salon Lumière</h1>
+                <p id="salonName">Loading...</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>ダッシュボード</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="icon">💬</span>
+                    <span>メッセージ</span>
+                </a>
+                <a href="/campaigns.html" class="nav-item">
+                    <span class="icon">📢</span>
+                    <span>キャンペーン</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <span id="userPlan" class="plan-badge">Light</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </aside>
+        
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="messages-container">
+                <!-- 会話リスト -->
+                <div class="conversations-panel">
+                    <div class="panel-header">
+                        <h2>会話</h2>
+                        <div class="channel-filters">
+                            <button class="filter-btn active" data-channel="all">すべて</button>
+                            <button class="filter-btn" data-channel="email">📧</button>
+                            <button class="filter-btn" data-channel="line">💚</button>
+                            <button class="filter-btn" data-channel="instagram">📷</button>
+                        </div>
+                    </div>
+                    <div class="conversations-list" id="conversationsList">
+                        <!-- 会話リストがここに表示されます -->
+                    </div>
+                </div>
+                
+                <!-- メッセージ詳細 -->
+                <div class="messages-panel">
+                    <div class="panel-header" id="messageHeader">
+                        <div class="customer-info">
+                            <h3>会話を選択してください</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="messages-thread" id="messagesThread">
+                        <div class="empty-state">
+                            <p>💬</p>
+                            <p>会話を選択してメッセージを表示</p>
+                        </div>
+                    </div>
+                    
+                    <div class="message-input-area" id="messageInputArea" style="display: none;">
+                        <div class="input-toolbar">
+                            <button class="toolbar-btn" onclick="insertTemplate()">📝 テンプレート</button>
+                            <button class="toolbar-btn" onclick="attachFile()">📎 ファイル</button>
+                        </div>
+                        <div class="message-input">
+                            <textarea id="messageText" placeholder="メッセージを入力..." rows="3"></textarea>
+                            <button class="send-btn" onclick="sendMessage()">送信</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 顧客情報パネル -->
+                <div class="customer-panel" id="customerPanel" style="display: none;">
+                    <div class="panel-header">
+                        <h3>顧客情報</h3>
+                        <button class="close-btn" onclick="closeCustomerPanel()">×</button>
+                    </div>
+                    <div class="customer-details" id="customerDetails">
+                        <!-- 顧客詳細がここに表示されます -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- モーダル -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">タイトル</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- モーダルコンテンツ -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/messages.js"></script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/calendar.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Salon Lumière</h1>
+                <p id="salonName">Loading...</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>ダッシュボード</span>
+                </a>
+                <a href="#" class="nav-item" data-page="customers">
+                    <span class="icon">👥</span>
+                    <span>顧客管理</span>
+                </a>
+                <a href="#" class="nav-item" data-page="appointments">
+                    <span class="icon">📅</span>
+                    <span>予約管理</span>
+                </a>
+                <a href="#" class="nav-item" data-page="sales">
+                    <span class="icon">💰</span>
+                    <span>売上管理</span>
+                </a>
+                <a href="#" class="nav-item" data-page="records">
+                    <span class="icon">📋</span>
+                    <span>カルテ</span>
+                </a>
+                <a href="/messages.html" class="nav-item">
+                    <span class="icon">💬</span>
+                    <span>メッセージ</span>
+                </a>
+                <a href="/campaigns.html" class="nav-item">
+                    <span class="icon">📢</span>
+                    <span>キャンペーン</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="icon">⚙️</span>
+                    <span>設定</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <span id="userPlan" class="plan-badge">Light</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </aside>
+        
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- ダッシュボード -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h2>ダッシュボード</h2>
+                    <p>本日の営業状況</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">📅</span>
+                            <span class="stat-title">本日の予約</span>
+                        </div>
+                        <div class="stat-value" id="todayAppointments">0</div>
+                        <div class="stat-label">件</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">💰</span>
+                            <span class="stat-title">本日の売上</span>
+                        </div>
+                        <div class="stat-value">¥<span id="todaySales">0</span></div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">👥</span>
+                            <span class="stat-title">総顧客数</span>
+                        </div>
+                        <div class="stat-value" id="totalCustomers">0</div>
+                        <div class="stat-label">名</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">📈</span>
+                            <span class="stat-title">今月の売上</span>
+                        </div>
+                        <div class="stat-value">¥<span id="monthlySales">0</span></div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>本日の予約</h3>
+                        <div id="todaySchedule" class="schedule-list">
+                            <p class="empty-state">本日の予約はありません</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>最近の顧客</h3>
+                        <div id="recentCustomers" class="customer-list">
+                            <p class="empty-state">データがありません</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 顧客管理 -->
+            <div id="customers" class="page">
+                <div class="page-header">
+                    <h2>顧客管理</h2>
+                    <button class="btn btn-primary" id="addCustomerBtn">
+                        <span>➕</span> 新規顧客登録
+                    </button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="customerSearch" placeholder="名前、電話番号で検索...">
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>顧客名</th>
+                                <th>カナ</th>
+                                <th>電話番号</th>
+                                <th>最終来店</th>
+                                <th>来店回数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">顧客データがありません</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 予約管理 -->
+            <div id="appointments" class="page">
+                <div class="page-header">
+                    <h2>予約管理</h2>
+                    <button class="btn btn-primary" id="addAppointmentBtn">
+                        <span>➕</span> 新規予約
+                    </button>
+                </div>
+                
+                <div id="appointmentCalendar">
+                    <!-- カレンダーがここに表示されます -->
+                </div>
+            </div>
+            
+            <!-- 売上管理 -->
+            <div id="sales" class="page">
+                <div class="page-header">
+                    <h2>売上管理</h2>
+                    <button class="btn btn-primary" id="addSaleBtn">
+                        <span>➕</span> 売上登録
+                    </button>
+                </div>
+                
+                <div class="period-selector">
+                    <button class="period-btn active" data-period="day">日別</button>
+                    <button class="period-btn" data-period="week">週別</button>
+                    <button class="period-btn" data-period="month">月別</button>
+                </div>
+                
+                <div class="sales-summary">
+                    <div class="summary-item">
+                        <span>売上件数</span>
+                        <strong id="salesCount">0件</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>売上合計</span>
+                        <strong>¥<span id="salesTotal">0</span></strong>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>顧客名</th>
+                                <th>サービス</th>
+                                <th>金額</th>
+                                <th>支払方法</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">売上データがありません</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- カルテ -->
+            <div id="records" class="page">
+                <div class="page-header">
+                    <h2>カルテ管理</h2>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="recordSearch" placeholder="顧客名で検索...">
+                </div>
+                
+                <div class="records-list" id="recordsList">
+                    <p class="empty-state">カルテデータがありません</p>
+                </div>
+            </div>
+            
+            <!-- 設定 -->
+            <div id="settings" class="page">
+                <div class="page-header">
+                    <h2>設定</h2>
+                </div>
+                
+                <div class="settings-sections">
+                    <div class="card">
+                        <h3>プロフィール設定</h3>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label>お名前</label>
+                                <input type="text" id="settingsName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>サロン名</label>
+                                <input type="text" id="settingsSalonName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>電話番号</label>
+                                <input type="tel" id="settingsPhone" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </form>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>営業時間設定</h3>
+                        <div id="businessHours">
+                            <!-- 営業時間設定がここに表示されます -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>プラン情報</h3>
+                        <div class="plan-info">
+                            <p>現在のプラン: <strong id="currentPlan">ライトプラン</strong></p>
+                            <p>試用期限: <strong id="trialEnd">-</strong></p>
+                            <button class="btn btn-secondary">プランをアップグレード</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- モーダル -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">タイトル</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- モーダルコンテンツ -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/app-new.js"></script>
+    <script src="/js/calendar.js"></script>
+</body>
+</html>

@@ -10,8 +10,13 @@ const authRoutes = require('./routes/authRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const subscriptionRoutes = require('./routes/subscription');
+const googleCalendarRoutes = require('./routes/googleCalendar');
 const { logRequest } = require('./middleware/auth');
 const config = require('../sms-service/src/config');
+
+// Import services
+const SMSRemindersService = require('./services/smsReminders');
 
 // Initialize express app
 const app = express();
@@ -129,6 +134,11 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/sms', smsRoutes);
+app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/google-calendar', googleCalendarRoutes);
+
+// Public API routes for booking widget
+app.use('/api/public/salons/:salonId', require('./routes/publicBooking'));
 
 // 404 handler for undefined routes
 app.use('*', (req, res) => {

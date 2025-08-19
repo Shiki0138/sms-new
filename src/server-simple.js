@@ -25,6 +25,9 @@ const db = {
   messageTemplates: []
 };
 
+// Make db globally accessible for SMS routes
+app.locals.db = db;
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -73,7 +76,27 @@ const authMiddleware = (req, res, next) => {
 
 // Initialize test data
 async function initTestData() {
-  // Create test user
+  // Create admin user for production
+  const adminHashedPassword = await bcrypt.hash('Skyosai51', 10);
+  const adminUser = {
+    id: uuidv4(),
+    email: 'greenroom51@gmail.com',
+    password: adminHashedPassword,
+    name: '管理者',
+    salonName: 'Salon Lumière',
+    phoneNumber: '090-0000-0000',
+    planType: 'premium',
+    role: 'admin',
+    isActive: true,
+    emailVerified: true,
+    trialEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1年後
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+  
+  db.users.push(adminUser);
+  
+  // Create test user for development
   const hashedPassword = await bcrypt.hash('password123', 10);
   const testUser = {
     id: uuidv4(),
@@ -83,6 +106,7 @@ async function initTestData() {
     salonName: 'テストサロン',
     phoneNumber: '090-1234-5678',
     planType: 'light',
+    role: 'user',
     isActive: true,
     emailVerified: true,
     trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
@@ -306,6 +330,49 @@ async function initTestData() {
     createdAt: new Date(),
     updatedAt: new Date()
   });
+
+  // Create SMS templates for the enhanced SMS system
+  db.messageTemplates.push({
+    id: uuidv4(),
+    userId: testUser.id,
+    name: '予約リマインダーSMS',
+    category: 'reminder',
+    channel: 'sms',
+    content: '{{lastName}}様、明日{{appointmentTime}}からのご予約をお待ちしております。変更がございましたらお早めにご連絡ください。{{salonName}}',
+    variables: ['lastName', 'appointmentTime', 'salonName'],
+    isActive: true,
+    usageCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+
+  db.messageTemplates.push({
+    id: uuidv4(),
+    userId: testUser.id,
+    name: 'キャンペーン告知SMS',
+    category: 'promotional',
+    channel: 'sms',
+    content: '{{firstName}}様、{{salonName}}です。特別キャンペーン実施中！{{serviceName}}が{{discount}}%オフ。ご予約はお早めに。詳細: {{url}}',
+    variables: ['firstName', 'salonName', 'serviceName', 'discount', 'url'],
+    isActive: true,
+    usageCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
+
+  db.messageTemplates.push({
+    id: uuidv4(),
+    userId: testUser.id,
+    name: '顧客復帰SMS',
+    category: 'reengagement',
+    channel: 'sms',
+    content: '{{fullName}}様、{{salonName}}です。お久しぶりです！特別価格でご案内できるメニューがございます。お気軽にお問い合わせください。',
+    variables: ['fullName', 'salonName'],
+    isActive: true,
+    usageCount: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  });
   
   // Create test medical records
   db.medicalRecords.push({
@@ -325,7 +392,10 @@ async function initTestData() {
   });
   
   console.log('Test data initialized');
-  console.log('Test account: test@salon-lumiere.com / password123');
+  console.log('Admin account: greenroom51@gmail.com / [Protected]');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('Test account: test@salon-lumiere.com / password123');
+  }
 }
 
 // API Routes
@@ -1079,6 +1149,14 @@ function personalizeContent(content, customer) {
       new Date(customer.lastVisitDate).toLocaleDateString('ja-JP') : '初回');
 }
 
+// SMS Blast Enhancement Routes
+const smsCampaignRoutes = require('./routes/sms-campaigns');
+const smsBulkEnhancedRoutes = require('./routes/sms-bulk-enhanced');
+
+// Mount SMS enhancement routes
+app.use('/api/sms', authMiddleware, smsCampaignRoutes);
+app.use('/api/sms', authMiddleware, smsBulkEnhancedRoutes);
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -1114,9 +1192,18 @@ async function startServer() {
       console.log(`🔐 Login Page: http://${HOST}:${PORT}/login-new.html`);
       console.log(`📊 Dashboard: http://${HOST}:${PORT}/dashboard.html`);
       console.log(`🏥 Health Check: http://${HOST}:${PORT}/health`);
-      console.log('\n📝 Test Account:');
-      console.log('   Email: test@salon-lumiere.com');
-      console.log('   Password: password123');
+      console.log('\n📱 SMS Blast Enhancement Features:');
+      console.log(`   📋 Campaigns: http://${HOST}:${PORT}/api/sms/campaigns`);
+      console.log(`   📝 Templates: http://${HOST}:${PORT}/api/sms/templates`);
+      console.log(`   🎯 Enhanced Bulk: http://${HOST}:${PORT}/api/sms/bulk`);
+      console.log(`   📊 Service Status: http://${HOST}:${PORT}/api/sms/status`);
+      console.log('\n📝 Admin Account:');
+      console.log('   Email: greenroom51@gmail.com');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('\n📝 Test Account:');
+        console.log('   Email: test@salon-lumiere.com');
+        console.log('   Password: password123');
+      }
     });
     
     // Graceful shutdown

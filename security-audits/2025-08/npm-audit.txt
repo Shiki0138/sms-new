@@ -1,0 +1,32 @@
+# npm audit report
+
+tar-fs  3.0.0 - 3.0.8
+Severity: high
+tar-fs Vulnerable to Link Following and Path Traversal via Extracting a Crafted tar File - https://github.com/advisories/GHSA-pq67-2wwv-3xjx
+tar-fs can extract outside the specified dir with a specific tarball - https://github.com/advisories/GHSA-8cj5-5rvv-wf4v
+fix available via `npm audit fix --force`
+Will install puppeteer@24.16.1, which is a breaking change
+node_modules/tar-fs
+  @puppeteer/browsers  1.4.2 - 2.2.3
+  Depends on vulnerable versions of tar-fs
+  node_modules/@puppeteer/browsers
+    puppeteer  18.2.0 - 22.13.0
+    Depends on vulnerable versions of @puppeteer/browsers
+    Depends on vulnerable versions of puppeteer-core
+    node_modules/puppeteer
+    puppeteer-core  11.0.0 - 22.13.0
+    Depends on vulnerable versions of @puppeteer/browsers
+    Depends on vulnerable versions of ws
+    node_modules/puppeteer-core
+
+ws  8.0.0 - 8.17.0
+Severity: high
+ws affected by a DoS when handling a request with many HTTP headers - https://github.com/advisories/GHSA-3h5v-q93c-6h6q
+fix available via `npm audit fix --force`
+Will install puppeteer@24.16.1, which is a breaking change
+node_modules/ws
+
+5 high severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force

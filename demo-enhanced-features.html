@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Lumière - セキュリティ強化機能デモ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .feature-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin: 15px 0 10px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status.active {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status.inactive {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status.warning {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+        }
+        
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .qr-code {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .qr-code img {
+            max-width: 200px;
+            border: 2px solid #e5e7eb;
+            padding: 10px;
+            background: white;
+        }
+        
+        .monitoring-data {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .audit-log {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .backup-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            margin: 5px 0;
+        }
+        
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .success {
+            color: #10b981;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #667eea;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Salon Lumière - セキュリティ強化機能デモ</h1>
+        
+        <div class="features-grid">
+            <!-- 2要素認証 -->
+            <div class="feature-card">
+                <h2>🔐 2要素認証（2FA）</h2>
+                <div id="2fa-status">
+                    <span class="status inactive">未設定</span>
+                </div>
+                <button onclick="setup2FA()">2FAをセットアップ</button>
+                <div id="2fa-setup" style="display: none;">
+                    <div class="qr-code" id="qr-code"></div>
+                    <input type="text" id="2fa-code" placeholder="6桁の確認コード" maxlength="6">
+                    <button onclick="verify2FA()">確認</button>
+                    <div id="2fa-message"></div>
+                </div>
+            </div>
+            
+            <!-- システムモニタリング -->
+            <div class="feature-card">
+                <h2>📊 リアルタイムモニタリング</h2>
+                <div class="monitoring-data">
+                    <div class="metric">
+                        <span>システムステータス</span>
+                        <span class="status active" id="system-status">健全</span>
+                    </div>
+                    <div class="metric">
+                        <span>CPU使用率</span>
+                        <span id="cpu-usage">--</span>
+                    </div>
+                    <div class="metric">
+                        <span>メモリ使用率</span>
+                        <span id="memory-usage">--</span>
+                    </div>
+                    <div class="metric">
+                        <span>アップタイム</span>
+                        <span id="uptime">--</span>
+                    </div>
+                    <div class="metric">
+                        <span>エラー率</span>
+                        <span id="error-rate">--</span>
+                    </div>
+                </div>
+                <button onclick="refreshMonitoring()">更新</button>
+            </div>
+            
+            <!-- 監査ログ -->
+            <div class="feature-card">
+                <h2>📝 監査ログ</h2>
+                <div id="audit-logs">
+                    <p>最近のアクティビティ：</p>
+                </div>
+                <button onclick="loadAuditLogs()">ログを読み込む</button>
+            </div>
+            
+            <!-- バックアップ管理 -->
+            <div class="feature-card">
+                <h2>💾 バックアップ管理</h2>
+                <div id="backup-list">
+                    <p>利用可能なバックアップ：</p>
+                </div>
+                <button onclick="createBackup()">手動バックアップ作成</button>
+                <button onclick="loadBackups()">バックアップ一覧更新</button>
+            </div>
+            
+            <!-- データ暗号化テスト -->
+            <div class="feature-card">
+                <h2>🔒 データ暗号化</h2>
+                <input type="text" id="encrypt-data" placeholder="暗号化するテキスト">
+                <button onclick="testEncryption()">暗号化テスト</button>
+                <div id="encryption-result" style="margin-top: 15px;"></div>
+            </div>
+            
+            <!-- セキュリティ設定 -->
+            <div class="feature-card">
+                <h2>⚙️ セキュリティ設定</h2>
+                <div class="monitoring-data">
+                    <div class="metric">
+                        <span>レート制限</span>
+                        <span class="status active">有効</span>
+                    </div>
+                    <div class="metric">
+                        <span>セッションタイムアウト</span>
+                        <span>30分</span>
+                    </div>
+                    <div class="metric">
+                        <span>CSRF保護</span>
+                        <span class="status active">有効</span>
+                    </div>
+                    <div class="metric">
+                        <span>XSS保護</span>
+                        <span class="status active">有効</span>
+                    </div>
+                    <div class="metric">
+                        <span>自動バックアップ</span>
+                        <span class="status active">有効</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // APIベースURL
+        const API_URL = 'http://localhost:3002/api';
+        let authToken = null;
+        
+        // 初期化
+        async function init() {
+            // テストユーザーでログイン
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@salon-lumiere.com',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.token) {
+                    authToken = data.token;
+                    console.log('ログイン成功');
+                    
+                    // 初期データ読み込み
+                    refreshMonitoring();
+                    loadAuditLogs();
+                    loadBackups();
+                }
+            } catch (error) {
+                console.error('ログインエラー:', error);
+            }
+        }
+        
+        // 2FAセットアップ
+        async function setup2FA() {
+            try {
+                const response = await fetch(`${API_URL}/auth/2fa/setup`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.qrCode) {
+                    document.getElementById('2fa-setup').style.display = 'block';
+                    document.getElementById('qr-code').innerHTML = `<img src="${data.qrCode}" alt="2FA QR Code">`;
+                    document.getElementById('2fa-message').innerHTML = `
+                        <div class="success">QRコードをGoogle Authenticatorでスキャンしてください</div>
+                        <div style="margin-top: 10px;">バックアップコード: ${data.backupCodes.join(', ')}</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('2FAセットアップエラー:', error);
+            }
+        }
+        
+        // 2FA確認
+        async function verify2FA() {
+            const code = document.getElementById('2fa-code').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/2fa/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: code })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('2fa-status').innerHTML = '<span class="status active">有効</span>';
+                    document.getElementById('2fa-message').innerHTML = '<div class="success">2FAが有効になりました！</div>';
+                } else {
+                    document.getElementById('2fa-message').innerHTML = '<div class="error">無効なコードです</div>';
+                }
+            } catch (error) {
+                console.error('2FA確認エラー:', error);
+            }
+        }
+        
+        // モニタリングデータ更新
+        async function refreshMonitoring() {
+            try {
+                const response = await fetch(`${API_URL}/monitoring/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                // システムステータス
+                const statusElement = document.getElementById('system-status');
+                statusElement.textContent = data.current.status === 'healthy' ? '健全' : 
+                                          data.current.status === 'degraded' ? '警告' : '異常';
+                statusElement.className = data.current.status === 'healthy' ? 'status active' : 
+                                        data.current.status === 'degraded' ? 'status warning' : 'status inactive';
+                
+                // メトリクス更新
+                document.getElementById('cpu-usage').textContent = 
+                    `${data.current.system.cpu?.usage?.toFixed(1) || '--'}%`;
+                document.getElementById('memory-usage').textContent = 
+                    `${data.current.system.memory?.usage?.toFixed(1) || '--'}%`;
+                document.getElementById('uptime').textContent = 
+                    `${data.uptime?.percentage?.toFixed(1) || '--'}%`;
+                document.getElementById('error-rate').textContent = 
+                    `${data.current.application.errors?.rate?.toFixed(1) || '0'}%`;
+                    
+            } catch (error) {
+                console.error('モニタリングエラー:', error);
+            }
+        }
+        
+        // 監査ログ読み込み
+        async function loadAuditLogs() {
+            try {
+                const response = await fetch(`${API_URL}/security/audit-logs?limit=5`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                const logsContainer = document.getElementById('audit-logs');
+                
+                logsContainer.innerHTML = '<p>最近のアクティビティ：</p>';
+                
+                if (data.logs && data.logs.length > 0) {
+                    data.logs.forEach(log => {
+                        const logElement = document.createElement('div');
+                        logElement.className = 'audit-log';
+                        logElement.innerHTML = `
+                            <strong>${log.eventType}</strong><br>
+                            ${new Date(log.timestamp).toLocaleString('ja-JP')}<br>
+                            IP: ${log.ip || 'N/A'}
+                        `;
+                        logsContainer.appendChild(logElement);
+                    });
+                } else {
+                    logsContainer.innerHTML += '<p>ログがありません</p>';
+                }
+            } catch (error) {
+                console.error('監査ログエラー:', error);
+            }
+        }
+        
+        // バックアップ一覧読み込み
+        async function loadBackups() {
+            try {
+                const response = await fetch(`${API_URL}/backup/list?limit=5`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                const backupContainer = document.getElementById('backup-list');
+                
+                backupContainer.innerHTML = '<p>利用可能なバックアップ：</p>';
+                
+                if (data.backups && data.backups.length > 0) {
+                    data.backups.forEach(backup => {
+                        const backupElement = document.createElement('div');
+                        backupElement.className = 'backup-item';
+                        backupElement.innerHTML = `
+                            <div>
+                                <strong>${backup.type}</strong><br>
+                                ${new Date(backup.timestamp).toLocaleString('ja-JP')}<br>
+                                サイズ: ${(backup.dataSize / 1024).toFixed(1)} KB
+                            </div>
+                            <button onclick="restoreBackup('${backup.id}')">復元</button>
+                        `;
+                        backupContainer.appendChild(backupElement);
+                    });
+                } else {
+                    backupContainer.innerHTML += '<p>バックアップがありません</p>';
+                }
+            } catch (error) {
+                console.error('バックアップ読み込みエラー:', error);
+            }
+        }
+        
+        // バックアップ作成
+        async function createBackup() {
+            try {
+                const response = await fetch(`${API_URL}/backup/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        description: 'Manual backup from demo'
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('バックアップが作成されました');
+                    loadBackups();
+                }
+            } catch (error) {
+                console.error('バックアップ作成エラー:', error);
+            }
+        }
+        
+        // 暗号化テスト
+        async function testEncryption() {
+            const data = document.getElementById('encrypt-data').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/test/encrypt`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data })
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('encryption-result').innerHTML = `
+                    <div><strong>元データ:</strong> ${result.original}</div>
+                    <div style="word-break: break-all;"><strong>暗号化:</strong> ${result.encrypted}</div>
+                    <div><strong>復号化:</strong> ${result.decrypted}</div>
+                    <div><strong>一致:</strong> ${result.match ? '✅' : '❌'}</div>
+                `;
+            } catch (error) {
+                console.error('暗号化テストエラー:', error);
+            }
+        }
+        
+        // 定期的な更新
+        setInterval(refreshMonitoring, 30000); // 30秒ごと
+        
+        // 初期化実行
+        init();
+    </script>
+</body>
+</html>

@@ -50,19 +50,10 @@ jobs:
           vercel link --yes --repo --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} || true
       
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        continue-on-error: true
-        
-      - name: Deploy to Vercel (Direct)
-        if: failure()
+      - name: Deploy to Vercel (Direct Method)
         run: |
-          echo "Build failed, trying direct deploy..."
+          echo "Using direct deploy method to avoid configuration conflicts..."
           vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-      
-      - name: Deploy to Vercel (Prebuilt)
-        if: success()
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
   deploy-preview:
     runs-on: ubuntu-latest

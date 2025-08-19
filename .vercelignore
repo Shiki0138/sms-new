@@ -1,0 +1,22 @@
+# Ignore files not needed for deployment
+node_modules
+.git
+.gitignore
+.env.local
+.env.development
+.env.test
+coverage
+tests
+dist
+*.log
+.DS_Store
+index.html
+src/frontend/index.html
+*.test.js
+*.spec.js
+.github
+docs
+scripts/test-*.js
+memory/agents/*
+memory/sessions/*
+.claude-flow

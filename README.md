@@ -1,6 +1,9 @@
-# SMS Management System
+# Salon Lumière - SMS Management System
 
-A comprehensive, enterprise-grade SMS management system with multi-provider support, advanced queuing, tenant isolation, and real-time analytics.
+A comprehensive, enterprise-grade SMS management system for beauty salons with elegant UI/UX design, multi-provider support, advanced queuing, and real-time analytics.
+
+[![Deploy Status](https://github.com/Shiki0138/sms-new/actions/workflows/deploy.yml/badge.svg)](https://github.com/Shiki0138/sms-new/actions)
+[![Live Demo](https://img.shields.io/badge/demo-live-green)](https://sms-new.vercel.app)
 
 ## 🚀 Features
 

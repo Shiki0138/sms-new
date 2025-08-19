@@ -33,8 +33,22 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
       
+      - name: Debug Vercel Configuration
+        run: |
+          echo "VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}"
+          echo "VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}"
+          echo "Token is set: ${{ secrets.VERCEL_TOKEN != '' }}"
+          
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        continue-on-error: true
+        
+      - name: Alternative - Link to existing project
+        if: failure()
+        run: |
+          echo "Trying alternative method..."
+          vercel link --yes --repo --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }} || true
       
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}

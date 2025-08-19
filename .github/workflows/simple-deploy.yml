@@ -1,0 +1,39 @@
+name: Simple Deploy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      
+      - name: Deploy to Vercel (Simple Method)
+        run: |
+          echo "Deploying with simple method..."
+          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --name sms-new || \
+          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --name salon-lumiere || \
+          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Deployment Status
+        run: |
+          echo "✅ Deployment completed!"
+          echo "🌐 Check your site at: https://sms-new.vercel.app"

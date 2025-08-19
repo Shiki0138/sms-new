@@ -1,0 +1,46 @@
+name: Fallback Deploy
+
+# 手動実行のみ
+on:
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deploy even if other methods work'
+        required: false
+        default: 'false'
+
+jobs:
+  fallback-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+        continue-on-error: true
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      
+      - name: Create temporary project
+        run: |
+          echo "Creating new Vercel project as fallback..."
+          # ランダムな名前でプロジェクトを作成
+          RANDOM_SUFFIX=$(date +%s)
+          PROJECT_NAME="sms-new-${RANDOM_SUFFIX}"
+          
+          echo "Deploying as: ${PROJECT_NAME}"
+          vercel --prod --yes --name "${PROJECT_NAME}" --token=${{ secrets.VERCEL_TOKEN }}
+          
+          echo "✅ Deployed successfully!"
+          echo "📝 Note: This created a new project. You may want to:"
+          echo "   1. Update your DNS/domain settings in Vercel"
+          echo "   2. Delete the old project if no longer needed"
+          echo "   3. Update GitHub secrets with new project ID"

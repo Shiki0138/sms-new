@@ -27,10 +27,10 @@ jobs:
       - name: Deploy to Vercel (Simple Method)
         run: |
           echo "Deploying with simple method..."
-          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --name sms-new || \
-          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --name salon-lumiere || \
-          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --yes
         env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       
       - name: Deployment Status

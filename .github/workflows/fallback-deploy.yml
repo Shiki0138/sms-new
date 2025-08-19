@@ -37,7 +37,9 @@ jobs:
           PROJECT_NAME="sms-new-${RANDOM_SUFFIX}"
           
           echo "Deploying as: ${PROJECT_NAME}"
-          vercel --prod --yes --name "${PROJECT_NAME}" --token=${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --yes --name "${PROJECT_NAME}"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           
           echo "✅ Deployed successfully!"
           echo "📝 Note: This created a new project. You may want to:"

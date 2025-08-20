@@ -14,11 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Check authentication
 function checkAuth() {
+    // Prevent multiple auth checks
+    if (window.authCheckInProgress) return;
+    window.authCheckInProgress = true;
+    
     authToken = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
     const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
     
     if (!authToken || !userStr) {
-        window.location.href = '/login-new.html';
+        window.location.href = '/login.html';
         return;
     }
     

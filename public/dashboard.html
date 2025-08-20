@@ -710,14 +710,16 @@
             localStorage.removeItem('salon_user');
             sessionStorage.removeItem('salon_token');
             sessionStorage.removeItem('salon_user');
-            window.location.href = '/login-elegant.html';
+            window.location.href = '/login.html';
         });
 
-        // Check authentication
+        // Check authentication - only if not already handled by app-new.js
         window.addEventListener('load', () => {
+            if (window.authCheckInProgress) return;
+            
             const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
             if (!token) {
-                window.location.href = '/login-elegant.html';
+                window.location.href = '/login.html';
             }
         });
 

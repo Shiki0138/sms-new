@@ -117,8 +117,12 @@
       "destination": "/public/:path*.js"
     },
     {
+      "source": "/api/dashboard/:path*",
+      "destination": "/api"
+    },
+    {
       "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "destination": "/api"
     }
   ]
 }

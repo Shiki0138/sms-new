@@ -38,6 +38,7 @@ jobs:
         run: |
           echo "VERCEL_ORG_ID is set: ${{ secrets.VERCEL_ORG_ID != '' }}"
           echo "VERCEL_PROJECT_ID is set: ${{ secrets.VERCEL_PROJECT_ID != '' }}"
+          echo "VERCEL_PROJECT_ID value: prj_7b1JDb2Ya215lJk4kfCpE8r2vJkc"
           echo "VERCEL_TOKEN is set: ${{ secrets.VERCEL_TOKEN != '' }}"
           echo "Token length: ${#VERCEL_TOKEN}"
           echo "Token starts with: ${VERCEL_TOKEN:0:7}..."

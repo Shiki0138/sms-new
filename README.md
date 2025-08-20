@@ -5,6 +5,8 @@ A comprehensive, enterprise-grade SMS management system for beauty salons with e
 [![Deploy Status](https://github.com/Shiki0138/sms-new/actions/workflows/deploy.yml/badge.svg)](https://github.com/Shiki0138/sms-new/actions)
 [![Live Demo](https://img.shields.io/badge/demo-live-green)](https://sms-new.vercel.app)
 
+**Project ID**: `prj_7b1JDb2Ya215lJk4kfCpE8r2vJkc`
+
 ## 🚀 Features
 
 - **Multi-Provider Support**: Twilio, AWS SNS with extensible architecture
@@ -158,6 +160,12 @@ docker run -d -p 3001:3001 --env-file .env sms-system
 docker-compose up -d
 ```
 
+### Vercel Deployment
+```bash
+# With correct project ID
+VERCEL_PROJECT_ID="prj_7b1JDb2Ya215lJk4kfCpE8r2vJkc" vercel --prod
+```
+
 ### Production Server
 ```bash
 # Install PM2
@@ -273,6 +281,7 @@ redis-cli ping
 
 - [System Architecture](docs/SMS_ARCHITECTURE.md)
 - [Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+- [Vercel Project Update](docs/VERCEL_PROJECT_UPDATE.md)
 - [Complete System Guide](docs/SMS_SYSTEM_COMPLETE.md)
 - [API Documentation](http://localhost:3001/api) (when running)
 

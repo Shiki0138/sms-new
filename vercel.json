@@ -13,7 +13,7 @@
     "api/auth/login.js": {
       "maxDuration": 10
     },
-    "api/dashboard.js": {
+    "api/health.js": {
       "maxDuration": 10
     }
   },

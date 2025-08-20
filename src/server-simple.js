@@ -1,6 +1,29 @@
 #!/usr/bin/env node
 
 require('dotenv').config();
+
+// Environment variable validation
+const requiredEnvVars = ['JWT_SECRET', 'ADMIN_PASSWORD', 'ADMIN_EMAIL'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:', missingEnvVars.join(', '));
+  console.error('Please create a .env file with all required variables.');
+  console.error('See .env.example for reference.');
+  process.exit(1);
+}
+
+// Validate JWT_SECRET strength
+if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 32) {
+  console.error('❌ JWT_SECRET must be at least 32 characters long for security.');
+  process.exit(1);
+}
+
+// Validate ADMIN_PASSWORD strength
+if (process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length < 8) {
+  console.error('❌ ADMIN_PASSWORD must be at least 8 characters long.');
+  process.exit(1);
+}
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -8,6 +31,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const { body, validationResult } = require('express-validator');
 
 // Create Express app
 const app = express();
@@ -44,12 +68,82 @@ app.use(helmet({
     }
   }
 }));
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : ['http://localhost:3000', 'http://localhost:3001'];
+    
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Validation error handler
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ 
+      message: 'Validation error',
+      errors: errors.array().map(err => ({
+        field: err.param,
+        message: err.msg
+      }))
+    });
+  }
+  next();
+};
+
+// Common validation rules
+const validationRules = {
+  email: body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Valid email is required'),
+  
+  password: body('password')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/[A-Z]/)
+    .withMessage('Password must contain at least one uppercase letter')
+    .matches(/[a-z]/)
+    .withMessage('Password must contain at least one lowercase letter')
+    .matches(/[0-9]/)
+    .withMessage('Password must contain at least one number'),
+  
+  phoneNumber: body('phoneNumber')
+    .optional()
+    .matches(/^(\+81|0)[0-9]{9,10}$/)
+    .withMessage('Invalid Japanese phone number format'),
+  
+  name: body('name')
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('Name must be between 1 and 100 characters'),
+  
+  salonName: body('salonName')
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .withMessage('Salon name must be between 1 and 200 characters')
+};
 
 // Auth middleware
 const authMiddleware = (req, res, next) => {
@@ -60,7 +154,7 @@ const authMiddleware = (req, res, next) => {
   }
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'salon-lumiere-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = db.users.find(u => u.id === decoded.id);
     
     if (!user || !user.isActive) {
@@ -77,10 +171,10 @@ const authMiddleware = (req, res, next) => {
 // Initialize test data
 async function initTestData() {
   // Create admin user for production
-  const adminHashedPassword = await bcrypt.hash('Skyosai51', 10);
+  const adminHashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
   const adminUser = {
     id: uuidv4(),
-    email: 'greenroom51@gmail.com',
+    email: process.env.ADMIN_EMAIL,
     password: adminHashedPassword,
     name: '管理者',
     salonName: 'Salon Lumière',
@@ -392,7 +486,7 @@ async function initTestData() {
   });
   
   console.log('Test data initialized');
-  console.log('Admin account: greenroom51@gmail.com / [Protected]');
+  console.log(`Admin account: ${process.env.ADMIN_EMAIL} / [Protected]`);
   if (process.env.NODE_ENV !== 'production') {
     console.log('Test account: test@salon-lumiere.com / password123');
   }
@@ -432,7 +526,7 @@ app.post('/api/auth/register', async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      process.env.JWT_SECRET || 'salon-lumiere-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
     
@@ -471,7 +565,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Generate token
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      process.env.JWT_SECRET || 'salon-lumiere-secret-key',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
     
@@ -1164,10 +1258,40 @@ app.get('/health', (req, res) => {
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  // Log security-related errors with more detail
+  if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+    console.error(`🔒 Security Error [${err.name}]:`, {
+      message: err.message,
+      timestamp: new Date().toISOString(),
+      ip: req.ip,
+      userAgent: req.get('User-Agent')
+    });
+    return res.status(401).json({
+      message: 'Authentication failed',
+      error: process.env.NODE_ENV === 'development' ? err.message : 'Invalid or expired token'
+    });
+  }
+  
+  // Log general errors
+  console.error('🚨 Application Error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    timestamp: new Date().toISOString(),
+    method: req.method,
+    url: req.originalUrl,
+    ip: req.ip
+  });
+  
+  // Don't leak sensitive information in production
+  const message = process.env.NODE_ENV === 'production' ? 
+    'Internal server error' : err.message || 'Internal server error';
+    
   res.status(err.status || 500).json({
-    message: err.message || 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err : {}
+    message,
+    error: process.env.NODE_ENV === 'development' ? {
+      stack: err.stack,
+      name: err.name
+    } : {}
   });
 });
 
@@ -1198,7 +1322,7 @@ async function startServer() {
       console.log(`   🎯 Enhanced Bulk: http://${HOST}:${PORT}/api/sms/bulk`);
       console.log(`   📊 Service Status: http://${HOST}:${PORT}/api/sms/status`);
       console.log('\n📝 Admin Account:');
-      console.log('   Email: greenroom51@gmail.com');
+      console.log(`   Email: ${process.env.ADMIN_EMAIL}`);
       if (process.env.NODE_ENV !== 'production') {
         console.log('\n📝 Test Account:');
         console.log('   Email: test@salon-lumiere.com');

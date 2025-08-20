@@ -39,6 +39,12 @@ jobs:
           echo "VERCEL_ORG_ID is set: ${{ secrets.VERCEL_ORG_ID != '' }}"
           echo "VERCEL_PROJECT_ID is set: ${{ secrets.VERCEL_PROJECT_ID != '' }}"
           echo "VERCEL_TOKEN is set: ${{ secrets.VERCEL_TOKEN != '' }}"
+          echo "Token length: ${#VERCEL_TOKEN}"
+          echo "Token starts with: ${VERCEL_TOKEN:0:7}..."
+          
+          # Test token validity
+          echo "Testing token validity..."
+          npx vercel whoami || echo "Token validation failed"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

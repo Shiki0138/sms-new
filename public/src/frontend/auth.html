@@ -80,8 +80,8 @@
                 }
                 
                 const data = await response.json();
-                localStorage.setItem('sms_token', data.token);
-                localStorage.setItem('sms_user', JSON.stringify(data.user));
+                localStorage.setItem('salon_token', data.token);
+                localStorage.setItem('salon_user', JSON.stringify(data.user));
                 
                 // ダッシュボードへリダイレクト
                 window.location.href = '/';

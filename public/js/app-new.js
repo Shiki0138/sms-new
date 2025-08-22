@@ -18,20 +18,34 @@ function checkAuth() {
     console.log('Current path:', window.location.pathname);
     
     // Skip if running on login page
-    if (window.location.pathname === '/login.html') {
-        console.log('On login page, skipping auth check');
+    if (window.location.pathname === '/login.html' || 
+        window.location.pathname.includes('/login') ||
+        window.location.pathname === '/register.html') {
+        console.log('On auth page, skipping auth check');
         return;
     }
     
-    // Prevent multiple auth checks
+    // Prevent multiple auth checks with timeout
     if (window.authCheckInProgress) {
         console.log('Auth check already in progress, skipping');
         return;
     }
     window.authCheckInProgress = true;
+    
+    // Clear any previous timeout
+    if (window.authCheckTimeout) {
+        clearTimeout(window.authCheckTimeout);
+    }
+    
+    // Reset auth check flag after delay to prevent permanent lock
+    window.authCheckTimeout = setTimeout(() => {
+        window.authCheckInProgress = false;
+        console.log('Auth check flag reset due to timeout');
+    }, 5000);
+    
     console.log('Checking authentication...');
     
-    // Check multiple possible token keys
+    // Check multiple possible token keys with enhanced validation
     authToken = localStorage.getItem('salon_token') || 
                 localStorage.getItem('salon_accessToken') || 
                 sessionStorage.getItem('salon_token') || 
@@ -42,12 +56,41 @@ function checkAuth() {
     console.log('Auth token found:', !!authToken);
     console.log('User data found:', !!userStr);
     
-    if (!authToken || !userStr) {
-        console.log('No token or user data, redirecting to login');
-        // Only redirect if not already on login page
-        if (window.location.pathname !== '/login.html') {
-            window.location.href = '/login.html';
+    // Enhanced validation - check token format and user data structure
+    let isValidToken = false;
+    let isValidUser = false;
+    
+    if (authToken && authToken.length > 10) {
+        isValidToken = true;
+    }
+    
+    if (userStr) {
+        try {
+            const userData = JSON.parse(userStr);
+            if (userData && userData.id && userData.name) {
+                isValidUser = true;
+            }
+        } catch (e) {
+            console.warn('Invalid user data format:', e);
         }
+    }
+    
+    if (!isValidToken || !isValidUser) {
+        console.log('Invalid or missing authentication data, redirecting to login');
+        // Clear invalid data
+        localStorage.removeItem('salon_token');
+        localStorage.removeItem('salon_accessToken');
+        localStorage.removeItem('salon_user');
+        sessionStorage.removeItem('salon_token');
+        sessionStorage.removeItem('salon_accessToken');
+        sessionStorage.removeItem('salon_user');
+        
+        // Add delay to prevent redirect loops
+        setTimeout(() => {
+            if (window.location.pathname !== '/login.html') {
+                window.location.href = '/login.html';
+            }
+        }, 100);
         return;
     }
     
@@ -58,37 +101,74 @@ function checkAuth() {
         
         console.log('User parsed successfully:', currentUser);
         console.log('Updating user info in UI...');
+        
+        // Clear the progress flag on success
+        window.authCheckInProgress = false;
+        if (window.authCheckTimeout) {
+            clearTimeout(window.authCheckTimeout);
+        }
+        
         updateUserInfo();
         
-        // Load appropriate page content
-        if (window.location.pathname === '/dashboard.html') {
-            console.log('Loading dashboard...');
-            loadDashboard();
-        }
+        // Load appropriate page content with delay for UI stability
+        setTimeout(() => {
+            if (window.location.pathname === '/dashboard.html' || 
+                window.location.pathname.includes('/dashboard')) {
+                console.log('Loading dashboard...');
+                loadDashboard();
+            }
+        }, 50);
+        
     } catch (error) {
         console.error('Auth error:', error);
+        window.authCheckInProgress = false;
+        if (window.authCheckTimeout) {
+            clearTimeout(window.authCheckTimeout);
+        }
         logout();
     }
 }
 
 // Update user info in UI
 function updateUserInfo() {
-    // Safely update UI elements if they exist
-    const userName = document.getElementById('userName');
-    const salonName = document.getElementById('salonName');
-    const userPlan = document.getElementById('userPlan');
+    if (!currentUser) {
+        console.warn('No current user data to update UI');
+        return;
+    }
     
-    if (userName) userName.textContent = currentUser.name;
-    if (salonName) salonName.textContent = currentUser.salonName;
-    if (userPlan) userPlan.textContent = currentUser.planType.toUpperCase();
-    
-    // Also update any other user info displays
-    const userNameDisplays = document.querySelectorAll('.user-name');
-    userNameDisplays.forEach(el => {
-        if (el.textContent !== currentUser.name) {
-            el.textContent = currentUser.name;
+    try {
+        // Safely update UI elements if they exist
+        const userName = document.getElementById('userName');
+        const salonName = document.getElementById('salonName');
+        const userPlan = document.getElementById('userPlan');
+        
+        if (userName && currentUser.name) {
+            userName.textContent = currentUser.name;
         }
-    });
+        if (salonName && currentUser.salonName) {
+            salonName.textContent = currentUser.salonName;
+        }
+        if (userPlan && currentUser.planType) {
+            userPlan.textContent = currentUser.planType.toUpperCase();
+        }
+        
+        // Also update any other user info displays with error protection
+        const userNameDisplays = document.querySelectorAll('.user-name');
+        userNameDisplays.forEach(el => {
+            try {
+                if (el && currentUser.name && el.textContent !== currentUser.name) {
+                    el.textContent = currentUser.name;
+                }
+            } catch (error) {
+                console.warn('Error updating user name display:', error);
+            }
+        });
+        
+        console.log('User info updated successfully');
+    } catch (error) {
+        console.error('Error updating user info:', error);
+        // Don't fail completely on UI update errors
+    }
 }
 
 // Setup event listeners
@@ -155,47 +235,79 @@ function navigateToPage(page) {
     }
 }
 
-// API request helper
+// API request helper with enhanced error handling
 async function apiRequest(endpoint, options = {}) {
-    const defaultOptions = {
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
+    try {
+        if (!authToken) {
+            throw new Error('No authentication token available');
         }
-    };
-    
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-        ...defaultOptions,
-        ...options,
-        headers: {
-            ...defaultOptions.headers,
-            ...options.headers
+        
+        const defaultOptions = {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000 // 10 second timeout
+        };
+        
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            ...defaultOptions,
+            ...options,
+            headers: {
+                ...defaultOptions.headers,
+                ...options.headers
+            }
+        });
+        
+        if (response.status === 401) {
+            console.warn('Authentication failed, logging out');
+            logout();
+            throw new Error('Unauthorized');
         }
-    });
-    
-    if (response.status === 401) {
-        logout();
-        throw new Error('Unauthorized');
+        
+        if (!response.ok) {
+            let errorMessage = 'API request failed';
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } catch (parseError) {
+                console.warn('Could not parse error response:', parseError);
+                errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error(`API request to ${endpoint} failed:`, error);
+        
+        // Don't re-throw network errors immediately, allow retry logic
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            console.warn('Network error detected, API may be unavailable');
+        }
+        
+        throw error;
     }
-    
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'API request failed');
-    }
-    
-    return response.json();
 }
 
-// Load dashboard
+// Load dashboard with graceful error handling
 async function loadDashboard() {
     try {
+        console.log('Loading dashboard data...');
         const data = await apiRequest('/dashboard/summary');
         
-        // Update stats
-        document.getElementById('todayAppointments').textContent = data.today.appointmentCount;
-        document.getElementById('todaySales').textContent = data.today.sales.total.toLocaleString();
-        document.getElementById('totalCustomers').textContent = data.customers.total;
-        document.getElementById('monthlySales').textContent = data.thisMonth.sales.total.toLocaleString();
+        // Safely update stats with null checks
+        const updateStat = (id, value, fallback = '0') => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value !== undefined && value !== null ? value : fallback;
+            }
+        };
+        
+        updateStat('todayAppointments', data?.today?.appointmentCount);
+        updateStat('todaySales', data?.today?.sales?.total?.toLocaleString());
+        updateStat('totalCustomers', data?.customers?.total);
+        updateStat('monthlySales', data?.thisMonth?.sales?.total?.toLocaleString());
         
         // Update today's schedule
         const scheduleHtml = data.today.appointments.length > 0
@@ -856,13 +968,33 @@ function showError(message) {
 }
 
 function logout() {
+    console.log('Logging out user...');
+    
+    // Clear all authentication data
     localStorage.removeItem('salon_token');
     localStorage.removeItem('salon_user');
     localStorage.removeItem('salon_accessToken');
     sessionStorage.removeItem('salon_token');
     sessionStorage.removeItem('salon_user');
     sessionStorage.removeItem('salon_accessToken');
-    window.location.href = '/login.html';
+    
+    // Reset global variables
+    currentUser = null;
+    authToken = null;
+    window.authToken = null;
+    window.authCheckInProgress = false;
+    
+    // Clear any pending timeouts
+    if (window.authCheckTimeout) {
+        clearTimeout(window.authCheckTimeout);
+    }
+    
+    // Redirect to login with slight delay to ensure cleanup
+    setTimeout(() => {
+        if (window.location.pathname !== '/login.html') {
+            window.location.href = '/login.html';
+        }
+    }, 50);
 }
 
 // Global functions for onclick handlers

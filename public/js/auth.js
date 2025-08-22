@@ -23,13 +23,14 @@ class AuthManager {
      * Load user data from localStorage
      */
     loadUserFromStorage() {
-        const userData = localStorage.getItem('user');
+        const userData = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
         if (userData) {
             try {
                 this.user = JSON.parse(userData);
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
-                localStorage.removeItem('user');
+                localStorage.removeItem('salon_user');
+                sessionStorage.removeItem('salon_user');
             }
         }
     }
@@ -56,7 +57,7 @@ class AuthManager {
      * Check authentication status on page load
      */
     checkAuthOnLoad() {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
         
         if (token && this.user) {
             // User is logged in, verify token validity
@@ -102,10 +103,11 @@ class AuthManager {
         try {
             const response = await api.login(email, password);
             
-            // Store tokens and user data
-            api.setToken(response.accessToken);
-            localStorage.setItem('refreshToken', response.refreshToken);
-            localStorage.setItem('user', JSON.stringify(response.user));
+            // Store tokens and user data (統一キー使用)
+            const token = response.accessToken || response.token;
+            api.setToken(token);
+            localStorage.setItem('salon_token', token);
+            localStorage.setItem('salon_user', JSON.stringify(response.user));
             
             this.user = response.user;
             

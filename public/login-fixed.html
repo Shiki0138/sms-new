@@ -202,9 +202,11 @@
                     successMessage.textContent = 'ログイン成功！ダッシュボードへ移動中...';
                     successMessage.style.display = 'block';
                     
-                    // トークンを保存
-                    if (data.accessToken) {
-                        localStorage.setItem('token', data.accessToken);
+                    // トークンを保存（統一キー名使用）
+                    if (data.accessToken || data.token) {
+                        const token = data.accessToken || data.token;
+                        localStorage.setItem('salon_token', token);
+                        localStorage.setItem('salon_user', JSON.stringify(data.user));
                     }
                     
                     // ダッシュボードへリダイレクト
@@ -228,7 +230,7 @@
         
         // ページ読み込み時にトークンをチェック
         window.addEventListener('load', () => {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
             if (token) {
                 // 既にログイン済みの場合はダッシュボードへ
                 window.location.href = '/dashboard.html';

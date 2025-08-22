@@ -721,20 +721,8 @@
             });
         }
 
-        // Authentication is handled by app-new.js
-        // This is a fallback check only
-        window.addEventListener('DOMContentLoaded', () => {
-            // Give app-new.js time to handle auth
-            setTimeout(() => {
-                if (!window.authCheckInProgress && !window.authToken) {
-                    const token = localStorage.getItem('salon_token') || 
-                                 sessionStorage.getItem('salon_token');
-                    if (!token) {
-                        window.location.href = '/login.html';
-                    }
-                }
-            }, 100);
-        });
+        // Authentication is fully handled by app-new.js
+        // Removing fallback to prevent conflicts and race conditions
 
         // Add hover effect to cards
         document.querySelectorAll('.stat-card, .appointment-card').forEach(card => {
@@ -748,7 +736,5 @@
         });
     </script>
     
-    <!-- Load app-new.js for authentication and API handling -->
-    <script src="/js/app-new.js"></script>
 </body>
 </html>

@@ -84,10 +84,10 @@
                 
                 // Store tokens
                 console.log('トークン保存中...');
-                localStorage.setItem('sms_token', data.accessToken);
-                localStorage.setItem('sms_user', JSON.stringify(data.user));
+                localStorage.setItem('salon_token', data.accessToken);
+                localStorage.setItem('salon_user', JSON.stringify(data.user));
                 
-                console.log('保存されたトークン:', localStorage.getItem('sms_token'));
+                console.log('保存されたトークン:', localStorage.getItem('salon_token'));
                 
                 // Redirect to dashboard
                 console.log('ダッシュボードへリダイレクト中...');

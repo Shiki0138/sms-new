@@ -4,7 +4,7 @@ class SMSApp {
         // 本番環境のAPIエンドポイント - 同じドメインのAPIを使用
         this.apiUrl = '/api';
         this.currentUser = null;
-        this.token = localStorage.getItem('sms_token');
+        this.token = localStorage.getItem('salon_token');
         this.init();
     }
 
@@ -60,7 +60,7 @@ class SMSApp {
                 });
                 
                 if (!response.ok) {
-                    localStorage.removeItem('sms_token');
+                    localStorage.removeItem('salon_token');
                     window.location.href = '/login';
                 }
             } catch (error) {
@@ -88,7 +88,7 @@ class SMSApp {
 
         if (!response.ok) {
             if (response.status === 401) {
-                localStorage.removeItem('sms_token');
+                localStorage.removeItem('salon_token');
                 window.location.href = '/login';
             }
             throw new Error(`API call failed: ${response.statusText}`);
@@ -402,8 +402,8 @@ class SMSApp {
                 throw new Error(data.error || 'ログインに失敗しました');
             }
             
-            localStorage.setItem('sms_token', data.token);
-            localStorage.setItem('sms_user', JSON.stringify(data.user));
+            localStorage.setItem('salon_token', data.token);
+            localStorage.setItem('salon_user', JSON.stringify(data.user));
             window.location.href = '/';
         } catch (error) {
             console.error('Login error:', error);

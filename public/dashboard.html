@@ -674,6 +674,8 @@
         </div>
     </main>
 
+    <!-- Include app-new.js for authentication and API handling -->
+    <script src="/js/app-new.js"></script>
     <script>
         // Mobile menu toggle
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -704,23 +706,34 @@
             });
         });
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('salon_token');
-            localStorage.removeItem('salon_user');
-            sessionStorage.removeItem('salon_token');
-            sessionStorage.removeItem('salon_user');
-            window.location.href = '/login.html';
-        });
-
-        // Check authentication - only if not already handled by app-new.js
-        window.addEventListener('load', () => {
-            if (window.authCheckInProgress) return;
-            
-            const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
-            if (!token) {
+        // Logout - handled by app-new.js, this is a fallback
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn && !logoutBtn.hasAttribute('data-logout-handler')) {
+            logoutBtn.setAttribute('data-logout-handler', 'true');
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('salon_token');
+                localStorage.removeItem('salon_user');
+                localStorage.removeItem('salon_accessToken');
+                sessionStorage.removeItem('salon_token');
+                sessionStorage.removeItem('salon_user');
+                sessionStorage.removeItem('salon_accessToken');
                 window.location.href = '/login.html';
-            }
+            });
+        }
+
+        // Authentication is handled by app-new.js
+        // This is a fallback check only
+        window.addEventListener('DOMContentLoaded', () => {
+            // Give app-new.js time to handle auth
+            setTimeout(() => {
+                if (!window.authCheckInProgress && !window.authToken) {
+                    const token = localStorage.getItem('salon_token') || 
+                                 sessionStorage.getItem('salon_token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                    }
+                }
+            }, 100);
         });
 
         // Add hover effect to cards
@@ -734,5 +747,8 @@
             });
         });
     </script>
+    
+    <!-- Load app-new.js for authentication and API handling -->
+    <script src="/js/app-new.js"></script>
 </body>
 </html>

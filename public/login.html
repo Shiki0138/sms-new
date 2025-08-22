@@ -571,27 +571,38 @@
                     // Save tokens
                     const storage = remember ? localStorage : sessionStorage;
                     
-                    // Check for both possible token fields
+                    // Clear any existing tokens first
+                    localStorage.removeItem('salon_token');
+                    localStorage.removeItem('salon_user');
+                    localStorage.removeItem('salon_accessToken');
+                    sessionStorage.removeItem('salon_token');
+                    sessionStorage.removeItem('salon_user');
+                    sessionStorage.removeItem('salon_accessToken');
+                    
+                    // Check for token in response
                     const token = data.token || data.accessToken;
-                    if (token) {
+                    if (token && data.user) {
                         storage.setItem('salon_token', token);
                         storage.setItem('salon_user', JSON.stringify(data.user));
-                        
-                        // Also support alternative token keys
-                        storage.setItem('salon_accessToken', token);
+                    } else {
+                        throw new Error('トークンまたはユーザーデータが不正です');
                     }
                     
                     // Show success
                     successMessage.textContent = '✨ ログイン成功！リダイレクト中...';
                     successMessage.style.display = 'block';
                     
-                    // Redirect with animation
+                    // Set a flag to prevent auth checks during transition
+                    window.authCheckInProgress = true;
+                    
+                    // Redirect immediately for better user experience
                     setTimeout(() => {
                         document.body.style.opacity = '0';
                         setTimeout(() => {
-                            window.location.href = '/dashboard.html';
-                        }, 300);
-                    }, 1000);
+                            // Use replace to prevent back button issues
+                            window.location.replace('/dashboard.html');
+                        }, 200);
+                    }, 800);
                 } else {
                     errorMessage.textContent = data.message || 'ログインに失敗しました';
                     errorMessage.style.display = 'block';
@@ -607,10 +618,18 @@
         });
 
         // Check if already logged in
-        window.addEventListener('load', () => {
-            const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
-            if (token) {
-                window.location.href = '/dashboard.html';
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check multiple possible token keys
+            const token = localStorage.getItem('salon_token') || 
+                         localStorage.getItem('salon_accessToken') || 
+                         sessionStorage.getItem('salon_token') || 
+                         sessionStorage.getItem('salon_accessToken');
+            
+            const user = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
+            
+            if (token && user) {
+                // Use replace to prevent back button issues
+                window.location.replace('/dashboard.html');
             }
         });
 

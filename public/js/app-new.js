@@ -14,22 +14,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Check authentication
 function checkAuth() {
-    // Prevent multiple auth checks
-    if (window.authCheckInProgress) return;
-    window.authCheckInProgress = true;
+    console.log('DOM loaded, initializing app...');
+    console.log('Current path:', window.location.pathname);
     
-    authToken = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
+    // Skip if running on login page
+    if (window.location.pathname === '/login.html') {
+        console.log('On login page, skipping auth check');
+        return;
+    }
+    
+    // Prevent multiple auth checks
+    if (window.authCheckInProgress) {
+        console.log('Auth check already in progress, skipping');
+        return;
+    }
+    window.authCheckInProgress = true;
+    console.log('Checking authentication...');
+    
+    // Check multiple possible token keys
+    authToken = localStorage.getItem('salon_token') || 
+                localStorage.getItem('salon_accessToken') || 
+                sessionStorage.getItem('salon_token') || 
+                sessionStorage.getItem('salon_accessToken');
+    
     const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
     
+    console.log('Auth token found:', !!authToken);
+    console.log('User data found:', !!userStr);
+    
     if (!authToken || !userStr) {
-        window.location.href = '/login.html';
+        console.log('No token or user data, redirecting to login');
+        // Only redirect if not already on login page
+        if (window.location.pathname !== '/login.html') {
+            window.location.href = '/login.html';
+        }
         return;
     }
     
     try {
         currentUser = JSON.parse(userStr);
+        // Make authToken globally available
+        window.authToken = authToken;
+        
+        console.log('User parsed successfully:', currentUser);
+        console.log('Updating user info in UI...');
         updateUserInfo();
-        loadDashboard();
+        
+        // Load appropriate page content
+        if (window.location.pathname === '/dashboard.html') {
+            console.log('Loading dashboard...');
+            loadDashboard();
+        }
     } catch (error) {
         console.error('Auth error:', error);
         logout();
@@ -38,15 +73,31 @@ function checkAuth() {
 
 // Update user info in UI
 function updateUserInfo() {
-    document.getElementById('userName').textContent = currentUser.name;
-    document.getElementById('salonName').textContent = currentUser.salonName;
-    document.getElementById('userPlan').textContent = currentUser.planType.toUpperCase();
+    // Safely update UI elements if they exist
+    const userName = document.getElementById('userName');
+    const salonName = document.getElementById('salonName');
+    const userPlan = document.getElementById('userPlan');
+    
+    if (userName) userName.textContent = currentUser.name;
+    if (salonName) salonName.textContent = currentUser.salonName;
+    if (userPlan) userPlan.textContent = currentUser.planType.toUpperCase();
+    
+    // Also update any other user info displays
+    const userNameDisplays = document.querySelectorAll('.user-name');
+    userNameDisplays.forEach(el => {
+        if (el.textContent !== currentUser.name) {
+            el.textContent = currentUser.name;
+        }
+    });
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    // Logout - check if element exists
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
     
     // Navigation
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -57,7 +108,7 @@ function setupEventListeners() {
         });
     });
     
-    // Add buttons
+    // Add buttons - use optional chaining
     document.getElementById('addCustomerBtn')?.addEventListener('click', showAddCustomerModal);
     document.getElementById('addAppointmentBtn')?.addEventListener('click', showAddAppointmentModal);
     document.getElementById('addSaleBtn')?.addEventListener('click', showAddSaleModal);
@@ -807,9 +858,11 @@ function showError(message) {
 function logout() {
     localStorage.removeItem('salon_token');
     localStorage.removeItem('salon_user');
+    localStorage.removeItem('salon_accessToken');
     sessionStorage.removeItem('salon_token');
     sessionStorage.removeItem('salon_user');
-    window.location.href = '/login-new.html';
+    sessionStorage.removeItem('salon_accessToken');
+    window.location.href = '/login.html';
 }
 
 // Global functions for onclick handlers

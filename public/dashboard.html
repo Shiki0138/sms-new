@@ -713,10 +713,8 @@
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('salon_token');
                 localStorage.removeItem('salon_user');
-                localStorage.removeItem('salon_accessToken');
                 sessionStorage.removeItem('salon_token');
                 sessionStorage.removeItem('salon_user');
-                sessionStorage.removeItem('salon_accessToken');
                 window.location.href = '/login.html';
             });
         }

@@ -1,0 +1,259 @@
+# ===================================================================
+# PRODUCTION ENVIRONMENT CONFIGURATION - SECURE TEMPLATE
+# ===================================================================
+# IMPORTANT: Copy this to .env and update all values before deployment
+# NEVER commit real credentials to version control
+
+# ===================================================================
+# SERVER CONFIGURATION
+# ===================================================================
+NODE_ENV=production
+PORT=3001
+HOST=0.0.0.0
+
+# ===================================================================
+# SECURITY CONFIGURATION - CRITICAL
+# ===================================================================
+
+# JWT Secret (MUST be at least 32 characters, use random generator)
+# Generate with: openssl rand -hex 32
+JWT_SECRET=your-super-secure-jwt-secret-key-minimum-32-characters-long-please-change-this
+
+# Session Secret (MUST be at least 32 characters)
+# Generate with: openssl rand -hex 32  
+SESSION_SECRET=your-super-secure-session-secret-minimum-32-characters-please-change-this
+
+# Encryption Key for sensitive data (32 bytes hex)
+# Generate with: openssl rand -hex 32
+ENCRYPTION_KEY=your-encryption-key-32-bytes-hex-please-change-this-value
+
+# ===================================================================
+# ADMIN ACCOUNT - CHANGE IMMEDIATELY
+# ===================================================================
+
+# Admin credentials (CHANGE THESE IMMEDIATELY)
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=ChangeThisStrongPassword123!@#
+ADMIN_PHONE=+1234567890
+
+# Salon Information
+SALON_NAME=Your Salon Name
+SALON_ADDRESS=Your Salon Address
+SALON_PHONE=+1234567890
+
+# ===================================================================
+# CORS CONFIGURATION - RESTRICT TO YOUR DOMAINS ONLY
+# ===================================================================
+
+# Allowed origins (comma-separated, NO SPACES)
+# NEVER use '*' in production
+ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com,https://admin.yourdomain.com
+
+# ===================================================================
+# DATABASE CONFIGURATION (Choose one)
+# ===================================================================
+
+# Option 1: Supabase (Recommended)
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+
+# Option 2: PostgreSQL Direct Connection
+# DATABASE_URL=postgresql://username:password@host:port/database_name
+# DATABASE_SSL=true
+
+# ===================================================================
+# SMS CONFIGURATION (Twilio)
+# ===================================================================
+
+# Twilio credentials
+TWILIO_ACCOUNT_SID=your-twilio-account-sid
+TWILIO_AUTH_TOKEN=your-twilio-auth-token
+TWILIO_PHONE_NUMBER=+1234567890
+TWILIO_VERIFY_SERVICE_SID=your-twilio-verify-service-sid
+
+# SMS Settings
+SMS_RATE_LIMIT_PER_HOUR=100
+SMS_RATE_LIMIT_PER_DAY=500
+
+# ===================================================================
+# EMAIL CONFIGURATION
+# ===================================================================
+
+# Email service configuration
+EMAIL_SERVICE=gmail
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-specific-password
+EMAIL_FROM=noreply@yourdomain.com
+
+# ===================================================================
+# EXTERNAL INTEGRATIONS (Optional)
+# ===================================================================
+
+# LINE Bot (Optional)
+LINE_CHANNEL_ACCESS_TOKEN=your-line-channel-access-token
+LINE_CHANNEL_SECRET=your-line-channel-secret
+LINE_WEBHOOK_URL=https://yourdomain.com/api/webhooks/line
+
+# Instagram Business API (Optional)
+INSTAGRAM_ACCESS_TOKEN=your-instagram-access-token
+INSTAGRAM_BUSINESS_ID=your-instagram-business-id
+
+# Google Analytics (Optional)
+GA_TRACKING_ID=UA-XXXXXXXXX-X
+GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# ===================================================================
+# SECURITY SETTINGS
+# ===================================================================
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000        # 15 minutes
+RATE_LIMIT_MAX_REQUESTS=100        # Max requests per window
+LOGIN_RATE_LIMIT_WINDOW_MS=900000  # 15 minutes  
+LOGIN_RATE_LIMIT_MAX_ATTEMPTS=5    # Max login attempts per window
+
+# Session Configuration
+SESSION_MAX_AGE=86400000           # 24 hours in milliseconds
+JWT_EXPIRES_IN=24h                 # JWT token expiration
+
+# Account Lockout
+MAX_FAILED_LOGIN_ATTEMPTS=5        # Lock account after 5 failures
+ACCOUNT_LOCKOUT_DURATION=1800000   # 30 minutes in milliseconds
+
+# Password Requirements
+MIN_PASSWORD_LENGTH=8
+REQUIRE_PASSWORD_UPPERCASE=true
+REQUIRE_PASSWORD_LOWERCASE=true
+REQUIRE_PASSWORD_NUMBERS=true
+REQUIRE_PASSWORD_SYMBOLS=false
+
+# ===================================================================
+# FILE UPLOAD SETTINGS
+# ===================================================================
+
+# File Upload Limits
+MAX_FILE_SIZE=5242880                           # 5MB in bytes
+ALLOWED_FILE_TYPES=.jpg,.jpeg,.png,.gif,.pdf   # Comma-separated
+UPLOAD_PATH=/uploads                            # Upload directory
+
+# Image Processing
+IMAGE_MAX_WIDTH=1920
+IMAGE_MAX_HEIGHT=1080
+IMAGE_QUALITY=85
+
+# ===================================================================
+# LOGGING CONFIGURATION
+# ===================================================================
+
+# Log Levels: error, warn, info, verbose, debug
+LOG_LEVEL=info
+LOG_DIR=./logs
+LOG_MAX_SIZE=10485760      # 10MB
+LOG_MAX_FILES=5            # Keep 5 log files
+LOG_DATE_PATTERN=YYYY-MM-DD
+
+# Security Event Logging
+LOG_SECURITY_EVENTS=true
+LOG_FAILED_LOGINS=true
+LOG_RATE_LIMIT_HITS=true
+
+# ===================================================================
+# PERFORMANCE SETTINGS
+# ===================================================================
+
+# Cache Settings
+CACHE_TTL=3600                    # 1 hour in seconds
+REDIS_URL=redis://localhost:6379  # Optional Redis for caching
+
+# Database Connection Pool
+DB_CONNECTION_POOL_MIN=2
+DB_CONNECTION_POOL_MAX=10
+
+# ===================================================================
+# MONITORING AND ALERTS
+# ===================================================================
+
+# Health Check Settings
+HEALTH_CHECK_INTERVAL=30000       # 30 seconds
+HEALTH_CHECK_TIMEOUT=5000         # 5 seconds
+
+# Error Tracking (Optional - Sentry, Bugsnag, etc.)
+# SENTRY_DSN=your-sentry-dsn
+# ERROR_REPORTING_ENABLED=true
+
+# Performance Monitoring
+# NEW_RELIC_LICENSE_KEY=your-new-relic-key
+# NEW_RELIC_APP_NAME=SMS-Management-System
+
+# ===================================================================
+# BACKUP CONFIGURATION
+# ===================================================================
+
+# Automated Backup Settings
+BACKUP_ENABLED=true
+BACKUP_SCHEDULE=0 2 * * *         # Daily at 2 AM (cron format)
+BACKUP_RETENTION_DAYS=30          # Keep backups for 30 days
+
+# Backup Storage (S3, Google Cloud, etc.)
+# BACKUP_STORAGE_TYPE=s3
+# AWS_ACCESS_KEY_ID=your-aws-access-key
+# AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+# AWS_REGION=us-east-1
+# S3_BACKUP_BUCKET=your-backup-bucket
+
+# ===================================================================
+# FEATURE FLAGS
+# ===================================================================
+
+# Enable/Disable Features
+ENABLE_SMS_CAMPAIGNS=true
+ENABLE_EMAIL_CAMPAIGNS=true
+ENABLE_LINE_INTEGRATION=false
+ENABLE_INSTAGRAM_INTEGRATION=false
+ENABLE_APPOINTMENT_REMINDERS=true
+ENABLE_ANALYTICS=true
+ENABLE_EXPORT_FEATURES=true
+
+# Plan Restrictions
+LIGHT_PLAN_CUSTOMER_LIMIT=100
+LIGHT_PLAN_SMS_LIMIT=500
+LIGHT_PLAN_STORAGE_LIMIT=1073741824  # 1GB in bytes
+
+PREMIUM_PLAN_CUSTOMER_LIMIT=1000
+PREMIUM_PLAN_SMS_LIMIT=5000
+PREMIUM_PLAN_STORAGE_LIMIT=5368709120  # 5GB in bytes
+
+# ===================================================================
+# DEVELOPMENT SETTINGS (Remove in production)
+# ===================================================================
+
+# Set to false in production
+DEBUG_MODE=false
+ENABLE_CORS_FOR_DEVELOPMENT=false
+SKIP_EMAIL_VERIFICATION=false
+ALLOW_WEAK_PASSWORDS=false
+
+# ===================================================================
+# SECURITY CHECKLIST
+# ===================================================================
+# 
+# ✅ 1. Changed all default passwords and secrets
+# ✅ 2. Set strong JWT_SECRET (32+ characters)
+# ✅ 3. Configured ALLOWED_ORIGINS (no wildcards)
+# ✅ 4. Set up database with proper credentials
+# ✅ 5. Configured SMS provider credentials
+# ✅ 6. Set up email service credentials
+# ✅ 7. Enabled HTTPS for all external URLs
+# ✅ 8. Set appropriate file upload limits
+# ✅ 9. Configured logging for security events
+# ✅ 10. Set up backup strategy
+# ✅ 11. Configured rate limiting
+# ✅ 12. Disabled debug mode
+# ✅ 13. Set up monitoring/alerting
+# ✅ 14. Reviewed all feature flags
+# ✅ 15. Tested authentication flow
+#
+# ===================================================================

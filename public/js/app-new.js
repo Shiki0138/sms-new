@@ -25,32 +25,18 @@ function checkAuth() {
         return;
     }
     
-    // Prevent multiple auth checks with timeout
-    if (window.authCheckInProgress) {
-        console.log('Auth check already in progress, skipping');
+    // Simple auth check without race condition locks
+    if (window.authCheckRunning) {
+        console.log('Auth check already running, skipping');
         return;
     }
-    window.authCheckInProgress = true;
-    
-    // Clear any previous timeout
-    if (window.authCheckTimeout) {
-        clearTimeout(window.authCheckTimeout);
-    }
-    
-    // Reset auth check flag after delay to prevent permanent lock
-    window.authCheckTimeout = setTimeout(() => {
-        window.authCheckInProgress = false;
-        console.log('Auth check flag reset due to timeout');
-    }, 5000);
+    window.authCheckRunning = true;
     
     console.log('Checking authentication...');
     
-    // Check multiple possible token keys with enhanced validation
+    // Use standardized token key only
     authToken = localStorage.getItem('salon_token') || 
-                localStorage.getItem('accessToken') ||
-                localStorage.getItem('salon_accessToken') || 
-                sessionStorage.getItem('salon_token') || 
-                sessionStorage.getItem('salon_accessToken');
+                sessionStorage.getItem('salon_token');
     
     const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
     
@@ -80,10 +66,8 @@ function checkAuth() {
         console.log('Invalid or missing authentication data, redirecting to login');
         // Clear invalid data
         localStorage.removeItem('salon_token');
-        localStorage.removeItem('salon_accessToken');
         localStorage.removeItem('salon_user');
         sessionStorage.removeItem('salon_token');
-        sessionStorage.removeItem('salon_accessToken');
         sessionStorage.removeItem('salon_user');
         
         // Add delay to prevent redirect loops
@@ -103,11 +87,8 @@ function checkAuth() {
         console.log('User parsed successfully:', currentUser);
         console.log('Updating user info in UI...');
         
-        // Clear the progress flag on success
-        window.authCheckInProgress = false;
-        if (window.authCheckTimeout) {
-            clearTimeout(window.authCheckTimeout);
-        }
+        // Clear the running flag on success
+        window.authCheckRunning = false;
         
         updateUserInfo();
         
@@ -122,10 +103,7 @@ function checkAuth() {
         
     } catch (error) {
         console.error('Auth error:', error);
-        window.authCheckInProgress = false;
-        if (window.authCheckTimeout) {
-            clearTimeout(window.authCheckTimeout);
-        }
+        window.authCheckRunning = false;
         logout();
     }
 }

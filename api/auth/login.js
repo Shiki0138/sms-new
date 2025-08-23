@@ -1,55 +1,45 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 
-// In-memory database (same as server)
-const users = [
-  {
-    id: '1',
-    email: 'admin@salon.com',
-    password: '$2a$10$' + bcrypt.hashSync('admin123', 10).substring(7),
-    name: '管理者',
-    salonName: 'Salon Lumière',
-    phoneNumber: '090-0000-0000',
-    planType: 'premium',
-    role: 'admin',
-    isActive: true,
-    emailVerified: true
-  },
-  {
-    id: '2',
-    email: 'greenroom51@gmail.com',
-    password: '$2a$10$' + bcrypt.hashSync('Skyosai51', 10).substring(7),
-    name: '管理者',
-    salonName: 'Salon Lumière',
-    phoneNumber: '090-0000-0000',
-    planType: 'premium',
-    role: 'admin',
-    isActive: true,
-    emailVerified: true
-  },
-  {
-    id: '3',
-    email: 'test@salon-lumiere.com',
-    password: '$2a$10$' + bcrypt.hashSync('password123', 10).substring(7),
-    name: 'テストユーザー',
-    salonName: 'テストサロン',
-    phoneNumber: '090-1234-5678',
-    planType: 'light',
-    role: 'user',
-    isActive: true,
-    emailVerified: true
+// In-memory users database for serverless
+const users = [{
+  id: uuidv4(),
+  email: process.env.ADMIN_EMAIL || 'admin@salon-lumiere.com',
+  password: '', // Will be set below
+  name: 'Admin User',
+  salonName: 'Salon Lumière',
+  planType: 'light',
+  isActive: true,
+  lastLoginAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date()
+}, {
+  id: uuidv4(),
+  email: 'test@salon-lumiere.com',
+  password: '', // Will be set below
+  name: 'Test User',
+  salonName: 'Test Salon',
+  planType: 'light',
+  isActive: true,
+  lastLoginAt: null,
+  createdAt: new Date(),
+  updatedAt: new Date()
+}];
+
+// Initialize hashed passwords
+async function initializeUsers() {
+  if (!users[0].password) {
+    users[0].password = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'AdminPass123!', 10);
+    users[1].password = await bcrypt.hash('password123', 10);
   }
-];
+}
 
-module.exports = async (req, res) => {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
+export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-  );
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -60,59 +50,52 @@ module.exports = async (req, res) => {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
-
   try {
+    await initializeUsers();
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     // Find user
     const user = users.find(u => u.email === email);
-    
-    if (!user) {
+    if (!user || !await bcrypt.compare(password, user.password)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
+    // Check if active
     if (!user.isActive) {
-      return res.status(401).json({ message: 'Account is not active' });
+      return res.status(403).json({ message: 'Account is deactivated' });
     }
 
-    // Generate JWT token
+    // Update last login
+    user.lastLoginAt = new Date();
+
+    // Generate token
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not defined');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+
     const token = jwt.sign(
-      { 
-        id: user.id, 
-        email: user.email,
-        role: user.role || 'user'
-      },
-      process.env.JWT_SECRET || 'salon-lumiere-secret-key',
-      { expiresIn: '24h' }
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
     );
 
-    // Return user data and token
-    res.status(200).json({
+    const userResponse = { ...user };
+    delete userResponse.password;
+
+    res.json({
+      message: 'Login successful',
+      user: userResponse,
       token,
-      accessToken: token, // For compatibility
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        salonName: user.salonName,
-        phoneNumber: user.phoneNumber,
-        planType: user.planType,
-        role: user.role || 'user',
-        emailVerified: user.emailVerified
-      }
+      accessToken: token // 互換性のため両方のキーで返す
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Login failed' });
   }
-};
+}

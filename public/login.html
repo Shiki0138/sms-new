@@ -574,10 +574,8 @@
                     // Clear any existing tokens first
                     localStorage.removeItem('salon_token');
                     localStorage.removeItem('salon_user');
-                    localStorage.removeItem('salon_accessToken');
                     sessionStorage.removeItem('salon_token');
                     sessionStorage.removeItem('salon_user');
-                    sessionStorage.removeItem('salon_accessToken');
                     
                     // Check for token in response
                     const token = data.token || data.accessToken;
@@ -619,11 +617,9 @@
 
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
-            // Check multiple possible token keys
+            // Check for salon_token only
             const token = localStorage.getItem('salon_token') || 
-                         localStorage.getItem('salon_accessToken') || 
-                         sessionStorage.getItem('salon_token') || 
-                         sessionStorage.getItem('salon_accessToken');
+                         sessionStorage.getItem('salon_token');
             
             const user = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
             

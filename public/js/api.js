@@ -3,12 +3,14 @@
  * Handles all HTTP requests to the backend API
  */
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api'
+    : '/api';
 
 class APIClient {
     constructor() {
         this.baseURL = API_BASE_URL;
-        this.token = localStorage.getItem('accessToken');
+        this.token = localStorage.getItem('salon_token') || localStorage.getItem('accessToken');
     }
 
     /**
@@ -97,7 +99,8 @@ class APIClient {
      */
     setToken(token) {
         this.token = token;
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem('salon_token', token);
+        localStorage.setItem('accessToken', token); // For compatibility
     }
 
     /**
@@ -105,8 +108,10 @@ class APIClient {
      */
     clearToken() {
         this.token = null;
+        localStorage.removeItem('salon_token');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('salon_user');
         localStorage.removeItem('user');
     }
 

@@ -5,6 +5,18 @@ const jwt = require('jsonwebtoken');
 const users = [
   {
     id: '1',
+    email: 'admin@salon.com',
+    password: '$2a$10$' + bcrypt.hashSync('admin123', 10).substring(7),
+    name: '管理者',
+    salonName: 'Salon Lumière',
+    phoneNumber: '090-0000-0000',
+    planType: 'premium',
+    role: 'admin',
+    isActive: true,
+    emailVerified: true
+  },
+  {
+    id: '2',
     email: 'greenroom51@gmail.com',
     password: '$2a$10$' + bcrypt.hashSync('Skyosai51', 10).substring(7),
     name: '管理者',
@@ -16,7 +28,7 @@ const users = [
     emailVerified: true
   },
   {
-    id: '2',
+    id: '3',
     email: 'test@salon-lumiere.com',
     password: '$2a$10$' + bcrypt.hashSync('password123', 10).substring(7),
     name: 'テストユーザー',
@@ -87,6 +99,7 @@ module.exports = async (req, res) => {
     // Return user data and token
     res.status(200).json({
       token,
+      accessToken: token, // For compatibility
       user: {
         id: user.id,
         email: user.email,

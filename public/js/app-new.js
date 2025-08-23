@@ -47,6 +47,7 @@ function checkAuth() {
     
     // Check multiple possible token keys with enhanced validation
     authToken = localStorage.getItem('salon_token') || 
+                localStorage.getItem('accessToken') ||
                 localStorage.getItem('salon_accessToken') || 
                 sessionStorage.getItem('salon_token') || 
                 sessionStorage.getItem('salon_accessToken');

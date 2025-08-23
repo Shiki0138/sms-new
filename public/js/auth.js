@@ -107,6 +107,7 @@ class AuthManager {
             const token = response.accessToken || response.token;
             api.setToken(token);
             localStorage.setItem('salon_token', token);
+            localStorage.setItem('accessToken', token); // For compatibility
             localStorage.setItem('salon_user', JSON.stringify(response.user));
             
             this.user = response.user;
@@ -221,7 +222,7 @@ class AuthManager {
      * @returns {boolean} True if user is authenticated
      */
     isAuthenticated() {
-        return !!(this.user && localStorage.getItem('accessToken'));
+        return !!(this.user && (localStorage.getItem('salon_token') || localStorage.getItem('accessToken')));
     }
 
     /**

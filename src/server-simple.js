@@ -563,6 +563,11 @@ app.post('/api/auth/login', async (req, res) => {
     user.lastLoginAt = new Date();
     
     // Generate token
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not defined');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
@@ -575,7 +580,8 @@ app.post('/api/auth/login', async (req, res) => {
     res.json({
       message: 'Login successful',
       user: userResponse,
-      token
+      token,
+      accessToken: token // 互換性のため両方のキーで返す
     });
   } catch (error) {
     console.error('Login error:', error);

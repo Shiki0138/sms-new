@@ -242,6 +242,10 @@ async function apiRequest(endpoint, options = {}) {
             throw new Error('No authentication token available');
         }
         
+        console.log(`Making API request to: ${API_BASE}${endpoint}`);
+        console.log('Auth token length:', authToken.length);
+        console.log('Request options:', options);
+        
         const defaultOptions = {
             headers: {
                 'Authorization': `Bearer ${authToken}`,
@@ -259,25 +263,45 @@ async function apiRequest(endpoint, options = {}) {
             }
         });
         
+        console.log(`Response status: ${response.status}`);
+        console.log(`Response ok: ${response.ok}`);
+        
         if (response.status === 401) {
-            console.warn('Authentication failed, logging out');
-            logout();
+            console.warn('Authentication failed, clearing invalid session');
+            // Clear authentication data and redirect
+            clearAuthData();
+            // Only redirect if not already on login page
+            if (!window.location.pathname.includes('login')) {
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 100);
+            }
             throw new Error('Unauthorized');
         }
         
         if (!response.ok) {
             let errorMessage = 'API request failed';
+            let errorData;
             try {
-                const errorData = await response.json();
+                errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
+                console.error('API error response:', errorData);
             } catch (parseError) {
                 console.warn('Could not parse error response:', parseError);
                 errorMessage = `HTTP ${response.status}: ${response.statusText}`;
             }
+            console.error(`API request failed: ${errorMessage}`, {
+                endpoint,
+                status: response.status,
+                statusText: response.statusText,
+                errorData
+            });
             throw new Error(errorMessage);
         }
         
-        return await response.json();
+        const responseData = await response.json();
+        console.log('API response data:', responseData);
+        return responseData;
     } catch (error) {
         console.error(`API request to ${endpoint} failed:`, error);
         
@@ -290,52 +314,100 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-// Load dashboard with graceful error handling
+// Load dashboard with enhanced error handling and fallback data
 async function loadDashboard() {
     try {
         console.log('Loading dashboard data...');
-        const data = await apiRequest('/dashboard/summary');
+        console.log('Auth token available:', !!authToken);
+        console.log('Current user:', currentUser);
         
-        // Safely update stats with null checks
+        // Show loading state
+        showLoadingState();
+        
+        const data = await apiRequest('/dashboard/summary');
+        console.log('Dashboard data received:', data);
+        
+        // Hide loading state
+        hideLoadingState();
+        
+        // Safely update stats with null checks and better fallbacks
         const updateStat = (id, value, fallback = '0') => {
             const element = document.getElementById(id);
             if (element) {
-                element.textContent = value !== undefined && value !== null ? value : fallback;
+                const displayValue = value !== undefined && value !== null ? value : fallback;
+                element.textContent = displayValue;
+                console.log(`Updated ${id} with value: ${displayValue}`);
+            } else {
+                console.warn(`Element with ID '${id}' not found`);
             }
         };
         
-        updateStat('todayAppointments', data?.today?.appointmentCount);
-        updateStat('todaySales', data?.today?.sales?.total?.toLocaleString());
-        updateStat('totalCustomers', data?.customers?.total);
-        updateStat('monthlySales', data?.thisMonth?.sales?.total?.toLocaleString());
+        // Update statistics with better error handling
+        updateStat('todayAppointments', data?.today?.appointmentCount || 0);
+        updateStat('todaySales', data?.today?.sales?.total ? data.today.sales.total.toLocaleString() : '0');
+        updateStat('totalCustomers', data?.customers?.total || 0);
+        updateStat('monthlySales', data?.thisMonth?.sales?.total ? data.thisMonth.sales.total.toLocaleString() : '0');
         
-        // Update today's schedule
-        const scheduleHtml = data.today.appointments.length > 0
-            ? data.today.appointments.map(apt => `
-                <div class="schedule-item">
-                    <span class="time">${apt.startTime}</span>
-                    <span class="customer">${apt.customer.lastName} ${apt.customer.firstName}</span>
-                    <span class="status">${getStatusBadge(apt.status)}</span>
-                </div>
-            `).join('')
-            : '<p class="empty-state">本日の予約はありません</p>';
+        // Update today's schedule with safety checks
+        const todayScheduleElement = document.getElementById('todaySchedule');
+        if (todayScheduleElement) {
+            const appointments = data?.today?.appointments || [];
+            const scheduleHtml = appointments.length > 0
+                ? appointments.map(apt => `
+                    <div class="schedule-item">
+                        <span class="time">${apt.startTime || '時間未設定'}</span>
+                        <span class="customer">${(apt.customer?.lastName || '') + ' ' + (apt.customer?.firstName || '名前未設定')}</span>
+                        <span class="status">${getStatusBadge(apt.status || 'unknown')}</span>
+                    </div>
+                `).join('')
+                : '<p class="empty-state">本日の予約はありません</p>';
+            
+            todayScheduleElement.innerHTML = scheduleHtml;
+        }
         
-        document.getElementById('todaySchedule').innerHTML = scheduleHtml;
+        // Update recent customers with safety checks
+        const recentCustomersElement = document.getElementById('recentCustomers');
+        if (recentCustomersElement) {
+            const recentCustomers = data?.customers?.recent || [];
+            const customersHtml = recentCustomers.length > 0
+                ? recentCustomers.map(customer => `
+                    <div class="customer-item">
+                        <span>${(customer.lastName || '') + ' ' + (customer.firstName || '名前未設定')}</span>
+                        <span class="date">${formatDate(customer.createdAt) || '登録日不明'}</span>
+                    </div>
+                `).join('')
+                : '<p class="empty-state">データがありません</p>';
+            
+            recentCustomersElement.innerHTML = customersHtml;
+        }
         
-        // Update recent customers
-        const customersHtml = data.customers.recent.length > 0
-            ? data.customers.recent.map(customer => `
-                <div class="customer-item">
-                    <span>${customer.lastName} ${customer.firstName}</span>
-                    <span class="date">${formatDate(customer.createdAt)}</span>
-                </div>
-            `).join('')
-            : '<p class="empty-state">データがありません</p>';
+        console.log('Dashboard loaded successfully');
         
-        document.getElementById('recentCustomers').innerHTML = customersHtml;
     } catch (error) {
         console.error('Dashboard load error:', error);
-        showError('ダッシュボードの読み込みに失敗しました');
+        console.error('Error details:', {
+            message: error.message,
+            status: error.status,
+            authToken: !!authToken,
+            user: !!currentUser
+        });
+        
+        // Hide loading state
+        hideLoadingState();
+        
+        // Show fallback data instead of complete failure
+        showFallbackDashboard(error);
+        
+        // Don't redirect to login unless it's specifically an auth error
+        if (error.message !== 'Unauthorized' && !error.message.includes('401')) {
+            showError(`ダッシュボードの読み込みに失敗しました: ${error.message}. データを再取得しています...`);
+            
+            // Retry after 3 seconds
+            setTimeout(() => {
+                console.log('Retrying dashboard load...');
+                loadDashboard();
+            }, 3000);
+        }
     }
 }
 
@@ -967,8 +1039,9 @@ function showError(message) {
     alert('エラー: ' + message);
 }
 
-function logout() {
-    console.log('Logging out user...');
+// Clear authentication data without redirect
+function clearAuthData() {
+    console.log('Clearing authentication data...');
     
     // Clear all authentication data
     localStorage.removeItem('salon_token');
@@ -988,6 +1061,13 @@ function logout() {
     if (window.authCheckTimeout) {
         clearTimeout(window.authCheckTimeout);
     }
+}
+
+function logout() {
+    console.log('Logging out user...');
+    
+    // Clear authentication data
+    clearAuthData();
     
     // Redirect to login with slight delay to ensure cleanup
     setTimeout(() => {
@@ -1055,3 +1135,55 @@ window.getStatusLabel = (status) => {
 };
 
 window.closeModal = closeModal;
+
+// Loading state functions
+function showLoadingState() {
+    // Show loading indicators if elements exist
+    const loadingElements = document.querySelectorAll('.loading-indicator');
+    loadingElements.forEach(el => el.style.display = 'block');
+    
+    // Show loading on stat elements
+    const statElements = ['todayAppointments', 'todaySales', 'totalCustomers', 'monthlySales'];
+    statElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = '読み込み中...';
+        }
+    });
+}
+
+function hideLoadingState() {
+    // Hide loading indicators
+    const loadingElements = document.querySelectorAll('.loading-indicator');
+    loadingElements.forEach(el => el.style.display = 'none');
+}
+
+// Fallback dashboard function
+function showFallbackDashboard(error) {
+    console.log('Showing fallback dashboard due to error:', error.message);
+    
+    // Show basic fallback data
+    const updateStat = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    };
+    
+    // Set fallback values
+    updateStat('todayAppointments', '---');
+    updateStat('todaySales', '---');
+    updateStat('totalCustomers', '---');
+    updateStat('monthlySales', '---');
+    
+    // Show error messages in content areas
+    const todayScheduleElement = document.getElementById('todaySchedule');
+    if (todayScheduleElement) {
+        todayScheduleElement.innerHTML = '<p class="error-state">データを読み込めませんでした。しばらくお待ちください。</p>';
+    }
+    
+    const recentCustomersElement = document.getElementById('recentCustomers');
+    if (recentCustomersElement) {
+        recentCustomersElement.innerHTML = '<p class="error-state">データを読み込めませんでした。しばらくお待ちください。</p>';
+    }
+}

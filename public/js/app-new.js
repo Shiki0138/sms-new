@@ -1062,7 +1062,7 @@ window.viewCustomer = (id) => {
 };
 
 window.editCustomer = (id) => {
-    window.location.href = `/customer-edit.html?id=${id}`;
+    window.location.href = `/customer-detail.html?id=${id}&mode=edit`;
 };
 
 window.viewSale = (id) => {

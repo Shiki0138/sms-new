@@ -42,12 +42,21 @@ function updateUserInfo() {
 
 // Setup event listeners
 function setupEventListeners() {
-    // Get customer ID from URL
+    // Get customer ID and mode from URL
     const urlParams = new URLSearchParams(window.location.search);
     customerId = urlParams.get('id');
+    const mode = urlParams.get('mode');
     
     console.log('Customer ID from URL:', customerId);
+    console.log('Mode from URL:', mode);
     console.log('Full URL:', window.location.href);
+    
+    // If mode is edit, enable edit mode after page loads
+    if (mode === 'edit') {
+        setTimeout(() => {
+            enableEditMode();
+        }, 500);
+    }
     console.log('URL search params:', window.location.search);
     
     if (!customerId) {
@@ -541,9 +550,139 @@ function logout() {
     window.location.href = '/login-new.html';
 }
 
+// Edit mode functionality
+let isEditMode = false;
+
+function enableEditMode() {
+    isEditMode = true;
+    
+    // Change button text and styling
+    const editBtn = document.querySelector('.btn-secondary');
+    if (editBtn) {
+        editBtn.textContent = '保存';
+        editBtn.className = 'btn btn-primary';
+        editBtn.onclick = saveCustomerChanges;
+    }
+    
+    // Make fields editable
+    makeFieldsEditable();
+    
+    // Show cancel button
+    const headerActions = document.querySelector('.header-actions');
+    if (headerActions && !document.getElementById('cancelEditBtn')) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.id = 'cancelEditBtn';
+        cancelBtn.className = 'btn btn-outline';
+        cancelBtn.textContent = 'キャンセル';
+        cancelBtn.onclick = cancelEditMode;
+        headerActions.insertBefore(cancelBtn, headerActions.firstChild);
+    }
+}
+
+function cancelEditMode() {
+    isEditMode = false;
+    window.location.reload();
+}
+
+function makeFieldsEditable() {
+    // Make info section editable
+    const infoItems = document.querySelectorAll('.info-card .info-item');
+    infoItems.forEach(item => {
+        const valueElement = item.querySelector('.value');
+        if (valueElement && !valueElement.querySelector('input')) {
+            const currentValue = valueElement.textContent;
+            const label = item.querySelector('.label')?.textContent || '';
+            
+            let inputElement;
+            if (label.includes('メール')) {
+                inputElement = document.createElement('input');
+                inputElement.type = 'email';
+                inputElement.value = currentValue;
+                inputElement.className = 'form-input';
+            } else if (label.includes('電話')) {
+                inputElement = document.createElement('input');
+                inputElement.type = 'tel';
+                inputElement.value = currentValue;
+                inputElement.className = 'form-input';
+            } else if (label.includes('生年月日')) {
+                inputElement = document.createElement('input');
+                inputElement.type = 'date';
+                // Convert display format to date input format
+                const dateParts = currentValue.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+                if (dateParts) {
+                    inputElement.value = `${dateParts[1]}-${dateParts[2].padStart(2, '0')}-${dateParts[3].padStart(2, '0')}`;
+                }
+                inputElement.className = 'form-input';
+            } else {
+                inputElement = document.createElement('input');
+                inputElement.type = 'text';
+                inputElement.value = currentValue;
+                inputElement.className = 'form-input';
+            }
+            
+            inputElement.dataset.field = label;
+            valueElement.innerHTML = '';
+            valueElement.appendChild(inputElement);
+        }
+    });
+}
+
+async function saveCustomerChanges() {
+    try {
+        // Collect edited data
+        const updatedData = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            dateOfBirth: null,
+            address: {}
+        };
+        
+        // Get values from editable fields
+        const inputs = document.querySelectorAll('.info-item input');
+        inputs.forEach(input => {
+            const field = input.dataset.field;
+            if (field?.includes('名前')) {
+                const nameParts = input.value.split(' ');
+                updatedData.lastName = nameParts[0] || '';
+                updatedData.firstName = nameParts[1] || '';
+            } else if (field?.includes('メール')) {
+                updatedData.email = input.value;
+            } else if (field?.includes('電話')) {
+                updatedData.phone = input.value;
+            } else if (field?.includes('生年月日')) {
+                updatedData.dateOfBirth = input.value || null;
+            } else if (field?.includes('住所')) {
+                updatedData.address.street = input.value;
+            }
+        });
+        
+        // Call API to update customer
+        const response = await fetch(`/api/customers/${customerId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: JSON.stringify(updatedData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update customer');
+        }
+        
+        // Reload page to show updated data
+        window.location.reload();
+    } catch (error) {
+        console.error('Error saving customer:', error);
+        alert('顧客情報の更新に失敗しました');
+    }
+}
+
 // Global functions
 window.editCustomer = () => {
-    window.location.href = `/customer-edit.html?id=${customerId}`;
+    enableEditMode();
 };
 
 window.createAppointment = () => {

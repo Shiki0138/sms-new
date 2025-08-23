@@ -1,22 +1,28 @@
-# Ignore files not needed for deployment
+# Ignore development files
 node_modules
 .git
 .gitignore
+.env
 .env.local
-.env.development
-.env.test
-coverage
-tests
-dist
 *.log
-.DS_Store
-index.html
-src/frontend/index.html
+coverage
+.nyc_output
+tests
+test-*.html
 *.test.js
 *.spec.js
-.github
-docs
-scripts/test-*.js
-memory/agents/*
-memory/sessions/*
-.claude-flow
+
+# Ignore source files that shouldn't be deployed
+src/
+scripts/init-db.js
+scripts/migrate-to-supabase.js
+
+# Ignore documentation
+README.md
+CLAUDE.md
+docs/
+
+# Ignore development configs
+.eslintrc*
+jest.config*
+nodemon.json

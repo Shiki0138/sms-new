@@ -16,7 +16,7 @@
     "test:watch": "jest --watch",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
-    "build": "echo 'Build completed successfully'",
+    "build": "node scripts/vercel-post-build.js",
     "lint": "eslint src/",
     "typecheck": "echo 'Type checking not applicable for vanilla JS'",
     "vercel-build": "npm run build"

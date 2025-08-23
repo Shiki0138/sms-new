@@ -16,10 +16,19 @@
     "api/customers.js": {
       "maxDuration": 30
     },
+    "api/customers/[id].js": {
+      "maxDuration": 30
+    },
     "api/sales.js": {
       "maxDuration": 30
     },
     "api/appointments.js": {
+      "maxDuration": 30
+    },
+    "api/records/customer/[id].js": {
+      "maxDuration": 30
+    },
+    "api/records/[id]/photos.js": {
       "maxDuration": 30
     },
     "api/settings.js": {

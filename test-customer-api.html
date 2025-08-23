@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .result { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 4px; }
+        .error { background-color: #ffe6e6; color: #d00; }
+        .success { background-color: #e6ffe6; color: #080; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { white-space: pre-wrap; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Customer API Test Page</h1>
+    
+    <div class="test-section">
+        <h3>Authentication</h3>
+        <button onclick="generateToken()">Generate Test Token</button>
+        <div id="tokenStatus"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Customer API Endpoints</h3>
+        <button onclick="testAllCustomers()">Test GET /api/customers</button>
+        <button onclick="testSpecificCustomer('ad824dde-f031-436a-a206-d8d5704ab741')">Test UUID Customer</button>
+        <button onclick="testSpecificCustomer('cust-001')">Test Simple ID Customer</button>
+        <button onclick="testSpecificCustomer('nonexistent-id')">Test Non-existent Customer</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        
+        // Generate proper test token - using the same secret from .env
+        // For production, this would come from actual login
+        function generateTestToken() {
+            const header = btoa(JSON.stringify({
+                "alg": "HS256",
+                "typ": "JWT"
+            })).replace(/=/g, '');
+            
+            const payload = btoa(JSON.stringify({
+                "userId": "test-user",
+                "username": "test",
+                "salonId": "test-salon",
+                "exp": Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour from now
+            })).replace(/=/g, '');
+            
+            // For testing purposes, we'll use a simplified signature
+            // In production, this would be properly signed with JWT_SECRET
+            return `${header}.${payload}.test-signature`;
+        }
+        
+        let authToken = null;
+
+        async function generateToken() {
+            try {
+                const response = await fetch(`${API_BASE}/test-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    authToken = data.token;
+                    document.getElementById('tokenStatus').innerHTML = `
+                        <div class="result success">
+                            <h4>Token Generated Successfully</h4>
+                            <p><strong>Token:</strong> ${data.token.substring(0, 50)}...</p>
+                            <p><strong>Expires:</strong> ${new Date(data.payload.exp * 1000).toLocaleString()}</p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                document.getElementById('tokenStatus').innerHTML = `
+                    <div class="result error">
+                        <h4>Token Generation Failed</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function addResult(title, data, isError = false) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${isError ? 'error' : 'success'}`;
+            div.innerHTML = `
+                <h4>${title}</h4>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            results.appendChild(div);
+        }
+
+        async function testAllCustomers() {
+            if (!authToken) {
+                addResult('Error', 'No auth token. Please generate a token first.', true);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/customers`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                addResult('GET /api/customers', { 
+                    status: response.status,
+                    statusText: response.statusText,
+                    data 
+                }, !response.ok);
+            } catch (error) {
+                addResult('GET /api/customers - Error', error.message, true);
+            }
+        }
+
+        async function testSpecificCustomer(customerId) {
+            if (!authToken) {
+                addResult('Error', 'No auth token. Please generate a token first.', true);
+                return;
+            }
+            
+            try {
+                console.log(`Testing customer ID: ${customerId}`);
+                const response = await fetch(`${API_BASE}/customers/${customerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                let data;
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    data = { rawResponse: text.substring(0, 500) + '...' };
+                }
+                
+                addResult(`GET /api/customers/${customerId}`, { 
+                    status: response.status,
+                    statusText: response.statusText,
+                    contentType,
+                    data 
+                }, !response.ok);
+            } catch (error) {
+                addResult(`GET /api/customers/${customerId} - Error`, error.message, true);
+            }
+        }
+
+        // Test auth token
+        function testAuth() {
+            try {
+                const payload = JSON.parse(atob(mockToken.split('.')[1]));
+                addResult('Token Payload', payload);
+            } catch (error) {
+                addResult('Token Parse Error', error.message, true);
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            console.log('Running automatic tests...');
+            testAuth();
+        });
+    </script>
+</body>
+</html>

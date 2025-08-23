@@ -17,14 +17,18 @@ function verifyToken(req) {
   }
 }
 
-// Mock appointments database
+// Mock appointments database (updated with consistent customer IDs)
 const mockAppointments = [
   {
-    id: uuidv4(),
+    id: 'apt-001',
     customerName: '田中 さくら',
-    customerId: '1',
+    customerId: 'cust-001',
     customerPhone: '090-1234-5678',
     serviceName: 'カット & カラー',
+    services: [
+      { name: 'カット', duration: 60, price: 4500 },
+      { name: 'カラー', duration: 60, price: 4000 }
+    ],
     appointmentDate: new Date().toISOString().split('T')[0],
     startTime: '10:00',
     endTime: '12:00',
@@ -37,11 +41,14 @@ const mockAppointments = [
     updatedAt: new Date().toISOString()
   },
   {
-    id: uuidv4(),
+    id: 'apt-002',
     customerName: '佐藤 みゆき',
-    customerId: '2',
+    customerId: 'cust-002',
     customerPhone: '090-2345-6789',
     serviceName: 'ヘッドスパ',
+    services: [
+      { name: 'ヘッドスパ', duration: 90, price: 6000 }
+    ],
     appointmentDate: new Date().toISOString().split('T')[0],
     startTime: '14:00',
     endTime: '15:30',
@@ -54,11 +61,16 @@ const mockAppointments = [
     updatedAt: new Date().toISOString()
   },
   {
-    id: uuidv4(),
+    id: 'apt-003',
     customerName: '山田 えみ',
-    customerId: '3',
+    customerId: 'cust-003',
     customerPhone: '090-3456-7890',
     serviceName: 'フルコース',
+    services: [
+      { name: 'カット', duration: 60, price: 4500 },
+      { name: 'カラー', duration: 60, price: 4000 },
+      { name: 'パーマ', duration: 60, price: 6500 }
+    ],
     appointmentDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     startTime: '13:00',
     endTime: '16:00',
@@ -71,11 +83,14 @@ const mockAppointments = [
     updatedAt: new Date().toISOString()
   },
   {
-    id: uuidv4(),
+    id: 'apt-004',
     customerName: '鈴木 あい',
-    customerId: '4',
+    customerId: 'cust-004',
     customerPhone: '090-4567-8901',
     serviceName: 'カット',
+    services: [
+      { name: 'カット', duration: 60, price: 4500 }
+    ],
     appointmentDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     startTime: '15:00',
     endTime: '16:00',
@@ -86,6 +101,27 @@ const mockAppointments = [
     staffName: '山田 花音',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'apt-005',
+    customerName: '田中 さくら',
+    customerId: 'cust-001',
+    customerPhone: '090-1234-5678',
+    serviceName: 'ヘッドスパ & トリートメント',
+    services: [
+      { name: 'ヘッドスパ', duration: 45, price: 3500 },
+      { name: 'ヘアトリートメント', duration: 30, price: 2500 }
+    ],
+    appointmentDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    startTime: '15:00',
+    endTime: '16:15',
+    duration: 75,
+    price: 6000,
+    status: 'completed',
+    notes: '髪のダメージケア',
+    staffName: '山田 花音',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
   }
 ];
 
@@ -108,6 +144,13 @@ export default async function handler(req, res) {
       case 'GET':
         // Filter appointments based on query parameters
         let filteredAppointments = [...mockAppointments];
+        
+        // Filter by customer ID if provided
+        if (req.query.customerId) {
+          filteredAppointments = filteredAppointments.filter(apt => 
+            apt.customerId === req.query.customerId
+          );
+        }
         
         // Filter by date if provided
         if (req.query.date) {

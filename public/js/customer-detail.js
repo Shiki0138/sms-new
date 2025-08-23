@@ -46,7 +46,13 @@ function setupEventListeners() {
     const urlParams = new URLSearchParams(window.location.search);
     customerId = urlParams.get('id');
     
+    console.log('Customer ID from URL:', customerId);
+    console.log('Full URL:', window.location.href);
+    console.log('URL search params:', window.location.search);
+    
     if (!customerId) {
+        console.error('No customer ID found in URL parameters');
+        alert('顧客IDが指定されていません。顧客一覧に戻ります。');
         window.location.href = '/dashboard.html#customers';
         return;
     }
@@ -116,17 +122,43 @@ async function apiRequest(endpoint, options = {}) {
     }
     
     if (!response.ok) {
-        const error = await response.json();
+        let error;
+        try {
+            // Try to parse JSON error response
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                error = await response.json();
+            } else {
+                // Handle HTML error pages (like Vercel 404)
+                const text = await response.text();
+                error = { message: `HTTP ${response.status}: ${response.statusText}` };
+                console.error('Non-JSON response:', text.substring(0, 200));
+            }
+        } catch (parseError) {
+            console.error('Error parsing response:', parseError);
+            error = { message: `HTTP ${response.status}: ${response.statusText}` };
+        }
         throw new Error(error.message || 'API request failed');
     }
     
-    return response.json();
+    try {
+        return await response.json();
+    } catch (parseError) {
+        console.error('Error parsing successful response:', parseError);
+        throw new Error('Invalid JSON response from server');
+    }
 }
 
 // Load customer details
 async function loadCustomerDetails() {
     try {
+        console.log('Loading customer details for ID:', customerId);
         const data = await apiRequest(`/customers/${customerId}`);
+        
+        if (!data || !data.customer) {
+            throw new Error('Invalid response format: customer data not found');
+        }
+        
         currentCustomer = data.customer;
         
         // Update header
@@ -168,7 +200,19 @@ async function loadCustomerDetails() {
         
     } catch (error) {
         console.error('Load customer error:', error);
-        showError('顧客情報の読み込みに失敗しました');
+        console.error('Customer ID that failed:', customerId);
+        
+        // Provide specific error messages based on error type
+        if (error.message.includes('404') || error.message.includes('not found')) {
+            showError(`指定された顧客が見つかりません (ID: ${customerId})\n\n有効な顧客IDを確認してください。`);
+        } else if (error.message.includes('Unauthorized')) {
+            showError('認証に失敗しました。再度ログインしてください。');
+            logout();
+        } else if (error.message.includes('Invalid JSON')) {
+            showError('サーバーからの応答が正しくありません。管理者に連絡してください。');
+        } else {
+            showError(`顧客情報の読み込みに失敗しました: ${error.message}`);
+        }
     }
 }
 

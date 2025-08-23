@@ -17,14 +17,18 @@ function verifyToken(req) {
   }
 }
 
-// Mock sales database
+// Mock sales database (updated with consistent customer IDs)
 const mockSales = [
   {
-    id: uuidv4(),
+    id: 'sale-001',
     customerName: '田中 さくら',
-    customerId: '1',
+    customerId: 'cust-001',
     serviceName: 'カット & カラー',
     servicePrice: 8500,
+    items: [
+      { name: 'カット & カラー', price: 8500, type: 'service' },
+      { name: 'ヘアトリートメント', price: 2000, quantity: 1, type: 'product' }
+    ],
     products: [
       { name: 'ヘアトリートメント', price: 2000, quantity: 1 }
     ],
@@ -35,11 +39,16 @@ const mockSales = [
     notes: '次回はパーマ希望'
   },
   {
-    id: uuidv4(),
+    id: 'sale-002',
     customerName: '佐藤 みゆき',
-    customerId: '2',
+    customerId: 'cust-002',
     serviceName: 'ヘッドスパ',
     servicePrice: 6000,
+    items: [
+      { name: 'ヘッドスパ', price: 6000, type: 'service' },
+      { name: 'スカルプエッセンス', price: 3500, quantity: 1, type: 'product' },
+      { name: 'ヘアオイル', price: 2800, quantity: 1, type: 'product' }
+    ],
     products: [
       { name: 'スカルプエッセンス', price: 3500, quantity: 1 },
       { name: 'ヘアオイル', price: 2800, quantity: 1 }
@@ -51,11 +60,15 @@ const mockSales = [
     notes: 'リラックス効果を実感'
   },
   {
-    id: uuidv4(),
+    id: 'sale-003',
     customerName: '山田 えみ',
-    customerId: '3',
+    customerId: 'cust-003',
     serviceName: 'フルコース（カット・カラー・パーマ）',
     servicePrice: 15000,
+    items: [
+      { name: 'フルコース（カット・カラー・パーマ）', price: 15000, type: 'service' },
+      { name: 'ヘアケアセット', price: 5000, quantity: 1, type: 'product' }
+    ],
     products: [
       { name: 'ヘアケアセット', price: 5000, quantity: 1 }
     ],
@@ -66,17 +79,36 @@ const mockSales = [
     notes: 'VIP顧客、満足度高'
   },
   {
-    id: uuidv4(),
+    id: 'sale-004',
     customerName: '鈴木 あい',
-    customerId: '4',
+    customerId: 'cust-004',
     serviceName: 'カット & ブロー',
     servicePrice: 5500,
+    items: [
+      { name: 'カット & ブロー', price: 5500, type: 'service' }
+    ],
     products: [],
     totalAmount: 5500,
     paymentMethod: '現金',
     saleDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     notes: 'シンプルスタイル希望'
+  },
+  {
+    id: 'sale-005',
+    customerName: '田中 さくら',
+    customerId: 'cust-001',
+    serviceName: 'ヘッドスパ & トリートメント',
+    servicePrice: 6000,
+    items: [
+      { name: 'ヘッドスパ & トリートメント', price: 6000, type: 'service' }
+    ],
+    products: [],
+    totalAmount: 6000,
+    paymentMethod: 'クレジットカード',
+    saleDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    notes: '髪の健康重視'
   }
 ];
 
@@ -97,21 +129,45 @@ export default async function handler(req, res) {
 
     switch (req.method) {
       case 'GET':
-        // Return all sales with summary
-        const totalSales = mockSales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+        // Filter sales based on query parameters
+        let filteredSales = [...mockSales];
+        
+        // Filter by customer ID if provided
+        if (req.query.customerId) {
+          filteredSales = filteredSales.filter(sale => 
+            sale.customerId === req.query.customerId
+          );
+        }
+        
+        // Filter by date range if provided
+        if (req.query.startDate) {
+          filteredSales = filteredSales.filter(sale => 
+            sale.saleDate >= req.query.startDate
+          );
+        }
+        
+        if (req.query.endDate) {
+          filteredSales = filteredSales.filter(sale => 
+            sale.saleDate <= req.query.endDate
+          );
+        }
+        
+        // Calculate summary based on filtered or all sales
+        const salesForSummary = req.query.customerId ? filteredSales : mockSales;
+        const totalSales = salesForSummary.reduce((sum, sale) => sum + sale.totalAmount, 0);
         const todaysSales = mockSales.filter(sale => 
           sale.saleDate === new Date().toISOString().split('T')[0]
         );
         const todaysRevenue = todaysSales.reduce((sum, sale) => sum + sale.totalAmount, 0);
 
         res.json({
-          sales: mockSales,
+          sales: filteredSales,
           summary: {
-            totalSales: mockSales.length,
+            totalSales: salesForSummary.length,
             totalRevenue: totalSales,
             todaysSales: todaysSales.length,
             todaysRevenue: todaysRevenue,
-            averageSale: Math.round(totalSales / mockSales.length)
+            averageSale: salesForSummary.length > 0 ? Math.round(totalSales / salesForSummary.length) : 0
           }
         });
         break;

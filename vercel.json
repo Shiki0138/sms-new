@@ -28,15 +28,6 @@
     "api/auth/profile.js": {
       "maxDuration": 30
     },
-    "api/settings/business-hours.js": {
-      "maxDuration": 30
-    },
-    "api/settings/holidays.js": {
-      "maxDuration": 30
-    },
-    "api/settings/closures.js": {
-      "maxDuration": 30
-    },
     "api/health.js": {
       "maxDuration": 10
     }

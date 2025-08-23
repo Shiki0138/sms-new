@@ -83,11 +83,86 @@ export default async function handler(req, res) {
     // Verify authentication
     const user = verifyToken(req);
 
+    // Handle sub-paths for settings endpoints
+    const path = req.url.replace('/api/settings', '') || '/';
+    
+    // Business Hours endpoint
+    if (path.startsWith('/business-hours')) {
+      switch (req.method) {
+        case 'GET':
+          res.json({ businessHours: mockSettings.businessHours });
+          break;
+        case 'PUT':
+          mockSettings.businessHours = { ...mockSettings.businessHours, ...req.body };
+          res.json({ message: 'Business hours updated successfully', businessHours: mockSettings.businessHours });
+          break;
+        default:
+          res.status(405).json({ message: 'Method not allowed' });
+      }
+      return;
+    }
+
+    // Holidays endpoint
+    if (path.startsWith('/holidays')) {
+      switch (req.method) {
+        case 'GET':
+          res.json({ holidays: mockSettings.holidays });
+          break;
+        case 'POST':
+          const { date } = req.body;
+          if (date && !mockSettings.holidays.includes(date)) {
+            mockSettings.holidays.push(date);
+            mockSettings.holidays.sort();
+          }
+          res.json({ message: 'Holiday added successfully', holidays: mockSettings.holidays });
+          break;
+        case 'DELETE':
+          const { date: dateToRemove } = req.body;
+          mockSettings.holidays = mockSettings.holidays.filter(holiday => holiday !== dateToRemove);
+          res.json({ message: 'Holiday removed successfully', holidays: mockSettings.holidays });
+          break;
+        default:
+          res.status(405).json({ message: 'Method not allowed' });
+      }
+      return;
+    }
+
+    // Closures endpoint
+    if (path.startsWith('/closures')) {
+      switch (req.method) {
+        case 'GET':
+          res.json({ closures: mockSettings.closures });
+          break;
+        case 'POST':
+          const newClosure = { id: Date.now().toString(), ...req.body, createdAt: new Date().toISOString() };
+          mockSettings.closures.push(newClosure);
+          res.status(201).json({ message: 'Closure created successfully', closure: newClosure, closures: mockSettings.closures });
+          break;
+        case 'PUT':
+          const { id: updateId } = req.query;
+          const closureIndex = mockSettings.closures.findIndex(c => c.id === updateId);
+          if (closureIndex !== -1) {
+            mockSettings.closures[closureIndex] = { ...mockSettings.closures[closureIndex], ...req.body, updatedAt: new Date().toISOString() };
+            res.json({ message: 'Closure updated successfully', closure: mockSettings.closures[closureIndex], closures: mockSettings.closures });
+          } else {
+            res.status(404).json({ message: 'Closure not found' });
+          }
+          break;
+        case 'DELETE':
+          const { id: deleteId } = req.query;
+          mockSettings.closures = mockSettings.closures.filter(c => c.id !== deleteId);
+          res.json({ message: 'Closure deleted successfully', closures: mockSettings.closures });
+          break;
+        default:
+          res.status(405).json({ message: 'Method not allowed' });
+      }
+      return;
+    }
+
+    // Default settings endpoint
     switch (req.method) {
       case 'GET':
-        // Return all settings or specific section
         const section = req.query.section;
-        
         if (section) {
           if (mockSettings[section]) {
             res.json({ [section]: mockSettings[section] });
@@ -100,34 +175,17 @@ export default async function handler(req, res) {
         break;
 
       case 'PUT':
-        // Update settings
         const updatedSection = req.query.section;
-        
         if (updatedSection && mockSettings[updatedSection]) {
-          mockSettings[updatedSection] = {
-            ...mockSettings[updatedSection],
-            ...req.body
-          };
-          
-          res.json({
-            message: 'Settings updated successfully',
-            [updatedSection]: mockSettings[updatedSection]
-          });
+          mockSettings[updatedSection] = { ...mockSettings[updatedSection], ...req.body };
+          res.json({ message: 'Settings updated successfully', [updatedSection]: mockSettings[updatedSection] });
         } else if (!updatedSection) {
-          // Update entire settings object
           Object.keys(req.body).forEach(key => {
             if (mockSettings[key]) {
-              mockSettings[key] = {
-                ...mockSettings[key],
-                ...req.body[key]
-              };
+              mockSettings[key] = { ...mockSettings[key], ...req.body[key] };
             }
           });
-          
-          res.json({
-            message: 'Settings updated successfully',
-            settings: mockSettings
-          });
+          res.json({ message: 'Settings updated successfully', settings: mockSettings });
         } else {
           res.status(404).json({ message: 'Settings section not found' });
         }

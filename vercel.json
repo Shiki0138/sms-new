@@ -13,6 +13,30 @@
     "api/dashboard/summary.js": {
       "maxDuration": 30
     },
+    "api/customers.js": {
+      "maxDuration": 30
+    },
+    "api/sales.js": {
+      "maxDuration": 30
+    },
+    "api/appointments.js": {
+      "maxDuration": 30
+    },
+    "api/settings.js": {
+      "maxDuration": 30
+    },
+    "api/auth/profile.js": {
+      "maxDuration": 30
+    },
+    "api/settings/business-hours.js": {
+      "maxDuration": 30
+    },
+    "api/settings/holidays.js": {
+      "maxDuration": 30
+    },
+    "api/settings/closures.js": {
+      "maxDuration": 30
+    },
     "api/health.js": {
       "maxDuration": 10
     }

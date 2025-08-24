@@ -12,6 +12,9 @@ test-*.html
 *.test.js
 *.spec.js
 
+# Ignore data files (not serverless functions)
+api/data/
+
 # Ignore source files that shouldn't be deployed
 src/
 scripts/init-db.js

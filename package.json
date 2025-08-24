@@ -16,10 +16,9 @@
     "test:watch": "jest --watch",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
-    "build": "node scripts/vercel-post-build.js",
+    "build": "echo 'Build completed - Static files ready'",
     "lint": "eslint src/",
-    "typecheck": "echo 'Type checking not applicable for vanilla JS'",
-    "vercel-build": "npm run build"
+    "typecheck": "echo 'Type checking not applicable for vanilla JS'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

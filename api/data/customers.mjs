@@ -1,5 +1,9 @@
-// Centralized customer data management
-const { v4: uuidv4 } = require('uuid');
+// Centralized customer data management (ES6 module version)
+
+// Simple ID generator
+function generateId() {
+  return `cust-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
 
 // Centralized customer database - single source of truth
 let customers = [
@@ -167,7 +171,7 @@ const customerData = {
 
   // Create new customer
   createCustomer(data) {
-    const newId = `cust-${Date.now()}`;
+    const newId = generateId();
     const newCustomer = {
       ...data,
       id: newId,
@@ -239,6 +243,4 @@ const customerData = {
   }
 };
 
-// Export for both CommonJS and ES modules
-module.exports = customerData;
-module.exports.default = customerData;
+export default customerData;

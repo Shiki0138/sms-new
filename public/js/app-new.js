@@ -208,6 +208,21 @@ function navigateToPage(page) {
         case 'records':
             loadRecords();
             break;
+        case 'campaigns':
+            loadCampaigns();
+            break;
+        case 'services':
+            loadServices();
+            break;
+        case 'staff':
+            loadStaff();
+            break;
+        case 'messages':
+            loadMessages();
+            break;
+        case 'analytics':
+            loadAnalytics();
+            break;
         case 'settings':
             loadSettings();
             break;
@@ -1164,5 +1179,93 @@ function showFallbackDashboard(error) {
     const recentCustomersElement = document.getElementById('recentCustomers');
     if (recentCustomersElement) {
         recentCustomersElement.innerHTML = '<p class="error-state">データを読み込めませんでした。しばらくお待ちください。</p>';
+    }
+}
+
+// Load sales
+async function loadSales() {
+    try {
+        console.log('Loading sales');
+        // 売上管理の実装
+    } catch (error) {
+        console.error('Sales load error:', error);
+        showError('売上の読み込みに失敗しました');
+    }
+}
+
+// Load records
+async function loadRecords() {
+    try {
+        console.log('Loading records');
+        // カルテ管理の実装
+    } catch (error) {
+        console.error('Records load error:', error);
+        showError('カルテの読み込みに失敗しました');
+    }
+}
+
+// Load settings
+async function loadSettings() {
+    try {
+        console.log('Loading settings');
+        // 設定機能の実装
+    } catch (error) {
+        console.error('Settings load error:', error);
+        showError('設定の読み込みに失敗しました');
+    }
+}
+
+// Load campaigns
+async function loadCampaigns() {
+    try {
+        console.log('Loading campaigns');
+        // キャンペーン管理の実装
+    } catch (error) {
+        console.error('Campaigns load error:', error);
+        showError('キャンペーンの読み込みに失敗しました');
+    }
+}
+
+// Load services
+async function loadServices() {
+    try {
+        console.log('Loading services');
+        // サービス管理の実装
+    } catch (error) {
+        console.error('Services load error:', error);
+        showError('サービスの読み込みに失敗しました');
+    }
+}
+
+// Load staff
+async function loadStaff() {
+    try {
+        console.log('Loading staff');
+        // スタッフ管理の実装
+    } catch (error) {
+        console.error('Staff load error:', error);
+        showError('スタッフの読み込みに失敗しました');
+    }
+}
+
+// Load messages
+async function loadMessages() {
+    try {
+        console.log('Loading messages');
+        // メッセージ機能の実装
+    } catch (error) {
+        console.error('Messages load error:', error);
+        showError('メッセージの読み込みに失敗しました');
+    }
+}
+
+// Load analytics
+async function loadAnalytics() {
+    try {
+        console.log('Loading analytics');
+        // 分析・レポート機能の実装
+    } catch (error) {
+        console.error('Analytics load error:', error);
+        showError('分析の読み込みに失敗しました');
     }
 }

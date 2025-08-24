@@ -54,7 +54,8 @@
             box-shadow: 2px 0 20px rgba(0, 0, 0, 0.05);
             z-index: 1000;
             transition: transform 0.3s ease;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar-header {
@@ -97,6 +98,8 @@
 
         .nav-menu {
             padding: 1.5rem 0;
+            flex: 1;
+            overflow-y: auto;
         }
 
         .nav-item {
@@ -140,10 +143,7 @@
         }
 
         .user-section {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            flex-shrink: 0;
             padding: 1.5rem;
             background: var(--white);
             border-top: 1px solid rgba(0, 0, 0, 0.05);
@@ -452,6 +452,39 @@
             font-size: 1.5rem;
         }
 
+        /* Page visibility */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* Table styling */
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .customers-table th,
+        .customers-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .customers-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .content-area {
+            padding: 20px;
+        }
+
         /* Mobile Styles */
         @media (max-width: 768px) {
             .mobile-menu-toggle {
@@ -540,6 +573,14 @@
                 <span class="nav-icon">👥</span>
                 <span>顧客管理</span>
             </a>
+            <a href="#" class="nav-item" data-page="records">
+                <span class="nav-icon">📋</span>
+                <span>カルテ管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="campaigns">
+                <span class="nav-icon">📢</span>
+                <span>キャンペーン</span>
+            </a>
             <a href="#" class="nav-item" data-page="services">
                 <span class="nav-icon">✂️</span>
                 <span>サービス管理</span>
@@ -575,23 +616,25 @@
     </aside>
 
     <main class="main-content">
-        <header class="header">
-            <h1 class="page-title">こんにちは、素敵な一日を！</h1>
-            <div class="header-actions">
-                <button class="icon-button">
-                    🔍
-                </button>
-                <button class="icon-button">
-                    🔔
-                    <span class="notification-badge"></span>
-                </button>
-                <button class="icon-button">
-                    ➕
-                </button>
-            </div>
-        </header>
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+            <header class="header">
+                <h1 class="page-title">こんにちは、素敵な一日を！</h1>
+                <div class="header-actions">
+                    <button class="icon-button">
+                        🔍
+                    </button>
+                    <button class="icon-button">
+                        🔔
+                        <span class="notification-badge"></span>
+                    </button>
+                    <button class="icon-button">
+                        ➕
+                    </button>
+                </div>
+            </header>
 
-        <div class="stats-grid">
+            <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-header">
                     <div class="stat-icon">📅</div>
@@ -672,9 +715,112 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Appointments Page -->
+        <div class="page" id="appointments">
+            <header class="header">
+                <h1 class="page-title">予約管理</h1>
+            </header>
+            <div id="appointmentCalendar"></div>
+        </div>
+
+        <!-- Customers Page -->
+        <div class="page" id="customers">
+            <header class="header">
+                <h1 class="page-title">顧客管理</h1>
+            </header>
+            <div class="content-area">
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>顧客名</th>
+                            <th>電話番号</th>
+                            <th>メール</th>
+                            <th>最終来店日</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <!-- Customer data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Records Page -->
+        <div class="page" id="records">
+            <header class="header">
+                <h1 class="page-title">カルテ管理</h1>
+            </header>
+            <div class="content-area">
+                <p>カルテ管理機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Campaigns Page -->
+        <div class="page" id="campaigns">
+            <header class="header">
+                <h1 class="page-title">キャンペーン</h1>
+            </header>
+            <div class="content-area">
+                <p>キャンペーン機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Services Page -->
+        <div class="page" id="services">
+            <header class="header">
+                <h1 class="page-title">サービス管理</h1>
+            </header>
+            <div class="content-area">
+                <p>サービス管理機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Staff Page -->
+        <div class="page" id="staff">
+            <header class="header">
+                <h1 class="page-title">スタッフ管理</h1>
+            </header>
+            <div class="content-area">
+                <p>スタッフ管理機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Messages Page -->
+        <div class="page" id="messages">
+            <header class="header">
+                <h1 class="page-title">メッセージ</h1>
+            </header>
+            <div class="content-area">
+                <p>メッセージ機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="page" id="analytics">
+            <header class="header">
+                <h1 class="page-title">分析・レポート</h1>
+            </header>
+            <div class="content-area">
+                <p>分析・レポート機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="settings">
+            <header class="header">
+                <h1 class="page-title">設定</h1>
+            </header>
+            <div class="content-area">
+                <p>設定機能は準備中です。</p>
+            </div>
+        </div>
     </main>
 
     <!-- Include app-new.js for authentication and API handling -->
+    <script src="/js/calendar.js"></script>
     <script src="/js/app-new.js"></script>
     <script>
         // Mobile menu toggle

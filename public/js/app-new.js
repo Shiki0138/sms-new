@@ -208,9 +208,6 @@ function navigateToPage(page) {
         case 'records':
             loadRecords();
             break;
-        case 'campaigns':
-            loadCampaigns();
-            break;
         case 'services':
             loadServices();
             break;
@@ -1215,16 +1212,6 @@ async function loadSettings() {
     }
 }
 
-// Load campaigns
-async function loadCampaigns() {
-    try {
-        console.log('Loading campaigns');
-        // キャンペーン管理の実装
-    } catch (error) {
-        console.error('Campaigns load error:', error);
-        showError('キャンペーンの読み込みに失敗しました');
-    }
-}
 
 // Load services
 async function loadServices() {
@@ -1248,15 +1235,9 @@ async function loadStaff() {
     }
 }
 
-// Load messages
+// Load messages - redirect to dedicated page
 async function loadMessages() {
-    try {
-        console.log('Loading messages');
-        // メッセージ機能の実装
-    } catch (error) {
-        console.error('Messages load error:', error);
-        showError('メッセージの読み込みに失敗しました');
-    }
+    window.location.href = '/messages.html';
 }
 
 // Load analytics

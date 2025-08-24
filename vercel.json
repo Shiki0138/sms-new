@@ -1,13 +1,18 @@
 {
-  "name": "sms-new",
+  "name": "salon-lumiere",
   "regions": ["hnd1"],
   "env": {
     "NODE_ENV": "production"
   },
   "buildCommand": "npm run vercel-build",
-  "outputDirectory": ".",
+  "outputDirectory": "public",
   "functions": {
     "api/data/**": false,
+    "api/src/**": false,
+    "api/scripts/**": false,
+    "api/tests/**": false,
+    "api/*.test.js": false,
+    "api/*.spec.js": false,
     "api/auth/login.js": {
       "maxDuration": 30
     },

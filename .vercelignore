@@ -4,28 +4,56 @@ node_modules
 .gitignore
 .env
 .env.local
+.env.*
 *.log
 coverage
 .nyc_output
-tests
+
+# Ignore test files
+tests/
 test-*.html
 *.test.js
 *.spec.js
+__tests__/
 
 # Ignore data files (not serverless functions)
 api/data/
 
 # Ignore source files that shouldn't be deployed
 src/
-scripts/init-db.js
-scripts/migrate-to-supabase.js
+scripts/
+!api/
 
 # Ignore documentation
 README.md
 CLAUDE.md
 docs/
+*.md
 
 # Ignore development configs
 .eslintrc*
 jest.config*
 nodemon.json
+.prettierrc*
+.babelrc*
+webpack.config*
+rollup.config*
+tsconfig.json
+
+# Ignore build artifacts
+dist/
+build/
+.cache/
+temp/
+tmp/
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore OS files
+.DS_Store
+Thumbs.db

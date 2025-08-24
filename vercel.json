@@ -1,52 +1,5 @@
 {
-  "name": "salon-lumiere",
   "regions": ["hnd1"],
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "buildCommand": "npm run vercel-build",
-  "outputDirectory": "public",
-  "functions": {
-    "api/data/**": false,
-    "api/src/**": false,
-    "api/scripts/**": false,
-    "api/tests/**": false,
-    "api/*.test.js": false,
-    "api/*.spec.js": false,
-    "api/auth/login.js": {
-      "maxDuration": 30
-    },
-    "api/dashboard/summary.js": {
-      "maxDuration": 30
-    },
-    "api/customers.js": {
-      "maxDuration": 30
-    },
-    "api/customers/[id].js": {
-      "maxDuration": 30
-    },
-    "api/sales.js": {
-      "maxDuration": 30
-    },
-    "api/appointments.js": {
-      "maxDuration": 30
-    },
-    "api/records/customer/[id].js": {
-      "maxDuration": 30
-    },
-    "api/records/[id]/photos.js": {
-      "maxDuration": 30
-    },
-    "api/settings.js": {
-      "maxDuration": 30
-    },
-    "api/auth/profile.js": {
-      "maxDuration": 30
-    },
-    "api/health.js": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
@@ -68,56 +21,9 @@
           "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
         }
       ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/icons/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        }
-      ]
     }
   ],
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
     {
       "source": "/",
       "destination": "/public/login.html"
@@ -139,22 +45,6 @@
       "destination": "/public/customer-detail.html"
     },
     {
-      "source": "/assets/:path*",
-      "destination": "/public/assets/:path*"
-    },
-    {
-      "source": "/icons/:path*",
-      "destination": "/public/icons/:path*"
-    },
-    {
-      "source": "/css/:path*",
-      "destination": "/public/css/:path*"
-    },
-    {
-      "source": "/js/:path*",
-      "destination": "/public/js/:path*"
-    },
-    {
       "source": "/:path*.html",
       "destination": "/public/:path*.html"
     },
@@ -174,7 +64,5 @@
       "source": "/favicon.ico",
       "destination": "/public/favicon.ico"
     }
-  ],
-  "trailingSlash": false,
-  "cleanUrls": false
+  ]
 }

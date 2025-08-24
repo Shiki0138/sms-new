@@ -52,7 +52,10 @@ class Dashboard {
      */
     async loadDashboardData() {
         try {
-            window.showLoading(true);
+            // Fallback for showLoading if not available
+            if (typeof window.showLoading === 'function') {
+                window.showLoading(true);
+            }
             
             // Load all dashboard data in parallel
             const [statsResponse, activityResponse, upcomingResponse] = await Promise.all([
@@ -69,14 +72,21 @@ class Dashboard {
             // Update timestamp
             this.updateLastRefresh();
             
-            window.showToast('ダッシュボードが更新されました', 'success', 2000);
+            // Fallback for showToast if not available
+            if (typeof window.showToast === 'function') {
+                window.showToast('ダッシュボードが更新されました', 'success', 2000);
+            }
             
         } catch (error) {
             console.error('Error loading dashboard data:', error);
-            window.showToast('ダッシュボードデータの読み込みに失敗しました', 'error');
+            if (typeof window.showToast === 'function') {
+                window.showToast('ダッシュボードデータの読み込みに失敗しました', 'error');
+            }
             this.showErrorState();
         } finally {
-            window.showLoading(false);
+            if (typeof window.showLoading === 'function') {
+                window.showLoading(false);
+            }
         }
     }
 
@@ -465,7 +475,9 @@ class Dashboard {
             this.updateRevenueChart(revenue.data);
         } catch (error) {
             console.error('Error loading revenue data:', error);
-            window.showToast('売上データの読み込みに失敗しました', 'error');
+            if (typeof window.showToast === 'function') {
+                window.showToast('売上データの読み込みに失敗しました', 'error');
+            }
         }
     }
 

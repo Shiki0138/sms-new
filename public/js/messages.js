@@ -23,7 +23,7 @@ function checkAuth() {
     const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
     
     if (!authToken || !userStr) {
-        window.location.href = '/login-new.html';
+        window.location.href = '/login.html';
         return;
     }
     

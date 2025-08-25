@@ -485,6 +485,30 @@
             padding: 20px;
         }
 
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+        }
+
         /* Mobile Styles */
         @media (max-width: 768px) {
             .mobile-menu-toggle {
@@ -825,19 +849,8 @@
             }
         });
 
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                
-                // Close mobile menu after selection
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                }
-            });
-        });
+        // Navigation is handled by app-new.js
+        // This prevents duplicate event listeners
 
         // Logout - handled by app-new.js, this is a fallback
         const logoutBtn = document.getElementById('logoutBtn');

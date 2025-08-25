@@ -5,6 +5,10 @@ const Appointment = require('./Appointment');
 const Sale = require('./Sale');
 const MedicalRecord = require('./MedicalRecord');
 const Setting = require('./Setting');
+const Message = require('./Message');
+const MessageConversation = require('./MessageConversation');
+const ChannelConfig = require('./ChannelConfig');
+const BulkMessageJob = require('./BulkMessageJob');
 
 // User associations
 User.hasMany(Customer, { foreignKey: 'userId', as: 'customers' });
@@ -38,6 +42,34 @@ MedicalRecord.belongsTo(Appointment, { foreignKey: 'appointmentId', as: 'appoint
 // Setting associations
 Setting.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// Message associations
+Message.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Message.belongsTo(Customer, { foreignKey: 'customerId', as: 'customer' });
+Message.belongsTo(MessageConversation, { foreignKey: 'conversationId', as: 'conversation' });
+Message.belongsTo(BulkMessageJob, { foreignKey: 'bulkJobId', as: 'bulkJob' });
+
+// MessageConversation associations
+MessageConversation.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+MessageConversation.belongsTo(Customer, { foreignKey: 'customerId', as: 'customer' });
+MessageConversation.hasMany(Message, { foreignKey: 'conversationId', as: 'messages' });
+
+// ChannelConfig associations
+ChannelConfig.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// BulkMessageJob associations
+BulkMessageJob.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+BulkMessageJob.hasMany(Message, { foreignKey: 'bulkJobId', as: 'messages' });
+
+// Additional Customer associations for messaging
+Customer.hasMany(Message, { foreignKey: 'customerId', as: 'messages' });
+Customer.hasMany(MessageConversation, { foreignKey: 'customerId', as: 'conversations' });
+
+// Additional User associations for messaging
+User.hasMany(Message, { foreignKey: 'userId', as: 'messages' });
+User.hasMany(MessageConversation, { foreignKey: 'userId', as: 'conversations' });
+User.hasMany(ChannelConfig, { foreignKey: 'userId', as: 'channelConfigs' });
+User.hasMany(BulkMessageJob, { foreignKey: 'userId', as: 'bulkMessageJobs' });
+
 module.exports = {
   sequelize,
   User,
@@ -45,5 +77,9 @@ module.exports = {
   Appointment,
   Sale,
   MedicalRecord,
-  Setting
+  Setting,
+  Message,
+  MessageConversation,
+  ChannelConfig,
+  BulkMessageJob
 };

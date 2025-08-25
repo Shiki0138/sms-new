@@ -16,7 +16,7 @@ const Message = sequelize.define('Message', {
     allowNull: true // null for broadcast messages
   },
   channel: {
-    type: DataTypes.ENUM('email', 'line', 'instagram'),
+    type: DataTypes.ENUM('sms', 'email', 'line', 'instagram'),
     allowNull: false
   },
   channelUserId: {
@@ -65,6 +65,40 @@ const Message = sequelize.define('Message', {
   },
   error: {
     type: DataTypes.TEXT,
+    allowNull: true
+  },
+  conversationId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'message_conversations',
+      key: 'id'
+    }
+  },
+  bulkJobId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'bulk_message_jobs',
+      key: 'id'
+    }
+  },
+  // Email specific fields
+  emailSubject: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  // Tracking data
+  openedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  clickedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  bouncedAt: {
+    type: DataTypes.DATE,
     allowNull: true
   }
 }, {

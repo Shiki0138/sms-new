@@ -12,6 +12,8 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const subscriptionRoutes = require('./routes/subscription');
 const googleCalendarRoutes = require('./routes/googleCalendar');
+const messagingRoutes = require('./routes/messaging');
+const channelConfigRoutes = require('./routes/channelConfig');
 const { logRequest } = require('./middleware/auth');
 const config = require('../sms-service/src/config');
 
@@ -136,6 +138,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/google-calendar', googleCalendarRoutes);
+app.use('/api/messaging', messagingRoutes);
+app.use('/api/channel-config', channelConfigRoutes);
 
 // Public API routes for booking widget
 app.use('/api/public/salons/:salonId', require('./routes/publicBooking'));

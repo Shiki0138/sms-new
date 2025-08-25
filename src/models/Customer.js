@@ -98,6 +98,40 @@ const Customer = sequelize.define('Customer', {
   isActive: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  // Multi-channel identifiers
+  lineUserId: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  instagramUsername: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  instagramUserId: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  preferredChannel: {
+    type: DataTypes.ENUM('sms', 'email', 'line', 'instagram'),
+    defaultValue: 'sms'
+  },
+  channelPreferences: {
+    type: DataTypes.JSON,
+    defaultValue: {
+      sms: true,
+      email: true,
+      line: false,
+      instagram: false
+    }
+  },
+  lastContactedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  lastContactedChannel: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   tableName: 'customers',

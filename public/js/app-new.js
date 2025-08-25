@@ -163,7 +163,12 @@ function setupEventListeners() {
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const page = item.dataset.page;
-            navigateToPage(page);
+            console.log('Navigation item clicked in app-new.js:', page);
+            if (page) {
+                navigateToPage(page);
+            } else {
+                console.warn('No data-page attribute found on nav item');
+            }
         });
     });
     
@@ -181,6 +186,8 @@ function setupEventListeners() {
 
 // Navigate to page
 function navigateToPage(page) {
+    console.log('Navigating to page:', page);
+    
     // Update nav
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.toggle('active', item.dataset.page === page);
@@ -190,6 +197,14 @@ function navigateToPage(page) {
     document.querySelectorAll('.page').forEach(pageEl => {
         pageEl.classList.toggle('active', pageEl.id === page);
     });
+    
+    // Close mobile menu if open
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && window.innerWidth <= 768) {
+        sidebar.classList.remove('active');
+    }
+    
+    console.log('Loading page data for:', page);
     
     // Load page data
     switch(page) {
@@ -1235,9 +1250,28 @@ async function loadStaff() {
     }
 }
 
-// Load messages - redirect to dedicated page
+// Load messages
 async function loadMessages() {
-    window.location.href = '/messages.html';
+    try {
+        console.log('Loading messages...');
+        // For now, just show the messages section
+        // Later, we can add functionality to load message data
+        const messagesContent = document.querySelector('#messages .content-area');
+        if (messagesContent) {
+            messagesContent.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h2>メッセージ機能</h2>
+                    <p style="margin: 20px 0;">統合メッセージシステムは準備中です。</p>
+                    <a href="/messages.html" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px;">
+                        専用メッセージページを開く
+                    </a>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Messages load error:', error);
+        showError('メッセージの読み込みに失敗しました');
+    }
 }
 
 // Load analytics

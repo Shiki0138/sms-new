@@ -19,6 +19,7 @@ const staffRoutes = require('./routes/staff-supabase');
 const serviceRoutes = require('./routes/services-supabase');
 const dashboardRoutes = require('./routes/dashboard-supabase');
 const settingsRoutes = require('./routes/settings-supabase');
+const channelConfigRoutes = require('./routes/channelConfig');
 
 // Import middleware
 const { supabaseAuth, optionalAuth } = require('./middleware/supabase-auth');
@@ -115,6 +116,7 @@ app.use('/api/staff', supabaseAuth, staffRoutes);
 app.use('/api/services', supabaseAuth, serviceRoutes);
 app.use('/api/dashboard', supabaseAuth, dashboardRoutes);
 app.use('/api/settings', supabaseAuth, settingsRoutes);
+app.use('/api/channel-config', supabaseAuth, channelConfigRoutes);
 
 // Public booking widget endpoint (optional auth)
 app.use('/api/public/booking', optionalAuth, require('./routes/public-booking-supabase'));

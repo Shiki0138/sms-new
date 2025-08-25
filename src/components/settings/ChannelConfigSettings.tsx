@@ -30,8 +30,9 @@ import {
   Switch,
   Code,
 } from '@chakra-ui/react';
-import { Eye, EyeOff, Save, TestTube, Copy, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, EyeOff, Save, TestTube, Copy, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { api } from '../../services/api';
+import ChannelStatusIndicator from './ChannelStatusIndicator';
 
 interface ChannelConfig {
   channel: string;
@@ -42,6 +43,11 @@ interface ChannelConfig {
   lastTestAt?: string;
   webhookUrl?: string;
   webhookSecret?: string;
+  connectionStatus: 'connected' | 'disconnected' | 'error' | 'testing';
+  lastConnectionTest?: string;
+  connectionError?: string;
+  testAttempts: number;
+  maxTestAttempts: number;
 }
 
 const channelDetails = {
@@ -225,9 +231,7 @@ const ChannelConfigSettings: React.FC = () => {
                   <HStack spacing={2}>
                     <Text>{details.name}</Text>
                     {config && (
-                      <Badge colorScheme={config.isVerified ? 'green' : 'gray'} size="sm">
-                        {config.isVerified ? '接続済み' : '未接続'}
-                      </Badge>
+                      <ChannelStatusIndicator config={config} />
                     )}
                   </HStack>
                 </Tab>
@@ -243,22 +247,16 @@ const ChannelConfigSettings: React.FC = () => {
                     <HStack justify="space-between">
                       <Heading size="sm">{channelConfig.name}設定</Heading>
                       {existingConfig && (
-                        <HStack spacing={2}>
-                          {existingConfig.isVerified ? (
-                            <Badge colorScheme="green" leftIcon={<CheckCircle size={14} />}>
-                              検証済み
-                            </Badge>
-                          ) : (
-                            <Badge colorScheme="gray" leftIcon={<XCircle size={14} />}>
-                              未検証
-                            </Badge>
-                          )}
+                        <HStack spacing={3}>
+                          <ChannelStatusIndicator config={existingConfig} showDetails={false} />
                           <Switch
+                            size="sm"
                             isChecked={existingConfig.isActive}
                             isDisabled
-                          >
-                            有効
-                          </Switch>
+                          />
+                          <Text fontSize="sm" color="gray.600">
+                            {existingConfig.isActive ? '有効' : '無効'}
+                          </Text>
                         </HStack>
                       )}
                     </HStack>
@@ -339,24 +337,38 @@ const ChannelConfigSettings: React.FC = () => {
                         </Box>
                       )}
 
-                      <HStack pt={4}>
-                        <Button
-                          leftIcon={<Save size={16} />}
-                          colorScheme="blue"
-                          onClick={handleSave}
-                          isLoading={saveMutation.isLoading}
-                        >
-                          保存
-                        </Button>
-                        <Button
-                          leftIcon={<TestTube size={16} />}
-                          variant="outline"
-                          onClick={handleTest}
-                          isLoading={testMutation.isLoading}
-                          isDisabled={!existingConfig}
-                        >
-                          接続テスト
-                        </Button>
+                      <HStack pt={4} justify="space-between">
+                        <HStack>
+                          <Button
+                            leftIcon={<Save size={16} />}
+                            colorScheme="blue"
+                            onClick={handleSave}
+                            isLoading={saveMutation.isLoading}
+                          >
+                            保存
+                          </Button>
+                          <Button
+                            leftIcon={<TestTube size={16} />}
+                            variant="outline"
+                            onClick={handleTest}
+                            isLoading={testMutation.isLoading}
+                            isDisabled={!existingConfig}
+                          >
+                            接続テスト
+                          </Button>
+                        </HStack>
+                        
+                        {existingConfig && (
+                          <Button
+                            leftIcon={<RefreshCw size={16} />}
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => refetch()}
+                            title="設定を再読み込み"
+                          >
+                            更新
+                          </Button>
+                        )}
                       </HStack>
                     </VStack>
                   </CardBody>

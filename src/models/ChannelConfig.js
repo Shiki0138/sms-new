@@ -63,6 +63,26 @@ const ChannelConfig = sequelize.define('ChannelConfig', {
   metadata: {
     type: DataTypes.JSON,
     defaultValue: {}
+  },
+  connectionStatus: {
+    type: DataTypes.ENUM('connected', 'disconnected', 'error', 'testing'),
+    defaultValue: 'disconnected'
+  },
+  lastConnectionTest: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  connectionError: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  testAttempts: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  maxTestAttempts: {
+    type: DataTypes.INTEGER,
+    defaultValue: 5
   }
 }, {
   tableName: 'channel_configs',
@@ -70,8 +90,23 @@ const ChannelConfig = sequelize.define('ChannelConfig', {
     {
       fields: ['userId', 'channel'],
       unique: true
+    },
+    {
+      fields: ['userId', 'isActive']
+    },
+    {
+      fields: ['connectionStatus']
     }
-  ]
+  ],
+  hooks: {
+    beforeValidate: (instance) => {
+      // Ensure webhook URL is generated if not provided
+      if (!instance.webhookUrl && instance.userId && instance.channel) {
+        const baseUrl = process.env.BASE_URL || 'https://your-domain.com';
+        instance.webhookUrl = `${baseUrl}/api/messaging/webhook/${instance.channel}`;
+      }
+    }
+  }
 });
 
 module.exports = ChannelConfig;

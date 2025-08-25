@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { ChannelConfig } = require('../models');
 const { body, param, validationResult } = require('express-validator');
-const crypto = require('crypto');
+const { encrypt, decrypt, maskSensitive, generateToken } = require('../utils/encryption');
 
 // Validation middleware
 const validate = (req, res, next) => {
@@ -14,38 +14,7 @@ const validate = (req, res, next) => {
   next();
 };
 
-// Encrypt sensitive configuration data
-const encryptConfig = (config) => {
-  const algorithm = 'aes-256-gcm';
-  const key = Buffer.from(process.env.ENCRYPTION_KEY || 'default-encryption-key-change-this', 'utf8').slice(0, 32);
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  
-  let encrypted = cipher.update(JSON.stringify(config), 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  
-  const authTag = cipher.getAuthTag();
-  
-  return {
-    encrypted,
-    iv: iv.toString('hex'),
-    authTag: authTag.toString('hex')
-  };
-};
-
-// Decrypt sensitive configuration data
-const decryptConfig = (encryptedData) => {
-  const algorithm = 'aes-256-gcm';
-  const key = Buffer.from(process.env.ENCRYPTION_KEY || 'default-encryption-key-change-this', 'utf8').slice(0, 32);
-  const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(encryptedData.iv, 'hex'));
-  
-  decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
-  
-  let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  
-  return JSON.parse(decrypted);
-};
+// These functions are now handled by the encryption utility
 
 // Get all channel configurations
 router.get('/', authenticateToken, async (req, res) => {
@@ -129,7 +98,7 @@ router.post('/:channel',
       }
 
       // Encrypt sensitive configuration
-      const encryptedData = encryptConfig(config);
+      const encryptedData = encrypt(config);
 
       // Find existing config
       let channelConfig = await ChannelConfig.findOne({
@@ -154,7 +123,7 @@ router.post('/:channel',
           config: maskConfig(config),
           encryptedConfig: JSON.stringify(encryptedData),
           webhookUrl: generateWebhookUrl(req.user.id, channel),
-          webhookSecret: crypto.randomBytes(32).toString('hex')
+          webhookSecret: generateToken(32)
         });
       }
 
@@ -188,16 +157,20 @@ router.post('/:channel/test',
       }
 
       // Decrypt configuration
-      const decryptedConfig = decryptConfig(JSON.parse(config.encryptedConfig));
+      const decryptedConfig = decrypt(JSON.parse(config.encryptedConfig));
 
       // Test based on channel
       const testResult = await testChannelConfig(req.params.channel, config.provider, decryptedConfig);
 
-      // Update last test time
+      // Update connection status and test information
       await config.update({
         lastTestAt: new Date(),
+        lastConnectionTest: new Date(),
         isVerified: testResult.success,
-        verifiedAt: testResult.success ? new Date() : null
+        verifiedAt: testResult.success ? new Date() : null,
+        connectionStatus: testResult.success ? 'connected' : 'error',
+        connectionError: testResult.success ? null : testResult.error,
+        testAttempts: config.testAttempts + 1
       });
 
       res.json(testResult);
@@ -280,10 +253,12 @@ function validateChannelConfig(channel, provider, config) {
 // Helper function to mask sensitive configuration data
 function maskConfig(config) {
   const masked = { ...config };
-  if (masked.authToken) masked.authToken = '***';
-  if (masked.apiKey) masked.apiKey = '***';
-  if (masked.channelAccessToken) masked.channelAccessToken = '***';
-  if (masked.accessToken) masked.accessToken = '***';
+  if (masked.authToken) masked.authToken = maskSensitive(masked.authToken);
+  if (masked.apiKey) masked.apiKey = maskSensitive(masked.apiKey);
+  if (masked.channelAccessToken) masked.channelAccessToken = maskSensitive(masked.channelAccessToken);
+  if (masked.accessToken) masked.accessToken = maskSensitive(masked.accessToken);
+  if (masked.channelSecret) masked.channelSecret = maskSensitive(masked.channelSecret);
+  if (masked.webhookSecret) masked.webhookSecret = maskSensitive(masked.webhookSecret);
   return masked;
 }
 
@@ -293,44 +268,20 @@ function generateWebhookUrl(userId, channel) {
   return `${baseUrl}/api/messaging/webhook/${channel}`;
 }
 
+// Import the channel test service
+const channelTestService = require('../services/channelTestService');
+
 // Helper function to test channel configuration
 async function testChannelConfig(channel, provider, config) {
   try {
-    switch (channel) {
-      case 'sms':
-        // Test Twilio configuration
-        const twilio = require('twilio');
-        const client = twilio(config.accountSid, config.authToken);
-        await client.api.accounts(config.accountSid).fetch();
-        return { success: true, message: 'SMS configuration is valid' };
-
-      case 'email':
-        // Test SendGrid configuration
-        const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey(config.apiKey);
-        // SendGrid doesn't have a direct test endpoint, but we can try to set the API key
-        return { success: true, message: 'Email configuration appears valid' };
-
-      case 'line':
-        // Test LINE configuration
-        const axios = require('axios');
-        const response = await axios.get('https://api.line.me/v2/bot/info', {
-          headers: {
-            'Authorization': `Bearer ${config.channelAccessToken}`
-          }
-        });
-        return { success: true, message: 'LINE configuration is valid', botInfo: response.data };
-
-      case 'instagram':
-        // Test Instagram configuration
-        // This would require actual Instagram API testing
-        return { success: false, message: 'Instagram configuration testing not yet implemented' };
-
-      default:
-        return { success: false, message: 'Invalid channel' };
-    }
+    const result = await channelTestService.testChannel(channel, provider, config);
+    return result;
   } catch (error) {
-    return { success: false, message: error.message };
+    return { 
+      success: false, 
+      error: 'Configuration test failed',
+      details: error.message 
+    };
   }
 }
 

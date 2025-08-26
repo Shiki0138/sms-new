@@ -9,6 +9,9 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
  * @returns {string} JWT token
  */
 const generateToken = (payload) => {
+  if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || JWT_SECRET === 'fallback-secret-key-change-in-production')) {
+    throw new Error('JWT_SECRET must be configured in production');
+  }
   return jwt.sign(payload, JWT_SECRET, { 
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'sms-salon',
@@ -24,6 +27,9 @@ const generateToken = (payload) => {
  */
 const verifyToken = (token) => {
   try {
+    if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || JWT_SECRET === 'fallback-secret-key-change-in-production')) {
+      throw new Error('JWT_SECRET not configured');
+    }
     return jwt.verify(token, JWT_SECRET, {
       issuer: 'sms-salon',
       audience: 'sms-users'
@@ -48,6 +54,9 @@ const decodeToken = (token) => {
  * @returns {string} Refresh token
  */
 const generateRefreshToken = (payload) => {
+  if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || JWT_SECRET === 'fallback-secret-key-change-in-production')) {
+    throw new Error('JWT_SECRET must be configured in production');
+  }
   return jwt.sign(payload, JWT_SECRET, { 
     expiresIn: '7d',
     issuer: 'sms-salon',

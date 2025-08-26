@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// IMPORTANT: Do NOT expose service role key in client bundles
 
 // Create Supabase client for public/client-side use
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -24,15 +24,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Create Supabase admin client for server-side use
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-  db: {
-    schema: 'public',
-  },
-});
+// Server-side admin client moved to server-only module to prevent key leakage
+// See: src/server/supabaseAdmin.js
 
 // Auth helpers
 export const signUp = async (email, password, metadata = {}) => {

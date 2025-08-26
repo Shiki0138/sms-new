@@ -1,13 +1,63 @@
 const express = require('express');
 const { body, param, query, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
+const twilio = require('twilio');
 const SMSService = require('../../sms-service/src/services/sms-service');
-const { authenticateToken, validateTenant } = require('../middleware/auth');
+// Use consistent JWT verification across the app
+const { authenticateToken } = require('../middleware/authMiddleware');
+// Keep tenant utilities from the multi-tenant helper
+const { validateTenant } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Initialize SMS service instance
+// Initialize SMS service instance (lazy init on first use)
 const smsService = new SMSService();
+const ensureInitialized = async () => {
+  if (!smsService.initialized) {
+    await smsService.initialize();
+  }
+};
+
+// Helpers
+const getFullUrl = (req) => `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+
+// Provider webhook signature verification
+const verifyWebhookSignature = async (req, res, next) => {
+  try {
+    const { provider } = req.params;
+
+    if (provider === 'twilio') {
+      const signature = req.get('x-twilio-signature');
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      if (!authToken) {
+        return res.status(500).json({ success: false, error: 'Twilio auth token not configured' });
+      }
+      if (!signature) {
+        return res.status(401).json({ success: false, error: 'Missing Twilio signature' });
+      }
+      const url = getFullUrl(req);
+      // Note: validateRequest expects form-encoded params. For JSON webhooks, capture raw body.
+      const valid = twilio.validateRequest(authToken, signature, url, req.body || {});
+      if (!valid) {
+        return res.status(403).json({ success: false, error: 'Invalid Twilio signature' });
+      }
+    } else if (provider === 'aws-sns') {
+      // Minimal SNS checks: require message type and expected TopicArn
+      const messageType = req.get('x-amz-sns-message-type');
+      if (!messageType) {
+        return res.status(400).json({ success: false, error: 'Missing SNS message type' });
+      }
+      const expectedTopic = process.env.AWS_SNS_TOPIC_ARN;
+      if (expectedTopic && req.body?.TopicArn && req.body.TopicArn !== expectedTopic) {
+        return res.status(403).json({ success: false, error: 'Unexpected SNS TopicArn' });
+      }
+      // Full signature verification is recommended (TODO)
+    }
+    next();
+  } catch (e) {
+    return res.status(400).json({ success: false, error: 'Webhook verification failed', message: e.message });
+  }
+};
 
 // Rate limiting middleware
 const createRateLimit = (limit, windowMs = 15 * 60 * 1000) => 
@@ -48,6 +98,7 @@ router.post('/send',
   handleValidationErrors,
   async (req, res) => {
     try {
+      await ensureInitialized();
       const { to, body: messageBody, from, priority, scheduledAt, providerName, options = {} } = req.body;
       
       const result = await smsService.sendSMS({
@@ -60,7 +111,7 @@ router.post('/send',
         providerName,
         options: {
           ...options,
-          userId: req.user.id,
+          userId: req.user.userId || req.user.id,
           userAgent: req.get('User-Agent'),
           ipAddress: req.ip
         }
@@ -97,6 +148,7 @@ router.post('/bulk',
   handleValidationErrors,
   async (req, res) => {
     try {
+      await ensureInitialized();
       const { 
         messages, 
         batchSize = 50, 
@@ -127,7 +179,7 @@ router.post('/bulk',
         providerName,
         options: {
           ...options,
-          userId: req.user.id,
+          userId: req.user.userId || req.user.id,
           userAgent: req.get('User-Agent'),
           ipAddress: req.ip
         }
@@ -255,6 +307,7 @@ router.post('/webhook/:provider',
     param('provider').isIn(['twilio', 'aws-sns']).withMessage('Supported provider required'),
   ],
   handleValidationErrors,
+  verifyWebhookSignature,
   async (req, res) => {
     try {
       const { provider } = req.params;

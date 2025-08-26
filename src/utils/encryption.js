@@ -33,15 +33,16 @@ function encrypt(data) {
   try {
     const key = getEncryptionKey();
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipher(ALGORITHM, key, iv);
-    
+    // Use modern, non-deprecated API with explicit IV
+    const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+
     const plaintext = typeof data === 'string' ? data : JSON.stringify(data);
-    
-    let encrypted = cipher.update(plaintext, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    
+
+    const encryptedBuffers = [cipher.update(plaintext, 'utf8'), cipher.final()];
+    const encrypted = Buffer.concat(encryptedBuffers).toString('hex');
+
     const authTag = cipher.getAuthTag();
-    
+
     return {
       encrypted,
       iv: iv.toString('hex'),
@@ -64,20 +65,16 @@ function decrypt(encryptedData) {
     if (!encryptedData || !encryptedData.encrypted || !encryptedData.iv || !encryptedData.authTag) {
       throw new Error('Invalid encrypted data format');
     }
-    
+
     const key = getEncryptionKey();
-    const decipher = crypto.createDecipher(
-      encryptedData.algorithm || ALGORITHM,
-      key,
-      Buffer.from(encryptedData.iv, 'hex')
-    );
-    
-    decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'hex'));
-    
-    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    
-    // Try to parse as JSON, fallback to string
+    const iv = Buffer.from(encryptedData.iv, 'hex');
+    const authTag = Buffer.from(encryptedData.authTag, 'hex');
+    const decipher = crypto.createDecipheriv(encryptedData.algorithm || ALGORITHM, key, iv);
+    decipher.setAuthTag(authTag);
+
+    const decryptedBuffers = [decipher.update(Buffer.from(encryptedData.encrypted, 'hex')), decipher.final()];
+    const decrypted = Buffer.concat(decryptedBuffers).toString('utf8');
+
     try {
       return JSON.parse(decrypted);
     } catch {

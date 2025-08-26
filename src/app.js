@@ -24,6 +24,8 @@ const SMSRemindersService = require('./services/smsReminders');
 const app = express();
 
 // Security middleware
+// Ensure correct protocol/host are derived behind proxies (for webhook signature validation, logs)
+app.set('trust proxy', true);
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -39,8 +41,20 @@ app.use(helmet({
 }));
 
 // CORS configuration
+// CORS: default to localhost origins in dev, require explicit list in prod
+const defaultDevOrigins = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'];
+const parsedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+  : (process.env.NODE_ENV === 'production' ? [] : defaultDevOrigins);
+
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+  origin: function (origin, callback) {
+    // Allow server-to-server/health checks with no Origin
+    if (!origin) return callback(null, true);
+    if (parsedOrigins.includes('*')) return callback(null, true);
+    if (parsedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'X-Tenant-ID']

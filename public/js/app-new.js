@@ -1253,18 +1253,20 @@ async function loadStaff() {
 // Load messages
 async function loadMessages() {
     try {
-        console.log('Loading messages...');
+        console.log('Loading messages page - function called successfully');
         // For now, just show the messages section
         // Later, we can add functionality to load message data
         const messagesContent = document.querySelector('#messages .content-area');
+        console.log('Messages content element found:', !!messagesContent);
         if (messagesContent) {
             messagesContent.innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h2>メッセージ機能</h2>
-                    <p style="margin: 20px 0;">統合メッセージシステムは準備中です。</p>
-                    <a href="/messages.html" class="btn btn-primary" style="display: inline-block; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px;">
-                        専用メッセージページを開く
-                    </a>
+                <div style="text-align: center; padding: 3rem;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <h3 style="color: var(--text-dark); margin-bottom: 1rem; font-size: 1.5rem;">統合メッセージング</h3>
+                    <p style="color: var(--text-light); margin-bottom: 2rem;">LINE、SMS、メール、Instagramを統合管理</p>
+                    <button onclick="window.open('/messages.html', '_blank')" style="background: var(--gradient-2); color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-md);">
+                        メッセージセンターを開く
+                    </button>
                 </div>
             `;
         }

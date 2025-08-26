@@ -4,10 +4,10 @@
   "description": "Salon Lumière - Professional Beauty Salon Management System",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server-simple.js",
+    "start": "node src/server.js",
     "start:full": "node src/server-new.js",
     "start:supabase": "node src/server-supabase.js",
-    "dev": "nodemon src/server-simple.js",
+    "dev": "nodemon src/server.js",
     "dev:full": "nodemon src/server-new.js",
     "dev:supabase": "nodemon src/server-supabase.js",
     "init-db": "node scripts/init-db.js",

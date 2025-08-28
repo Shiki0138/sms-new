@@ -1,3 +1,36 @@
+// API Request Helper
+async function apiRequest(endpoint, options = {}) {
+    const token = localStorage.getItem('token') || localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
+    
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
+    
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    
+    const finalOptions = {
+        ...defaultOptions,
+        ...options,
+        headers: {
+            ...defaultOptions.headers,
+            ...(options.headers || {})
+        }
+    };
+    
+    const response = await fetch(`/api${endpoint}`, finalOptions);
+    
+    if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.json();
+}
+
 // Calendar Component
 class AppointmentCalendar {
     constructor(containerId, options = {}) {
@@ -27,11 +60,20 @@ class AppointmentCalendar {
     async loadSettings() {
         try {
             const response = await apiRequest('/settings');
-            this.settings = response.setting;
+            // Handle different response structures
+            this.settings = response.setting || response;
             this.holidays = this.settings.holidays || [];
-            this.closures = this.settings.temporaryClosures || [];
+            this.closures = this.settings.closures || this.settings.temporaryClosures || [];
         } catch (error) {
             console.error('Failed to load settings:', error);
+            // Set defaults to prevent errors
+            this.settings = {
+                holidays: [],
+                closures: [],
+                temporaryClosures: []
+            };
+            this.holidays = [];
+            this.closures = [];
         }
     }
     

@@ -170,7 +170,11 @@ export default async function handler(req, res) {
             res.status(404).json({ message: 'Settings section not found' });
           }
         } else {
-          res.json(mockSettings);
+          // Return settings in the format expected by the frontend
+          res.json({
+            setting: mockSettings,
+            ...mockSettings
+          });
         }
         break;
 

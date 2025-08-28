@@ -50,14 +50,27 @@ class SettingsManager {
 
     async loadChannelConfigs() {
         try {
+            const token = localStorage.getItem('token') || localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
+            
+            if (!token) {
+                console.warn('No authentication token found');
+                return;
+            }
+            
             const response = await fetch('/api/channel-config', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to load channel configurations');
+                if (response.status === 404) {
+                    console.warn('Channel configuration endpoint not found');
+                    // Set default empty configs
+                    this.channelConfigs = {};
+                    return;
+                }
+                throw new Error(`Failed to load channel configurations: ${response.status}`);
             }
 
             const data = await response.json();
@@ -68,7 +81,12 @@ class SettingsManager {
 
         } catch (error) {
             console.error('Error loading channel configurations:', error);
-            this.showNotification('チャネル設定の読み込みに失敗しました', 'error');
+            // Don't show error notification for initial load failures
+            if (error.message && !error.message.includes('404')) {
+                this.showNotification('チャネル設定の読み込みに失敗しました', 'error');
+            }
+            // Set default empty configs to prevent further errors
+            this.channelConfigs = {};
         }
     }
 

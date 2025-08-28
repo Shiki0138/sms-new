@@ -42,9 +42,13 @@ class SettingsManager {
 
         this.currentTab = tab;
 
-        // Load channel configuration if switching to channels tab
+        // Load specific interface based on tab
         if (tab === 'channels') {
             this.loadChannelConfigInterface();
+        } else if (tab === 'integrations') {
+            this.loadIntegrationsInterface();
+        } else if (tab === 'automation') {
+            this.loadAutomationInterface();
         }
     }
 
@@ -501,6 +505,477 @@ class SettingsManager {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+
+    // External Integrations
+    loadIntegrationsInterface() {
+        const container = document.getElementById('integrations-config-container');
+        if (!container) return;
+
+        container.innerHTML = this.renderIntegrationsInterface();
+        this.bindIntegrationEvents();
+    }
+
+    renderIntegrationsInterface() {
+        return `
+            <div class="integrations-interface">
+                <!-- Hot Pepper Beauty Integration -->
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <h4><i>🌶️</i> ホットペッパービューティー連携</h4>
+                        <span class="integration-status ${this.integrations?.hotpepper?.isConnected ? 'connected' : 'disconnected'}">
+                            ${this.integrations?.hotpepper?.isConnected ? '連携済み' : '未連携'}
+                        </span>
+                    </div>
+                    <div class="integration-content">
+                        <p>ホットペッパービューティーからの予約データや顧客情報を自動同期します。</p>
+                        
+                        <div class="form-group">
+                            <label for="hotpepper-api-key">APIキー</label>
+                            <input type="password" id="hotpepper-api-key" 
+                                value="${this.integrations?.hotpepper?.apiKey || ''}" 
+                                placeholder="ホットペッパーAPIキー">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="hotpepper-salon-id">サロンID</label>
+                            <input type="text" id="hotpepper-salon-id" 
+                                value="${this.integrations?.hotpepper?.salonId || ''}" 
+                                placeholder="サロンID">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="hotpepper-auto-sync" 
+                                    ${this.integrations?.hotpepper?.autoSync ? 'checked' : ''}>
+                                自動同期を有効にする
+                            </label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" onclick="settingsManager.saveIntegration('hotpepper')">
+                                💾 保存
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="settingsManager.testIntegration('hotpepper')">
+                                🧪 接続テスト
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSV Import/Export -->
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <h4><i>📊</i> CSV インポート/エクスポート</h4>
+                    </div>
+                    <div class="integration-content">
+                        <p>顧客データや予約データをCSV形式でインポート・エクスポートします。</p>
+                        
+                        <div class="csv-section">
+                            <h5>データインポート</h5>
+                            <div class="form-group">
+                                <label for="csv-import-type">インポートタイプ</label>
+                                <select id="csv-import-type" class="form-select">
+                                    <option value="customers">顧客データ</option>
+                                    <option value="appointments">予約データ</option>
+                                    <option value="services">サービスデータ</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="csv-file">CSVファイル</label>
+                                <input type="file" id="csv-file" accept=".csv" class="form-input">
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary" onclick="settingsManager.importCSV()">
+                                📥 インポート
+                            </button>
+                            
+                            <p class="form-note">
+                                <a href="#" onclick="settingsManager.downloadTemplate()">テンプレートをダウンロード</a>
+                            </p>
+                        </div>
+                        
+                        <div class="csv-section">
+                            <h5>データエクスポート</h5>
+                            <div class="form-group">
+                                <label for="csv-export-type">エクスポートタイプ</label>
+                                <select id="csv-export-type" class="form-select">
+                                    <option value="customers">顧客データ</option>
+                                    <option value="appointments">予約データ</option>
+                                    <option value="services">サービスデータ</option>
+                                    <option value="sales">売上データ</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="csv-export-range">期間</label>
+                                <select id="csv-export-range" class="form-select">
+                                    <option value="all">すべて</option>
+                                    <option value="month">今月</option>
+                                    <option value="quarter">今四半期</option>
+                                    <option value="year">今年</option>
+                                    <option value="custom">カスタム</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" class="btn btn-primary" onclick="settingsManager.exportCSV()">
+                                📤 エクスポート
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Integrations -->
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <h4><i>🔗</i> その他の連携</h4>
+                    </div>
+                    <div class="integration-content">
+                        <p>今後追加予定の連携サービス:</p>
+                        <ul>
+                            <li>Google Calendar - 予約の自動同期</li>
+                            <li>会計ソフト連携 - 売上データの自動転記</li>
+                            <li>在庫管理システム - 商品在庫の連携</li>
+                            <li>POSシステム - 決済データの連携</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Automation Settings
+    loadAutomationInterface() {
+        const container = document.getElementById('automation-config-container');
+        if (!container) return;
+
+        container.innerHTML = this.renderAutomationInterface();
+        this.bindAutomationEvents();
+    }
+
+    renderAutomationInterface() {
+        return `
+            <div class="automation-interface">
+                <!-- Auto Reminder Settings -->
+                <div class="automation-card">
+                    <div class="automation-header">
+                        <h4><i>⏰</i> 自動リマインダー設定</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="reminder-enabled" 
+                                ${this.automations?.reminder?.enabled ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="automation-content">
+                        <div class="form-group">
+                            <label for="reminder-timing">リマインダー送信タイミング</label>
+                            <select id="reminder-timing" class="form-select">
+                                <option value="24" ${this.automations?.reminder?.timing === 24 ? 'selected' : ''}>予約24時間前</option>
+                                <option value="12" ${this.automations?.reminder?.timing === 12 ? 'selected' : ''}>予約12時間前</option>
+                                <option value="6" ${this.automations?.reminder?.timing === 6 ? 'selected' : ''}>予約6時間前</option>
+                                <option value="2" ${this.automations?.reminder?.timing === 2 ? 'selected' : ''}>予約2時間前</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reminder-channels">送信チャンネル</label>
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" name="reminder-channel" value="sms" 
+                                        ${this.automations?.reminder?.channels?.includes('sms') ? 'checked' : ''}>
+                                    SMS
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="reminder-channel" value="email" 
+                                        ${this.automations?.reminder?.channels?.includes('email') ? 'checked' : ''}>
+                                    Email
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="reminder-channel" value="line" 
+                                        ${this.automations?.reminder?.channels?.includes('line') ? 'checked' : ''}>
+                                    LINE
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reminder-template">メッセージテンプレート</label>
+                            <textarea id="reminder-template" class="form-textarea" rows="4">${this.automations?.reminder?.template || 
+                                '{customerName}様\n\n明日{appointmentTime}からのご予約をお待ちしております。\n\n{salonName}'}</textarea>
+                            <p class="form-note">
+                                使用可能な変数: {customerName}, {appointmentDate}, {appointmentTime}, {serviceName}, {staffName}, {salonName}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow-up Messages -->
+                <div class="automation-card">
+                    <div class="automation-header">
+                        <h4><i>💌</i> フォローアップメッセージ</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="followup-enabled" 
+                                ${this.automations?.followup?.enabled ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="automation-content">
+                        <div class="form-group">
+                            <label for="followup-timing">送信タイミング</label>
+                            <select id="followup-timing" class="form-select">
+                                <option value="1" ${this.automations?.followup?.timing === 1 ? 'selected' : ''}>来店翌日</option>
+                                <option value="3" ${this.automations?.followup?.timing === 3 ? 'selected' : ''}>来店3日後</option>
+                                <option value="7" ${this.automations?.followup?.timing === 7 ? 'selected' : ''}>来店1週間後</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="followup-template">メッセージテンプレート</label>
+                            <textarea id="followup-template" class="form-textarea" rows="4">${this.automations?.followup?.template || 
+                                '{customerName}様\n\n先日はご来店ありがとうございました。\nその後、お髪の調子はいかがでしょうか？\n\nまたのご来店を心よりお待ちしております。\n\n{salonName}'}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Birthday Messages -->
+                <div class="automation-card">
+                    <div class="automation-header">
+                        <h4><i>🎂</i> お誕生日メッセージ</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="birthday-enabled" 
+                                ${this.automations?.birthday?.enabled ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="automation-content">
+                        <div class="form-group">
+                            <label for="birthday-template">メッセージテンプレート</label>
+                            <textarea id="birthday-template" class="form-textarea" rows="4">${this.automations?.birthday?.template || 
+                                '{customerName}様\n\nお誕生日おめでとうございます！🎉\n\n特別な日を記念して、お誕生日限定クーポンをプレゼントいたします。\n\n{salonName}'}</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="birthday-coupon" 
+                                    ${this.automations?.birthday?.includeCoupon ? 'checked' : ''}>
+                                誕生日クーポンを含める
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="settingsManager.saveAutomationSettings()">
+                        💾 すべての設定を保存
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Integration Events
+    bindIntegrationEvents() {
+        // Add any specific event handlers for integrations
+    }
+
+    // Automation Events  
+    bindAutomationEvents() {
+        // Add any specific event handlers for automation
+    }
+
+    // Integration Methods
+    async saveIntegration(integration) {
+        const config = this.getIntegrationConfig(integration);
+        
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`/api/integrations/${integration}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('salon_token')}`
+                },
+                body: JSON.stringify(config)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save integration settings');
+            }
+
+            this.showNotification('連携設定を保存しました', 'success');
+        } catch (error) {
+            console.error('Error saving integration:', error);
+            this.showNotification('連携設定の保存に失敗しました', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async testIntegration(integration) {
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`/api/integrations/${integration}/test`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('salon_token')}`
+                }
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.showNotification('接続テスト成功', 'success');
+            } else {
+                this.showNotification(`接続テスト失敗: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error testing integration:', error);
+            this.showNotification('接続テストでエラーが発生しました', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    getIntegrationConfig(integration) {
+        if (integration === 'hotpepper') {
+            return {
+                apiKey: document.getElementById('hotpepper-api-key').value,
+                salonId: document.getElementById('hotpepper-salon-id').value,
+                autoSync: document.getElementById('hotpepper-auto-sync').checked
+            };
+        }
+        return {};
+    }
+
+    // CSV Methods
+    async importCSV() {
+        const fileInput = document.getElementById('csv-file');
+        const importType = document.getElementById('csv-import-type').value;
+        
+        if (!fileInput.files[0]) {
+            this.showNotification('CSVファイルを選択してください', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('type', importType);
+
+        try {
+            this.showLoading();
+            
+            const response = await fetch('/api/import/csv', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('salon_token')}`
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+            
+            if (response.ok) {
+                this.showNotification(`インポート完了: ${result.imported}件`, 'success');
+            } else {
+                this.showNotification(`インポート失敗: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error importing CSV:', error);
+            this.showNotification('CSVインポートでエラーが発生しました', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async exportCSV() {
+        const exportType = document.getElementById('csv-export-type').value;
+        const exportRange = document.getElementById('csv-export-range').value;
+        
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`/api/export/csv?type=${exportType}&range=${exportRange}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('salon_token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Export failed');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `${exportType}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            this.showNotification('エクスポート完了', 'success');
+        } catch (error) {
+            console.error('Error exporting CSV:', error);
+            this.showNotification('CSVエクスポートでエラーが発生しました', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    downloadTemplate() {
+        const importType = document.getElementById('csv-import-type').value;
+        window.open(`/api/templates/csv/${importType}`, '_blank');
+    }
+
+    // Automation Methods
+    async saveAutomationSettings() {
+        const settings = {
+            reminder: {
+                enabled: document.getElementById('reminder-enabled').checked,
+                timing: parseInt(document.getElementById('reminder-timing').value),
+                channels: Array.from(document.querySelectorAll('input[name="reminder-channel"]:checked'))
+                    .map(cb => cb.value),
+                template: document.getElementById('reminder-template').value
+            },
+            followup: {
+                enabled: document.getElementById('followup-enabled').checked,
+                timing: parseInt(document.getElementById('followup-timing').value),
+                template: document.getElementById('followup-template').value
+            },
+            birthday: {
+                enabled: document.getElementById('birthday-enabled').checked,
+                template: document.getElementById('birthday-template').value,
+                includeCoupon: document.getElementById('birthday-coupon').checked
+            }
+        };
+
+        try {
+            this.showLoading();
+            
+            const response = await fetch('/api/automation/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || localStorage.getItem('salon_token')}`
+                },
+                body: JSON.stringify(settings)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save automation settings');
+            }
+
+            this.showNotification('自動化設定を保存しました', 'success');
+        } catch (error) {
+            console.error('Error saving automation settings:', error);
+            this.showNotification('自動化設定の保存に失敗しました', 'error');
+        } finally {
+            this.hideLoading();
+        }
     }
 }
 

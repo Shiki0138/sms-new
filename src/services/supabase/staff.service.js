@@ -1,7 +1,7 @@
 const BaseService = require('./base.service');
 
 /**
- * Staff service for managing staff members
+ * Enhanced Staff service for comprehensive staff management
  */
 class StaffService extends BaseService {
   constructor() {

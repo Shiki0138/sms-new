@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Messages Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Messages Page Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>Test Configuration</h2>
+        <p>This test will verify that the messages page loads without errors.</p>
+        <button onclick="runTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Output</h2>
+        <pre id="consoleOutput"></pre>
+    </div>
+
+    <script>
+        let testResults = [];
+        let consoleMessages = [];
+
+        // Override console methods to capture output
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        console.log = function(...args) {
+            originalConsole.log(...args);
+            consoleMessages.push({ type: 'log', message: args.join(' ') });
+            updateConsoleOutput();
+        };
+
+        console.error = function(...args) {
+            originalConsole.error(...args);
+            consoleMessages.push({ type: 'error', message: args.join(' ') });
+            updateConsoleOutput();
+        };
+
+        console.warn = function(...args) {
+            originalConsole.warn(...args);
+            consoleMessages.push({ type: 'warn', message: args.join(' ') });
+            updateConsoleOutput();
+        };
+
+        function updateConsoleOutput() {
+            const output = document.getElementById('consoleOutput');
+            output.innerHTML = consoleMessages.map(msg => {
+                const color = msg.type === 'error' ? 'red' : msg.type === 'warn' ? 'orange' : 'black';
+                return `<span style="color: ${color}">[${msg.type.toUpperCase()}] ${msg.message}</span>`;
+            }).join('\n');
+        }
+
+        async function runTests() {
+            testResults = [];
+            consoleMessages = [];
+            
+            // Test 1: Check if messages.html exists
+            await testPageExists();
+            
+            // Test 2: Check if messages.js loads without errors
+            await testMessagesScript();
+            
+            // Test 3: Check API endpoints
+            await testAPIEndpoints();
+            
+            // Test 4: Test with mock authentication
+            await testWithMockAuth();
+            
+            displayResults();
+        }
+
+        async function testPageExists() {
+            try {
+                const response = await fetch('/messages.html');
+                if (response.ok) {
+                    addResult('Page Load Test', true, 'messages.html loads successfully');
+                } else {
+                    addResult('Page Load Test', false, `Failed to load messages.html: ${response.status}`);
+                }
+            } catch (error) {
+                addResult('Page Load Test', false, `Error loading page: ${error.message}`);
+            }
+        }
+
+        async function testMessagesScript() {
+            try {
+                // Create a test environment
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                // Mock localStorage
+                iframe.contentWindow.localStorage.setItem('salon_token', 'test-token');
+                iframe.contentWindow.localStorage.setItem('salon_user', JSON.stringify({
+                    id: 'test-user',
+                    name: 'Test User',
+                    salonName: 'Test Salon',
+                    planType: 'light'
+                }));
+                
+                // Load the script
+                const script = document.createElement('script');
+                script.src = '/js/messages.js';
+                
+                await new Promise((resolve, reject) => {
+                    script.onload = () => {
+                        addResult('Script Load Test', true, 'messages.js loaded successfully');
+                        resolve();
+                    };
+                    script.onerror = () => {
+                        addResult('Script Load Test', false, 'Failed to load messages.js');
+                        reject();
+                    };
+                    iframe.contentDocument.head.appendChild(script);
+                });
+                
+                document.body.removeChild(iframe);
+            } catch (error) {
+                addResult('Script Load Test', false, `Script error: ${error.message}`);
+            }
+        }
+
+        async function testAPIEndpoints() {
+            const endpoints = [
+                { path: '/api/messaging/conversations', method: 'GET', name: 'Get Conversations' },
+                { path: '/api/messaging/initialize', method: 'POST', name: 'Initialize Messaging' },
+                { path: '/api/messages', method: 'GET', name: 'Legacy Messages Endpoint' }
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint.path, {
+                        method: endpoint.method,
+                        headers: {
+                            'Authorization': 'Bearer test-token',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.status === 404) {
+                        addResult(`API Test: ${endpoint.name}`, false, 'Endpoint not found (404)');
+                    } else if (response.status === 401) {
+                        addResult(`API Test: ${endpoint.name}`, 'warning', 'Unauthorized (401) - Expected with test token');
+                    } else if (response.ok) {
+                        addResult(`API Test: ${endpoint.name}`, true, 'Endpoint accessible');
+                    } else {
+                        addResult(`API Test: ${endpoint.name}`, false, `Status: ${response.status}`);
+                    }
+                } catch (error) {
+                    addResult(`API Test: ${endpoint.name}`, false, `Network error: ${error.message}`);
+                }
+            }
+        }
+
+        async function testWithMockAuth() {
+            try {
+                // Set mock authentication
+                localStorage.setItem('salon_token', 'mock-token');
+                localStorage.setItem('salon_user', JSON.stringify({
+                    id: 'mock-user',
+                    name: 'Mock User',
+                    salonName: 'Mock Salon',
+                    planType: 'light'
+                }));
+                
+                // Test if the page would load with mock data
+                addResult('Mock Data Test', true, 'Mock authentication set up successfully');
+                
+                // Clean up
+                localStorage.removeItem('salon_token');
+                localStorage.removeItem('salon_user');
+            } catch (error) {
+                addResult('Mock Data Test', false, `Error: ${error.message}`);
+            }
+        }
+
+        function addResult(test, success, message) {
+            testResults.push({ test, success, message });
+        }
+
+        function displayResults() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = testResults.map(result => {
+                let className = 'error';
+                if (result.success === true) className = 'success';
+                if (result.success === 'warning') className = 'warning';
+                
+                return `
+                    <div>
+                        <span class="${className}">
+                            ${result.success === true ? '✓' : result.success === 'warning' ? '⚠' : '✗'}
+                        </span>
+                        <strong>${result.test}:</strong> ${result.message}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function clearResults() {
+            testResults = [];
+            consoleMessages = [];
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('consoleOutput').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

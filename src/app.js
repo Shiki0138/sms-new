@@ -155,6 +155,13 @@ app.use('/api/google-calendar', googleCalendarRoutes);
 app.use('/api/messaging', messagingRoutes);
 app.use('/api/channel-config', channelConfigRoutes);
 
+// Legacy messages endpoint wrapper for backward compatibility
+app.get('/api/messages', (req, res) => {
+  // Redirect to the new messaging conversations endpoint
+  req.url = '/api/messaging/conversations';
+  app.handle(req, res);
+});
+
 // Public API routes for booking widget
 app.use('/api/public/salons/:salonId', require('./routes/publicBooking'));
 

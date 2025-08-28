@@ -383,7 +383,7 @@ class SettingsManager {
         try {
             this.showLoading();
             
-            const response = await fetch(`/api/channel-config/${channel}/test`, {
+            const response = await fetch(`/api/channel-config/${channel}?action=test`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`

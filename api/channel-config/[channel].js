@@ -79,6 +79,47 @@ function generateWebhookSecret() {
   return Array.from({ length: 32 }, () => Math.random().toString(36)[2]).join('');
 }
 
+// Test channel connection (mock implementation)
+async function testChannelConnection(channel, config) {
+  // Simulate connection test delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  switch (channel) {
+    case 'sms':
+      // Check if required fields are provided
+      if (config.accountSid && config.authToken && config.phoneNumber) {
+        // In a real implementation, we would test the Twilio connection
+        // For now, simulate success if all fields are provided
+        return { success: true, message: 'SMS connection test successful' };
+      }
+      return { success: false, error: 'Missing required SMS configuration' };
+    
+    case 'email':
+      if (config.apiKey && config.fromEmail) {
+        // In a real implementation, we would test the SendGrid connection
+        return { success: true, message: 'Email connection test successful' };
+      }
+      return { success: false, error: 'Missing required email configuration' };
+    
+    case 'line':
+      if (config.channelAccessToken && config.channelSecret) {
+        // In a real implementation, we would test the LINE connection
+        return { success: true, message: 'LINE connection test successful' };
+      }
+      return { success: false, error: 'Missing required LINE configuration' };
+    
+    case 'instagram':
+      if (config.accessToken && config.businessAccountId) {
+        // In a real implementation, we would test the Instagram connection
+        return { success: true, message: 'Instagram connection test successful' };
+      }
+      return { success: false, error: 'Missing required Instagram configuration' };
+    
+    default:
+      return { success: false, error: 'Unknown channel type' };
+  }
+}
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -116,6 +157,33 @@ export default async function handler(req, res) {
 
       case 'POST':
       case 'PUT':
+        // Handle different POST operations based on action
+        const { action } = req.query;
+        
+        // Test connection endpoint
+        if (action === 'test') {
+          const currentConfig = mockChannelConfigs[channel];
+          if (!currentConfig) {
+            res.status(404).json({ error: 'Channel configuration not found' });
+            return;
+          }
+
+          // Test the connection with current configuration
+          const testResult = await testChannelConnection(channel, currentConfig.config);
+          
+          // Update connection status based on test result
+          if (testResult.success) {
+            mockChannelConfigs[channel].connectionStatus = 'connected';
+          } else {
+            mockChannelConfigs[channel].connectionStatus = 'error';
+          }
+          mockChannelConfigs[channel].lastTestAt = new Date().toISOString();
+
+          // Return test result
+          res.status(200).json(testResult);
+          return;
+        }
+        
         // Update channel configuration
         const { provider, config: newConfig } = req.body;
         

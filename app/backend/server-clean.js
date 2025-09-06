@@ -146,6 +146,11 @@ app.get('/api/channel-config', (req, res) => {
   });
 });
 
+// Favicon handling
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).send(); // No content for favicon
+});
+
 // Mock data endpoints
 app.get('/api/customers', (req, res) => {
   res.json([
@@ -156,11 +161,88 @@ app.get('/api/customers', (req, res) => {
 });
 
 app.get('/api/appointments', (req, res) => {
-  res.json([
-    { id: 1, customerName: '田中 花子', service: 'カット&カラー', date: '2025-09-07', time: '14:00', status: '確定' },
-    { id: 2, customerName: '佐藤 美香', service: 'パーマ', date: '2025-09-08', time: '10:00', status: '確定' },
-    { id: 3, customerName: '鈴木 愛', service: 'カット', date: '2025-09-07', time: '16:00', status: '予約済み' }
-  ]);
+  res.json({
+    appointments: [
+      { 
+        id: 1, 
+        customerName: '田中 花子', 
+        service: 'カット&カラー', 
+        appointmentDate: '2025-09-07', 
+        startTime: '14:00',
+        endTime: '16:00',
+        status: 'confirmed',
+        customer: {
+          lastName: '田中',
+          firstName: '花子'
+        },
+        services: [
+          { name: 'カット&カラー', price: 8000 }
+        ]
+      },
+      { 
+        id: 2, 
+        customerName: '佐藤 美香', 
+        service: 'パーマ', 
+        appointmentDate: '2025-09-08', 
+        startTime: '10:00',
+        endTime: '12:00',
+        status: 'confirmed',
+        customer: {
+          lastName: '佐藤',
+          firstName: '美香'
+        },
+        services: [
+          { name: 'パーマ', price: 12000 }
+        ]
+      },
+      { 
+        id: 3, 
+        customerName: '鈴木 愛', 
+        service: 'カット', 
+        appointmentDate: '2025-09-07', 
+        startTime: '16:00',
+        endTime: '17:00',
+        status: 'scheduled',
+        customer: {
+          lastName: '鈴木',
+          firstName: '愛'
+        },
+        services: [
+          { name: 'カット', price: 4000 }
+        ]
+      }
+    ]
+  });
+});
+
+// Settings API endpoint
+app.get('/api/settings', (req, res) => {
+  res.json({
+    success: true,
+    setting: {
+      businessHours: {
+        monday: { isOpen: true, open: '09:00', close: '19:00' },
+        tuesday: { isOpen: true, open: '09:00', close: '19:00' },
+        wednesday: { isOpen: true, open: '09:00', close: '19:00' },
+        thursday: { isOpen: true, open: '09:00', close: '19:00' },
+        friday: { isOpen: true, open: '09:00', close: '19:00' },
+        saturday: { isOpen: true, open: '09:00', close: '18:00' },
+        sunday: { isOpen: false, open: '10:00', close: '17:00' }
+      },
+      holidays: [
+        '2025-09-15',
+        '2025-09-23',
+        '2025-10-14'
+      ],
+      temporaryClosures: [
+        {
+          startDate: '2025-09-20',
+          endDate: '2025-09-21',
+          reason: '設備メンテナンス'
+        }
+      ]
+    }
+  });
 });
 
 // Serve frontend files for SPA routes

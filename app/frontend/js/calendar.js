@@ -113,10 +113,23 @@ class AppointmentCalendar {
                 `/appointments?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
             );
             
-            this.appointments = response.appointments;
+            // Handle different response structures with fallback
+            if (response && response.appointments) {
+                this.appointments = response.appointments;
+            } else if (Array.isArray(response)) {
+                // Fallback for direct array response
+                this.appointments = response;
+            } else {
+                console.warn('Unexpected appointments response structure:', response);
+                this.appointments = [];
+            }
+            
             this.renderAppointments();
         } catch (error) {
             console.error('Failed to load appointments:', error);
+            // Set empty appointments array to prevent further errors
+            this.appointments = [];
+            this.renderAppointments();
         }
     }
     
@@ -308,10 +321,20 @@ class AppointmentCalendar {
     }
     
     renderMonthAppointments() {
-        // Group appointments by date
+        // Group appointments by date with safety check
         const appointmentsByDate = {};
         
+        if (!Array.isArray(this.appointments)) {
+            console.warn('appointments is not an array:', this.appointments);
+            return;
+        }
+        
         this.appointments.forEach(apt => {
+            if (!apt || !apt.appointmentDate) {
+                console.warn('Invalid appointment data:', apt);
+                return;
+            }
+            
             const dateStr = this.formatDate(new Date(apt.appointmentDate));
             if (!appointmentsByDate[dateStr]) {
                 appointmentsByDate[dateStr] = [];

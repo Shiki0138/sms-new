@@ -513,25 +513,42 @@ async function loadRecords() {
 async function loadSettings() {
     try {
         const data = await apiRequest('/settings');
-        const setting = data.setting;
         
-        // Update profile form
-        document.getElementById('settingsName').value = currentUser.name;
-        document.getElementById('settingsSalonName').value = currentUser.salonName;
-        document.getElementById('settingsPhone').value = currentUser.phoneNumber;
+        // Handle different response structures
+        const setting = data.setting || data;
         
-        // Update plan info
-        document.getElementById('currentPlan').textContent = getPlanName(currentUser.planType);
-        document.getElementById('trialEnd').textContent = formatDate(currentUser.trialEndsAt);
+        if (!setting) {
+            throw new Error('設定データが見つかりません');
+        }
+        
+        // Update profile form only if elements exist
+        const settingsName = document.getElementById('settingsName');
+        const settingsSalonName = document.getElementById('settingsSalonName');
+        const settingsPhone = document.getElementById('settingsPhone');
+        
+        if (settingsName && currentUser.name) settingsName.value = currentUser.name;
+        if (settingsSalonName && currentUser.salonName) settingsSalonName.value = currentUser.salonName;
+        if (settingsPhone && currentUser.phoneNumber) settingsPhone.value = currentUser.phoneNumber;
+        
+        // Update plan info only if elements exist
+        const currentPlan = document.getElementById('currentPlan');
+        const trialEnd = document.getElementById('trialEnd');
+        
+        if (currentPlan && currentUser.planType) {
+            currentPlan.textContent = getPlanName(currentUser.planType);
+        }
+        if (trialEnd && currentUser.trialEndsAt) {
+            trialEnd.textContent = formatDate(currentUser.trialEndsAt);
+        }
         
         // Update business hours
         updateBusinessHoursUI(setting.businessHours);
         
         // Update holidays
-        updateHolidaysUI(setting.holidays, setting.temporaryClosures);
+        updateHolidaysUI(setting.holidays || [], setting.temporaryClosures || []);
     } catch (error) {
         console.error('Settings load error:', error);
-        showError('設定の読み込みに失敗しました');
+        showError('設定の読み込みに失敗しました: ' + error.message);
     }
 }
 

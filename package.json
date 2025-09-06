@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev",
+    "start": "PORT=3001 node app/backend/server-clean.js",
+    "dev:local": "PORT=3001 node app/backend/server-clean.js",
     "build": "echo 'No build required for Vercel deployment'",
     "deploy": "vercel --prod",
     "lint": "echo 'Linting not configured'",

@@ -3,8 +3,41 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 const Customer = require('../models/customerModel');
 const Appointment = require('../models/appointmentModel');
 const { asyncHandler } = require('../middleware/errorMiddleware');
+const { db } = require('../../shared/firebase-config');
 
 const router = express.Router();
+
+/**
+ * Helper function to get staff count from Firebase
+ */
+async function getStaffCount() {
+    try {
+        const staffSnapshot = await db.collection('staff')
+            .where('salonId', '==', 'salon_votan_001')
+            .where('isActive', '==', true)
+            .get();
+        return staffSnapshot.size;
+    } catch (error) {
+        console.error('スタッフ数取得エラー:', error);
+        return 7; // Fallback to VOTAN's actual staff count
+    }
+}
+
+/**
+ * Helper function to get services count from Firebase
+ */
+async function getServicesCount() {
+    try {
+        const servicesSnapshot = await db.collection('services')
+            .where('salonId', '==', 'salon_votan_001')
+            .where('isActive', '==', true)
+            .get();
+        return servicesSnapshot.size;
+    } catch (error) {
+        console.error('サービス数取得エラー:', error);
+        return 6; // Fallback to VOTAN's actual service count
+    }
+}
 
 /**
  * @desc    Get dashboard statistics
@@ -65,8 +98,8 @@ router.get('/stats', authenticateToken, asyncHandler(async (req, res) => {
             },
             totals: {
                 customers: totalCustomers,
-                staff: 4, // Hardcoded for light plan
-                services: 8 // Hardcoded for light plan
+                staff: await getStaffCount(),
+                services: await getServicesCount()
             }
         }
     });

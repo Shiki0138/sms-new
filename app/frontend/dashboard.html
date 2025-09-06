@@ -11,34 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main-unified.css">
     <style>
-        /* Dashboard page specific styles - extends main-unified.css */
-
-        /* Dashboard specific extensions to unified CSS */
-        .dashboard-grid {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: 1fr;
-        }
-        
-        /* Enhance stat cards with dashboard-specific styling */
-        .dashboard .stat-card {
-            border-radius: 20px;
-        }
-        
-        .dashboard .stat-card::before {
-            opacity: 1;
-        }
-        
-        /* Enhanced appointment cards */
-        .dashboard .appointment-card {
-            background: var(--gradient-3);
-        }
-        
-        .dashboard .appointment-card:hover {
-            transform: translateX(10px);
-        }
-
-        /* Page visibility - kept for navigation functionality */
+        /* Page visibility - navigation functionality only */
         .page {
             display: none;
         }
@@ -47,29 +20,11 @@
             display: block;
         }
         
-        /* Dashboard-specific content area */
-        .dashboard .content-area {
-            padding: 0;
-            margin: 0;
-        }
-        
-        /* Dashboard specific mobile overrides */
-        @media (max-width: 768px) {
-            .dashboard .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .dashboard .page-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Dashboard animations */
+        /* Smooth animations for better UX */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -77,22 +32,20 @@
             }
         }
 
-        .dashboard .stat-card {
-            animation: fadeInUp 0.6s ease-out;
+        .stat-card {
+            animation: fadeInUp 0.4s ease-out;
             animation-fill-mode: both;
         }
 
-        .dashboard .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .dashboard .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .dashboard .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .dashboard .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.15s; }
+        .stat-card:nth-child(3) { animation-delay: 0.2s; }
+        .stat-card:nth-child(4) { animation-delay: 0.25s; }
 
-        .dashboard .schedule-section {
-            animation: fadeInUp 0.6s ease-out 0.5s;
+        .schedule-section {
+            animation: fadeInUp 0.4s ease-out 0.3s;
             animation-fill-mode: both;
         }
-
-        /* Settings styles are now handled by main-unified.css */
     </style>
 </head>
 <body>
@@ -162,14 +115,14 @@
             <header class="header">
                 <h1 class="page-title">こんにちは、素敵な一日を！</h1>
                 <div class="header-actions">
-                    <button class="icon-button">
+                    <button class="icon-button" aria-label="検索">
                         🔍
                     </button>
-                    <button class="icon-button">
+                    <button class="icon-button" aria-label="通知">
                         🔔
                         <span class="notification-badge"></span>
                     </button>
-                    <button class="icon-button">
+                    <button class="icon-button" aria-label="新規追加">
                         ➕
                     </button>
                 </div>
@@ -213,10 +166,10 @@
             </div>
         </div>
 
-        <div class="schedule-section">
+        <section class="schedule-section">
             <div class="section-header">
                 <h2 class="section-title">本日の予約</h2>
-                <a href="#" class="view-all-btn">すべて見る →</a>
+                <a href="#" class="view-all-btn" data-page="appointments">すべて見る →</a>
             </div>
             <div class="appointment-list">
                 <div class="appointment-card">
@@ -228,7 +181,7 @@
                         <div class="customer-name">山田 花子 様</div>
                         <div class="service-name">カット + カラー + トリートメント</div>
                     </div>
-                    <div class="appointment-status"></div>
+                    <div class="appointment-status" aria-label="予約確定"></div>
                 </div>
 
                 <div class="appointment-card">
@@ -240,7 +193,7 @@
                         <div class="customer-name">佐藤 美咲 様</div>
                         <div class="service-name">カット + パーマ</div>
                     </div>
-                    <div class="appointment-status"></div>
+                    <div class="appointment-status" aria-label="予約確定"></div>
                 </div>
 
                 <div class="appointment-card">
@@ -252,10 +205,10 @@
                         <div class="customer-name">鈴木 真由美 様</div>
                         <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
                     </div>
-                    <div class="appointment-status"></div>
+                    <div class="appointment-status" aria-label="予約確定"></div>
                 </div>
             </div>
-        </div>
+        </section>
         </div>
 
         <!-- Appointments Page -->

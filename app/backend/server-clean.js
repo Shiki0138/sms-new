@@ -130,6 +130,32 @@ app.post('/api/auth/login', (req, res) => {
       },
       token: 'mock-admin-token-456'
     });
+  } else if (email === 'votan@salon.com' && password === 'votan2025') {
+    res.json({
+      success: true,
+      user: {
+        id: 'votan-user-id',
+        email: email,
+        name: 'VOTAN管理者',
+        role: 'admin',
+        salonName: 'ボタン(VOTAN)',
+        salonId: 'votan-salon-001'
+      },
+      token: 'votan-admin-token-789'
+    });
+  } else if (email === 'admin@votan.com') {
+    res.json({
+      success: true,
+      user: {
+        id: 'votan-admin-id',
+        email: email,
+        name: 'VOTAN管理者',
+        role: 'admin',
+        salonName: 'ボタン(VOTAN)',
+        salonId: 'votan-salon-001'
+      },
+      token: 'votan-admin-token-999'
+    });
   } else {
     res.status(401).json({
       success: false,

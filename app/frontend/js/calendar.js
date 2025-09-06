@@ -138,18 +138,18 @@ class AppointmentCalendar {
             <div class="calendar-wrapper">
                 <div class="calendar-controls">
                     <div class="calendar-nav">
-                        <button onclick="calendar.previousPeriod()">◀</button>
+                        <button type="button" class="nav-btn" data-action="prev">◀</button>
                         <div class="calendar-title">${this.getTitle()}</div>
-                        <button onclick="calendar.nextPeriod()">▶</button>
-                        <button onclick="calendar.today()">今日</button>
+                        <button type="button" class="nav-btn" data-action="next">▶</button>
+                        <button type="button" class="nav-btn today-btn" data-action="today">今日</button>
                     </div>
                     <div class="view-selector">
-                        <button class="view-btn ${this.options.view === 'day' ? 'active' : ''}" 
-                                onclick="calendar.setView('day')">日</button>
-                        <button class="view-btn ${this.options.view === 'week' ? 'active' : ''}" 
-                                onclick="calendar.setView('week')">週</button>
-                        <button class="view-btn ${this.options.view === 'month' ? 'active' : ''}" 
-                                onclick="calendar.setView('month')">月</button>
+                        <button type="button" class="view-btn ${this.options.view === 'day' ? 'active' : ''}" 
+                                data-view="day">日</button>
+                        <button type="button" class="view-btn ${this.options.view === 'week' ? 'active' : ''}" 
+                                data-view="week">週</button>
+                        <button type="button" class="view-btn ${this.options.view === 'month' ? 'active' : ''}" 
+                                data-view="month">月</button>
                     </div>
                 </div>
                 <div id="calendar-content">
@@ -159,6 +159,96 @@ class AppointmentCalendar {
         `;
         
         this.container.innerHTML = html;
+        
+        // イベントリスナーを追加
+        this.attachEventListeners();
+    }
+    
+    attachEventListeners() {
+        // ナビゲーションボタンのイベント
+        const navButtons = this.container.querySelectorAll('.nav-btn');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                console.log('Navigation button clicked:', action);
+                
+                switch (action) {
+                    case 'prev':
+                        this.previousPeriod();
+                        break;
+                    case 'next':
+                        this.nextPeriod();
+                        break;
+                    case 'today':
+                        this.today();
+                        break;
+                }
+            });
+        });
+        
+        // 表示切り替えボタンのイベント
+        const viewButtons = this.container.querySelectorAll('.view-btn');
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const view = btn.dataset.view;
+                console.log('View button clicked:', view);
+                
+                if (view && view !== this.options.view) {
+                    this.setView(view);
+                }
+            });
+        });
+        
+        // 日付クリックイベント
+        const dayElements = this.container.querySelectorAll('.calendar-day');
+        dayElements.forEach(day => {
+            day.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const dateStr = day.dataset.date;
+                if (dateStr && this.options.onDateClick) {
+                    this.options.onDateClick(new Date(dateStr));
+                }
+            });
+        });
+        
+        // タイムスロットクリックイベント
+        const timeSlots = this.container.querySelectorAll('.week-time-grid, .day-time-slot');
+        timeSlots.forEach(slot => {
+            slot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const dateStr = slot.dataset.date;
+                const time = slot.dataset.time;
+                if (dateStr && time && this.options.onDateClick) {
+                    const date = new Date(dateStr);
+                    const [hours, minutes] = time.split(':');
+                    date.setHours(parseInt(hours), parseInt(minutes));
+                    this.options.onDateClick(date);
+                }
+            });
+        });
+        
+        // 予約クリックイベント
+        const appointments = this.container.querySelectorAll('.appointment-item, .week-appointment');
+        appointments.forEach(apt => {
+            apt.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const appointmentId = apt.dataset.appointmentId || 
+                    (apt.onclick && apt.onclick.toString().match(/'([^']+)'/)?.[1]);
+                if (appointmentId && this.options.onAppointmentClick) {
+                    const appointment = this.appointments.find(a => a.id === appointmentId);
+                    if (appointment) {
+                        this.options.onAppointmentClick(appointment);
+                    }
+                }
+            });
+        });
     }
     
     renderView() {
@@ -214,7 +304,7 @@ class AppointmentCalendar {
             const dateStr = this.formatDate(date);
             
             html += `
-                <div class="${className}" data-date="${dateStr}" onclick="calendar.onDayClick('${dateStr}')">
+                <div class="${className}" data-date="${dateStr}">
                     <div class="day-number">${date.getDate()}</div>
                     ${isHoliday && isCurrentMonth ? '<div class="holiday-indicator">祝</div>' : ''}
                     ${isClosed ? this.getClosureReason(date) : ''}
@@ -267,8 +357,7 @@ class AppointmentCalendar {
                 html += `
                     <div class="week-time-grid ${isClosed ? 'closed' : ''}" 
                          data-date="${dateStr}" 
-                         data-time="${time}"
-                         onclick="calendar.onTimeSlotClick('${dateStr}', '${time}')">
+                         data-time="${time}">
                         <div id="slot-${dateStr}-${time.replace(':', '')}"></div>
                     </div>
                 `;
@@ -298,8 +387,8 @@ class AppointmentCalendar {
             html += `
                 <div class="time-slot">${time}</div>
                 <div class="day-time-slot ${isClosed ? 'closed' : ''}" 
-                     data-time="${time}"
-                     onclick="calendar.onTimeSlotClick('${dateStr}', '${time}')">
+                     data-date="${dateStr}" 
+                     data-time="${time}">
                     <div id="slot-${dateStr}-${time.replace(':', '')}"></div>
                 </div>
             `;
@@ -355,7 +444,7 @@ class AppointmentCalendar {
             visibleAppointments.forEach(apt => {
                 html += `
                     <div class="appointment-item ${apt.status}" 
-                         onclick="calendar.onAppointmentClick('${apt.id}', event)">
+                         data-appointment-id="${apt.id}">
                         ${apt.startTime} ${apt.customer?.lastName || ''}
                     </div>
                 `;
@@ -386,7 +475,7 @@ class AppointmentCalendar {
                 slot.innerHTML = `
                     <div class="week-appointment ${apt.status}" 
                          style="top: ${top}%; height: ${height}%;"
-                         onclick="calendar.onAppointmentClick('${apt.id}', event)">
+                         data-appointment-id="${apt.id}">
                         <div>${apt.customer?.lastName || ''}</div>
                         <div>${apt.services?.[0]?.name || ''}</div>
                     </div>
@@ -439,9 +528,33 @@ class AppointmentCalendar {
     }
     
     setView(view) {
+        console.log('Setting view to:', view);
         this.options.view = view;
+        
+        // ボタンのアクティブ状態を更新
+        this.updateViewButtons(view);
+        
         this.render();
         this.loadAppointments();
+    }
+    
+    updateViewButtons(activeView) {
+        const buttons = this.container.querySelectorAll('.view-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.trim() === this.getViewButtonText(activeView)) {
+                btn.classList.add('active');
+            }
+        });
+    }
+    
+    getViewButtonText(view) {
+        const textMap = {
+            'day': '日',
+            'week': '週',
+            'month': '月'
+        };
+        return textMap[view] || view;
     }
     
     // Event handlers

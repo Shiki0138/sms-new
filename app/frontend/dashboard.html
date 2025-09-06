@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/main-unified.css">
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250906">
     <style>
         /* Page visibility - navigation functionality only */
         .page {
@@ -50,6 +50,7 @@
 </head>
 <body>
     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -1206,48 +1207,56 @@
         // Mobile menu toggle with improved accessibility
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        if (mobileMenuToggle && sidebar) {
+        if (mobileMenuToggle && sidebar && sidebarOverlay) {
             // Set up ARIA attributes for accessibility
             mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
             mobileMenuToggle.setAttribute('aria-expanded', 'false');
             sidebar.setAttribute('role', 'navigation');
             sidebar.setAttribute('aria-label', 'メインナビゲーション');
 
+            function closeSidebar() {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
+                document.body.style.overflow = '';
+            }
+
+            function openSidebar() {
+                sidebar.classList.add('mobile-open');
+                sidebarOverlay.classList.add('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'true');
+                mobileMenuToggle.setAttribute('aria-label', 'メニューを閉じる');
+                document.body.style.overflow = 'hidden';
+            }
+
             mobileMenuToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = sidebar.classList.contains('mobile-open');
                 
                 if (isOpen) {
-                    sidebar.classList.remove('mobile-open');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
-                    document.body.style.overflow = ''; // Re-enable scrolling
+                    closeSidebar();
                 } else {
-                    sidebar.classList.add('mobile-open');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'true');
-                    mobileMenuToggle.setAttribute('aria-label', 'メニューを閉じる');
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                    openSidebar();
                 }
             });
+
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', closeSidebar);
 
             // Close sidebar when clicking outside
             document.addEventListener('click', (e) => {
                 if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target) && sidebar.classList.contains('mobile-open')) {
-                    sidebar.classList.remove('mobile-open');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
-                    document.body.style.overflow = '';
+                    closeSidebar();
                 }
             });
 
             // Close sidebar on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
-                    sidebar.classList.remove('mobile-open');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
-                    document.body.style.overflow = '';
+                    closeSidebar();
                     mobileMenuToggle.focus(); // Return focus to toggle button
                 }
             });

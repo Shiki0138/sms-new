@@ -42,8 +42,39 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Static files - serve frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Static files - serve frontend with cache control
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  setHeaders: (res, path) => {
+    // CSS files with long cache for versioned files
+    if (path.endsWith('.css')) {
+      if (path.includes('?v=')) {
+        // Versioned CSS files can be cached for 1 year
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else {
+        // Non-versioned CSS files cached for 1 hour
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+      }
+    }
+    // JavaScript files
+    else if (path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+    }
+    // Image files
+    else if (path.match(/\.(jpg|jpeg|png|gif|ico|svg)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800'); // 1 week
+    }
+    // HTML files - no cache to ensure fresh content
+    else if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+    // Default cache control
+    else {
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 hour
+    }
+  }
+}));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -256,6 +287,20 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/dashboard.html'));
   } else if (req.path === '/landing' || req.path === '/landing.html') {
     res.sendFile(path.join(__dirname, '../frontend/landing.html'));
+  } else if (req.path === '/appointments' || req.path === '/appointments.html') {
+    res.sendFile(path.join(__dirname, '../frontend/appointments.html'));
+  } else if (req.path === '/customers' || req.path === '/customers.html') {
+    res.sendFile(path.join(__dirname, '../frontend/customers.html'));
+  } else if (req.path === '/records' || req.path === '/records.html') {
+    res.sendFile(path.join(__dirname, '../frontend/records.html'));
+  } else if (req.path === '/services' || req.path === '/services.html') {
+    res.sendFile(path.join(__dirname, '../frontend/services.html'));
+  } else if (req.path === '/staff' || req.path === '/staff.html') {
+    res.sendFile(path.join(__dirname, '../frontend/staff.html'));
+  } else if (req.path === '/messages' || req.path === '/messages.html') {
+    res.sendFile(path.join(__dirname, '../frontend/messages.html'));
+  } else if (req.path === '/reports' || req.path === '/reports.html') {
+    res.sendFile(path.join(__dirname, '../frontend/reports.html'));
   } else {
     // Try to serve the requested file
     const filePath = path.join(__dirname, '../frontend', req.path);

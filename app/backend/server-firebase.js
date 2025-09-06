@@ -52,8 +52,39 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Static files - serve frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Static files - serve frontend with cache control
+app.use(express.static(path.join(__dirname, '../frontend'), {
+  setHeaders: (res, path) => {
+    // CSS files with long cache for versioned files
+    if (path.endsWith('.css')) {
+      if (path.includes('?v=')) {
+        // Versioned CSS files can be cached for 1 year
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else {
+        // Non-versioned CSS files cached for 1 hour
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+      }
+    }
+    // JavaScript files
+    else if (path.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+    }
+    // Image files
+    else if (path.match(/\.(jpg|jpeg|png|gif|ico|svg)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800'); // 1 week
+    }
+    // HTML files - no cache to ensure fresh content
+    else if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+    // Default cache control
+    else {
+      res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 hour
+    }
+  }
+}));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

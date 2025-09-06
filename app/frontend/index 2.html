@@ -7,23 +7,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>SMS - サロン管理システム</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250906">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
+<body class="salon-body">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-xl font-semibold">SMS - サロン管理システム</span>
+    <nav class="salon-nav">
+        <div class="salon-nav-container">
+            <div class="salon-nav-content">
+                <div class="salon-nav-brand">
+                    <span class="salon-nav-title">SMS - サロン管理システム</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="/" class="text-gray-700 hover:text-gray-900">ダッシュボード</a>
-                    <a href="/customers" class="text-gray-700 hover:text-gray-900">顧客管理</a>
-                    <a href="/appointments" class="text-gray-700 hover:text-gray-900">予約管理</a>
-                    <a href="/staff" class="text-gray-700 hover:text-gray-900">スタッフ管理</a>
-                    <button onclick="if(confirm('ログアウトしますか？')){localStorage.clear();window.location.href='/login'}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <div class="salon-nav-links">
+                    <a href="/" class="salon-nav-link">ダッシュボード</a>
+                    <a href="/customers" class="salon-nav-link">顧客管理</a>
+                    <a href="/appointments" class="salon-nav-link">予約管理</a>
+                    <a href="/staff" class="salon-nav-link">スタッフ管理</a>
+                    <button onclick="if(confirm('ログアウトしますか？')){localStorage.clear();window.location.href='/login'}" class="salon-btn salon-btn-primary">
                         ログアウト
                     </button>
                 </div>
@@ -32,7 +32,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div id="app" class="container mx-auto px-4 py-8">
+    <div id="app" class="salon-container salon-main-content">
         <!-- Content will be loaded here -->
     </div>
 

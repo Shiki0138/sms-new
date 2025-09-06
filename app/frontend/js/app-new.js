@@ -450,24 +450,40 @@ async function loadCustomers() {
 // Load appointments
 async function loadAppointments() {
     try {
+        console.log('Loading appointments page...');
+        
         // Initialize calendar if not already initialized
-        if (!calendar && window.AppointmentCalendar) {
+        const calendarContainer = document.getElementById('appointmentCalendar');
+        if (calendarContainer && !calendar && window.AppointmentCalendar) {
+            console.log('Initializing appointment calendar...');
+            
             calendar = new AppointmentCalendar('appointmentCalendar', {
                 view: 'month',
                 onDateClick: (date) => {
+                    console.log('Calendar date clicked:', date);
                     showAddAppointmentModal(date);
                 },
                 onAppointmentClick: (appointment) => {
+                    console.log('Appointment clicked:', appointment);
                     showAppointmentDetail(appointment);
                 }
             });
             
             // Make calendar globally accessible
             window.calendar = calendar;
+            console.log('Calendar initialized successfully');
+        } else if (calendar) {
+            // Refresh existing calendar
+            console.log('Refreshing existing calendar...');
+            calendar.loadAppointments();
+        } else if (!calendarContainer) {
+            console.warn('Calendar container not found in DOM');
+        } else if (!window.AppointmentCalendar) {
+            console.error('AppointmentCalendar class not available - check if calendar.js is loaded');
         }
     } catch (error) {
         console.error('Appointments load error:', error);
-        showError('予約データの読み込みに失敗しました');
+        showError('予約カレンダーの読み込みに失敗しました: ' + error.message);
     }
 }
 
@@ -1112,6 +1128,19 @@ window.editCustomer = (id) => {
 window.viewSale = (id) => {
     console.log('View sale:', id);
     // TODO: Implement
+};
+
+// Calendar refresh function
+window.refreshCalendar = () => {
+    console.log('Refreshing calendar...');
+    if (window.calendar) {
+        window.calendar.loadAppointments();
+        showSuccess('カレンダーを更新しました');
+    } else {
+        console.warn('Calendar not initialized');
+        // Try to load appointments page again
+        loadAppointments();
+    }
 };
 
 window.showAppointmentDetail = (appointment) => {

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Lumière - プロフェッショナル美容師向け顧客管理システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main-unified.css">
+    <style>
+        /* Landing page specific styles */
+        .landing-page {
+            font-family: var(--font-family-primary);
+        }
+
+        .header {
+            background: white;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo h1 {
+            font-family: var(--font-family-display);
+            color: var(--primary-500);
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .logo .tagline {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--primary-500);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%);
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-family: var(--font-family-display);
+            font-size: 3rem;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .trial-text {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .features {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .features h2 {
+            font-family: var(--font-family-display);
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--gray-800);
+            margin-bottom: 3rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .pricing {
+            padding: 5rem 0;
+            background: var(--gray-50);
+        }
+
+        .pricing h2 {
+            font-family: var(--font-family-display);
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 3rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--primary-500);
+            transform: scale(1.05);
+        }
+
+        .badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-500);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .price {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .price .currency {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+        }
+
+        .price .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-500);
+        }
+
+        .price .period {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            color: var(--gray-700);
+        }
+
+        .cta {
+            padding: 5rem 0;
+            background: var(--primary-500);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-family: var(--font-family-display);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .footer {
+            background: var(--gray-800);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-700);
+            color: var(--gray-400);
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-page">
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <h1>Salon Lumière</h1>
+                    <span class="tagline">美容師のための顧客管理システム</span>
+                </div>
+                <nav class="nav">
+                    <a href="#features">機能</a>
+                    <a href="#pricing">料金プラン</a>
+                    <a href="#contact">お問い合わせ</a>
+                    <a href="/login.html" class="btn btn-primary">ログイン</a>
+                </nav>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="container">
+                <h2>サロン運営を、もっとスマートに</h2>
+                <p>顧客管理・予約管理・売上管理をワンストップで実現</p>
+                <div class="hero-buttons">
+                    <a href="/register.html" class="btn btn-primary btn-large">無料で始める</a>
+                    <a href="#demo" class="btn btn-secondary btn-large">デモを見る</a>
+                </div>
+                <p class="trial-text">14日間の無料トライアル・クレジットカード不要</p>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>主な機能</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3>顧客管理</h3>
+                        <p>顧客情報を一元管理。来店履歴や施術内容を簡単に確認できます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📅</div>
+                        <h3>予約管理</h3>
+                        <p>直感的なカレンダーで予約を管理。ダブルブッキングを防止します。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>売上管理</h3>
+                        <p>日々の売上を自動集計。経営状況を見える化します。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <h3>カルテ機能</h3>
+                        <p>施術履歴や写真を保存。お客様に最適な提案が可能に。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>分析レポート</h3>
+                        <p>売上推移や顧客動向を分析。経営改善に活用できます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>モバイル対応</h3>
+                        <p>スマートフォンでも快適に操作。いつでもどこでも確認可能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing">
+            <div class="container">
+                <h2>料金プラン</h2>
+                <p class="pricing-subtitle">規模に合わせて選べる3つのプラン</p>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>ライトプラン</h3>
+                        <div class="price">
+                            <span class="currency">¥</span>
+                            <span class="amount">3,980</span>
+                            <span class="period">/月</span>
+                        </div>
+                        <ul class="features-list">
+                            <li>✓ 顧客登録 300名まで</li>
+                            <li>✓ 基本的な予約管理</li>
+                            <li>✓ 売上集計機能</li>
+                            <li>✓ カルテ機能（写真1枚）</li>
+                            <li>✓ CSV出力</li>
+                            <li>✓ メールサポート</li>
+                        </ul>
+                        <a href="/register.html?plan=light" class="btn btn-primary btn-block">このプランで始める</a>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="badge">人気No.1</div>
+                        <h3>スタンダードプラン</h3>
+                        <div class="price">
+                            <span class="currency">¥</span>
+                            <span class="amount">9,980</span>
+                            <span class="period">/月</span>
+                        </div>
+                        <ul class="features-list">
+                            <li>✓ 顧客登録 無制限</li>
+                            <li>✓ 高度な予約管理</li>
+                            <li>✓ 詳細な売上分析</li>
+                            <li>✓ カルテ機能（写真無制限）</li>
+                            <li>✓ PDF・CSV出力</li>
+                            <li>✓ 優先メールサポート</li>
+                        </ul>
+                        <a href="/register.html?plan=standard" class="btn btn-primary btn-block">このプランで始める</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>プレミアムプラン</h3>
+                        <div class="price">
+                            <span class="currency">¥</span>
+                            <span class="amount">19,980</span>
+                            <span class="period">/月</span>
+                        </div>
+                        <ul class="features-list">
+                            <li>✓ 全機能利用可能</li>
+                            <li>✓ 複数店舗対応</li>
+                            <li>✓ スタッフ管理</li>
+                            <li>✓ API連携</li>
+                            <li>✓ カスタマイズ可能</li>
+                            <li>✓ 電話・チャットサポート</li>
+                        </ul>
+                        <a href="/register.html?plan=premium" class="btn btn-primary btn-block">このプランで始める</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>今すぐ始めましょう</h2>
+                <p>14日間の無料トライアルで、全ての機能をお試しいただけます</p>
+                <a href="/register.html" class="btn btn-primary btn-large">無料で始める</a>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>Salon Lumière</h4>
+                        <p>美容師のための顧客管理システム</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>サービス</h4>
+                        <ul>
+                            <li><a href="#features">機能一覧</a></li>
+                            <li><a href="#pricing">料金プラン</a></li>
+                            <li><a href="/docs">ヘルプ</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>会社情報</h4>
+                        <ul>
+                            <li><a href="/about">会社概要</a></li>
+                            <li><a href="/privacy">プライバシーポリシー</a></li>
+                            <li><a href="/terms">利用規約</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>お問い合わせ</h4>
+                        <p>support@salon-lumiere.com</p>
+                        <p>営業時間: 平日 9:00-18:00</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Salon Lumière. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

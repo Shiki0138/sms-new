@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f8e5e1">
+    <link rel="manifest" href="/manifest.json">
+    <title>Salon Lumière - ログイン</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main-unified.css">
+    <style>
+        /* Login page specific styles */
+        body {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 50%, var(--gray-50) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background elements */
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            right: -75px;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        h1 {
+            font-family: var(--font-family-display);
+            font-size: 2rem;
+            color: var(--gray-800);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid transparent;
+            background: var(--primary-50);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            color: var(--gray-700);
+            transition: all 0.3s ease;
+            font-family: var(--font-family-primary);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            background: white;
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        input::placeholder {
+            color: var(--gray-400);
+            font-weight: 300;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1.2rem;
+            top: 3.2rem;
+            color: var(--gray-500);
+            transition: color 0.3s ease;
+        }
+
+        input:focus ~ .input-icon {
+            color: var(--primary-500);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            accent-color: var(--primary-500);
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--primary-500);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-600);
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            border: none;
+            border-radius: var(--border-radius);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .login-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 1rem;
+            position: relative;
+            color: var(--gray-500);
+            font-size: 0.85rem;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-button {
+            flex: 1;
+            padding: 0.9rem;
+            border: 2px solid var(--gray-200);
+            background: white;
+            border-radius: var(--border-radius-sm);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-button:hover {
+            border-color: var(--primary-500);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: var(--primary-500);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: var(--primary-600);
+            text-decoration: underline;
+        }
+
+        /* Loading states */
+        .loading {
+            display: none;
+            text-align: center;
+            color: var(--primary-500);
+            margin-top: 1rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+                border-radius: var(--border-radius);
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+
+            input {
+                padding: 0.9rem 1rem;
+                font-size: 16px;
+            }
+
+            .login-button {
+                padding: 1.1rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo">✨</div>
+            <h1>Salon Lumière</h1>
+            <p class="subtitle">美を創造する、特別な場所へ</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    placeholder="your@email.com"
+                    autocomplete="email"
+                >
+                <span class="input-icon">📧</span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                >
+                <span class="input-icon">🔒</span>
+            </div>
+
+            <div class="remember-forgot">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">ログイン状態を保持</label>
+                </div>
+                <a href="#" class="forgot-link">パスワードを忘れた？</a>
+            </div>
+
+            <div class="error-message message" id="errorMessage"></div>
+            <div class="success-message message" id="successMessage"></div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                ログイン
+            </button>
+
+            <div class="loading" id="loading">
+                <span>✨ ログイン中...</span>
+            </div>
+        </form>
+
+        <div class="divider">
+            <span>または</span>
+        </div>
+
+        <div class="social-login">
+            <button type="button" class="social-button">
+                <span>G</span>
+            </button>
+            <button type="button" class="social-button">
+                <span>L</span>
+            </button>
+            <button type="button" class="social-button">
+                <span>A</span>
+            </button>
+        </div>
+
+        <div class="signup-link">
+            アカウントをお持ちでない方は <a href="#">新規登録</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loginButton = document.getElementById('loginButton');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Reset messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Show loading
+            loginButton.disabled = true;
+            loading.classList.add('show');
+            
+            const formData = new FormData(e.target);
+            const email = formData.get('email');
+            const password = formData.get('password');
+            const remember = formData.get('remember') === 'on';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Save tokens
+                    const storage = remember ? localStorage : sessionStorage;
+                    
+                    // Clear any existing tokens first
+                    localStorage.removeItem('salon_token');
+                    localStorage.removeItem('salon_user');
+                    sessionStorage.removeItem('salon_token');
+                    sessionStorage.removeItem('salon_user');
+                    
+                    // Check for token in response
+                    const token = data.token || data.accessToken;
+                    if (token && data.user) {
+                        storage.setItem('salon_token', token);
+                        storage.setItem('salon_user', JSON.stringify(data.user));
+                    } else {
+                        throw new Error('トークンまたはユーザーデータが不正です');
+                    }
+                    
+                    // Show success
+                    successMessage.textContent = '✨ ログイン成功！リダイレクト中...';
+                    successMessage.style.display = 'block';
+                    
+                    // Set a flag to prevent auth checks during transition
+                    window.authCheckInProgress = true;
+                    
+                    // Redirect immediately for better user experience
+                    setTimeout(() => {
+                        document.body.style.opacity = '0';
+                        setTimeout(() => {
+                            // Use replace to prevent back button issues
+                            window.location.replace('/dashboard.html');
+                        }, 200);
+                    }, 800);
+                } else {
+                    errorMessage.textContent = data.message || 'ログインに失敗しました';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'ネットワークエラーが発生しました';
+                errorMessage.style.display = 'block';
+            } finally {
+                loginButton.disabled = false;
+                loading.classList.remove('show');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check for salon_token only
+            const token = localStorage.getItem('salon_token') || 
+                         sessionStorage.getItem('salon_token');
+            
+            const user = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
+            
+            if (token && user) {
+                // Use replace to prevent back button issues
+                window.location.replace('/dashboard.html');
+            }
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+</body>
+</html>

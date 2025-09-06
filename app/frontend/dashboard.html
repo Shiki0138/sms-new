@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f8e5e1">
+    <title>Dashboard - Salon Lumière</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main-unified.css">
+    <style>
+        /* Dashboard page specific styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #d4a574;
+            --primary-dark: #b8935f;
+            --secondary: #f8e5e1;
+            --accent: #e8b4b8;
+            --success: #81c784;
+            --warning: #ffb74d;
+            --error: #e57373;
+            --text-dark: #3a3a3a;
+            --text-light: #6b6b6b;
+            --white: #ffffff;
+            --bg-light: #fdf9f7;
+            --shadow-sm: 0 2px 8px rgba(212, 165, 116, 0.1);
+            --shadow-md: 0 4px 16px rgba(212, 165, 116, 0.15);
+            --shadow-lg: 0 8px 32px rgba(212, 165, 116, 0.2);
+            --gradient-1: linear-gradient(135deg, #f8e5e1 0%, #fdf0ed 50%, #fff9f7 100%);
+            --gradient-2: linear-gradient(135deg, #d4a574 0%, #e8b4b8 100%);
+            --gradient-3: linear-gradient(135deg, #fff 0%, rgba(248, 229, 225, 0.3) 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--white);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            background: var(--gradient-2);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .logo-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .salon-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 400;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: var(--gradient-2);
+            transition: height 0.3s ease;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--secondary);
+            color: var(--primary-dark);
+        }
+
+        .nav-item.active::before,
+        .nav-item:hover::before {
+            height: 60%;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            opacity: 0.8;
+        }
+
+        .user-section {
+            flex-shrink: 0;
+            padding: 1.5rem;
+            background: var(--white);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 500;
+            margin-right: 1rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: transparent;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--secondary);
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .icon-button {
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-button:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-trend {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--error);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Schedule Section */
+        .schedule-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .view-all-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .appointment-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--gradient-3);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .appointment-card:hover {
+            background: var(--secondary);
+            transform: translateX(10px);
+        }
+
+        .time-slot {
+            flex-shrink: 0;
+            width: 80px;
+            text-align: center;
+            padding-right: 1rem;
+            border-right: 2px solid rgba(212, 165, 116, 0.2);
+            margin-right: 1rem;
+        }
+
+        .time {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .duration {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .appointment-info {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .service-name {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .appointment-status {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Page visibility */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* Table styling */
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .customers-table th,
+        .customers-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .customers-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .content-area {
+            padding: 20px;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: var(--gradient-2);
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeIn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .schedule-section {
+            animation: fadeIn 0.6s ease-out 0.5s;
+            animation-fill-mode: both;
+        }
+
+        /* Settings Page Styles */
+        .settings-container {
+            display: flex;
+            gap: 2rem;
+            max-width: 1200px;
+        }
+
+        .settings-nav {
+            min-width: 250px;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+        }
+
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-nav-item:hover {
+            background: var(--secondary);
+        }
+
+        .settings-nav-item.active {
+            background: var(--gradient-2);
+            color: white;
+        }
+
+        .settings-nav-item i {
+            font-size: 1.2rem;
+            width: 20px;
+        }
+
+        .settings-content {
+            flex: 1;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .settings-tab {
+            display: none;
+        }
+
+        .settings-tab.active {
+            display: block;
+        }
+
+        .settings-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .channel-config-container {
+            margin-top: 2rem;
+        }
+
+        .channel-config-interface {
+            width: 100%;
+        }
+
+        /* Channel Configuration Styles */
+        .channel-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 2rem;
+        }
+
+        .channel-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .channel-tab:hover {
+            background: var(--secondary);
+        }
+
+        .channel-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .channel-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .channel-status.connected {
+            background: #d4f8d4;
+            color: #2d7d32;
+        }
+
+        .channel-status.disconnected {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .channel-status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .channel-status.testing {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .channel-content {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .channel-panel {
+            display: none;
+        }
+
+        .channel-panel.active {
+            display: block;
+        }
+
+        .channel-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .channel-form h4 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #f0d5d1;
+        }
+
+        .webhook-info {
+            background: var(--bg-light);
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .webhook-url {
+            font-family: monospace;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            word-break: break-all;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .settings-container {
+                flex-direction: column;
+            }
+
+            .settings-nav {
+                min-width: unset;
+            }
+
+            .channel-tabs {
+                overflow-x: auto;
+            }
+
+            .channel-tab {
+                min-width: 120px;
+                justify-content: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>ダッシュボード</span>
+            </a>
+            <a href="#" class="nav-item" data-page="appointments">
+                <span class="nav-icon">📅</span>
+                <span>予約管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="customers">
+                <span class="nav-icon">👥</span>
+                <span>顧客管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="records">
+                <span class="nav-icon">📋</span>
+                <span>カルテ管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="services">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="staff">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="messages">
+                <span class="nav-icon">💬</span>
+                <span>メッセージ</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <span class="nav-icon">📈</span>
+                <span>分析・レポート</span>
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+            <header class="header">
+                <h1 class="page-title">こんにちは、素敵な一日を！</h1>
+                <div class="header-actions">
+                    <button class="icon-button">
+                        🔍
+                    </button>
+                    <button class="icon-button">
+                        🔔
+                        <span class="notification-badge"></span>
+                    </button>
+                    <button class="icon-button">
+                        ➕
+                    </button>
+                </div>
+            </header>
+
+            <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📅</div>
+                    <span class="stat-trend trend-up">+12%</span>
+                </div>
+                <div class="stat-value">24</div>
+                <div class="stat-label">本日の予約</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <span class="stat-trend trend-up">+8%</span>
+                </div>
+                <div class="stat-value">¥248,500</div>
+                <div class="stat-label">本日の売上</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <span class="stat-trend trend-up">+15</span>
+                </div>
+                <div class="stat-value">1,234</div>
+                <div class="stat-label">総顧客数</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⭐</div>
+                    <span class="stat-trend">New!</span>
+                </div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">平均評価</div>
+            </div>
+        </div>
+
+        <div class="schedule-section">
+            <div class="section-header">
+                <h2 class="section-title">本日の予約</h2>
+                <a href="#" class="view-all-btn">すべて見る →</a>
+            </div>
+            <div class="appointment-list">
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">10:00</div>
+                        <div class="duration">90分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">山田 花子 様</div>
+                        <div class="service-name">カット + カラー + トリートメント</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">13:00</div>
+                        <div class="duration">60分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">佐藤 美咲 様</div>
+                        <div class="service-name">カット + パーマ</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">15:00</div>
+                        <div class="duration">120分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">鈴木 真由美 様</div>
+                        <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Appointments Page -->
+        <div class="page" id="appointments">
+            <header class="header">
+                <h1 class="page-title">予約管理</h1>
+            </header>
+            <div id="appointmentCalendar"></div>
+        </div>
+
+        <!-- Customers Page -->
+        <div class="page" id="customers">
+            <header class="header">
+                <h1 class="page-title">顧客管理</h1>
+            </header>
+            <div class="content-area">
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>顧客名</th>
+                            <th>電話番号</th>
+                            <th>メール</th>
+                            <th>最終来店日</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <!-- Customer data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Records Page -->
+        <div class="page" id="records">
+            <header class="header">
+                <h1 class="page-title">カルテ管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="addRecordBtn">
+                        <span>➕ 新規カルテ</span>
+                    </button>
+                    <div class="search-box">
+                        <input type="text" id="recordSearchInput" placeholder="顧客名、電話番号で検索..." class="search-input">
+                        <button class="search-btn" id="recordSearchBtn">🔍</button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="dateFilter">期間で絞り込み:</label>
+                        <select id="dateFilter" class="filter-select">
+                            <option value="all">すべて</option>
+                            <option value="today">今日</option>
+                            <option value="week">今週</option>
+                            <option value="month">今月</option>
+                            <option value="quarter">3か月以内</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="treatmentFilter">施術で絞り込み:</label>
+                        <select id="treatmentFilter" class="filter-select">
+                            <option value="all">すべての施術</option>
+                            <option value="cut">カット</option>
+                            <option value="color">カラー</option>
+                            <option value="perm">パーマ</option>
+                            <option value="treatment">トリートメント</option>
+                            <option value="spa">ヘッドスパ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Records Grid -->
+                <div class="records-grid" id="recordsGrid">
+                    <div class="record-card" data-record-id="1">
+                        <div class="record-header">
+                            <div class="customer-info">
+                                <h3>山田 花子 様</h3>
+                                <span class="phone-number">090-1234-5678</span>
+                            </div>
+                            <div class="record-date">2024-03-15</div>
+                        </div>
+                        <div class="record-body">
+                            <div class="treatment-info">
+                                <span class="treatment-tag cut">カット</span>
+                                <span class="treatment-tag color">カラー</span>
+                            </div>
+                            <div class="record-summary">
+                                前髪を少し短めにカット。カラーはブラウン系で全体的に明るく...
+                            </div>
+                            <div class="photo-preview">
+                                <div class="photo-count">📷 写真 4枚</div>
+                            </div>
+                        </div>
+                        <div class="record-actions">
+                            <button class="btn-view" onclick="viewRecord(1)">詳細</button>
+                            <button class="btn-edit" onclick="editRecord(1)">編集</button>
+                            <button class="btn-copy" onclick="copyRecord(1)">複製</button>
+                        </div>
+                    </div>
+
+                    <div class="record-card" data-record-id="2">
+                        <div class="record-header">
+                            <div class="customer-info">
+                                <h3>佐藤 美咲 様</h3>
+                                <span class="phone-number">080-9876-5432</span>
+                            </div>
+                            <div class="record-date">2024-03-14</div>
+                        </div>
+                        <div class="record-body">
+                            <div class="treatment-info">
+                                <span class="treatment-tag perm">パーマ</span>
+                                <span class="treatment-tag treatment">トリートメント</span>
+                            </div>
+                            <div class="record-summary">
+                                デジタルパーマでゆるめのウェーブ。ダメージケア用トリートメント施術...
+                            </div>
+                            <div class="photo-preview">
+                                <div class="photo-count">📷 写真 6枚</div>
+                            </div>
+                        </div>
+                        <div class="record-actions">
+                            <button class="btn-view" onclick="viewRecord(2)">詳細</button>
+                            <button class="btn-edit" onclick="editRecord(2)">編集</button>
+                            <button class="btn-copy" onclick="copyRecord(2)">複製</button>
+                        </div>
+                    </div>
+
+                    <div class="record-card" data-record-id="3">
+                        <div class="record-header">
+                            <div class="customer-info">
+                                <h3>鈴木 真由美 様</h3>
+                                <span class="phone-number">070-1111-2222</span>
+                            </div>
+                            <div class="record-date">2024-03-13</div>
+                        </div>
+                        <div class="record-body">
+                            <div class="treatment-info">
+                                <span class="treatment-tag spa">ヘッドスパ</span>
+                                <span class="treatment-tag treatment">トリートメント</span>
+                            </div>
+                            <div class="record-summary">
+                                リラクゼーションヘッドスパ60分。保湿トリートメントで毛先ケア...
+                            </div>
+                            <div class="photo-preview">
+                                <div class="photo-count">📷 写真 2枚</div>
+                            </div>
+                        </div>
+                        <div class="record-actions">
+                            <button class="btn-view" onclick="viewRecord(3)">詳細</button>
+                            <button class="btn-edit" onclick="editRecord(3)">編集</button>
+                            <button class="btn-copy" onclick="copyRecord(3)">複製</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="pagination-btn" id="prevPage" disabled>← 前へ</button>
+                    <span class="page-info">1 / 1 ページ</span>
+                    <button class="pagination-btn" id="nextPage" disabled>次へ →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Record Detail Modal -->
+        <div class="modal" id="recordModal">
+            <div class="modal-content record-modal-content">
+                <div class="modal-header">
+                    <h2 id="recordModalTitle">カルテ詳細</h2>
+                    <button class="close-btn" id="closeRecordModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="record-detail-container">
+                        <!-- Customer Information Section -->
+                        <div class="detail-section">
+                            <h3>顧客情報</h3>
+                            <div class="customer-detail-grid">
+                                <div class="detail-item">
+                                    <label>顧客名:</label>
+                                    <span id="detailCustomerName">山田 花子 様</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>電話番号:</label>
+                                    <span id="detailPhoneNumber">090-1234-5678</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>来店日:</label>
+                                    <span id="detailVisitDate">2024-03-15</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>担当スタッフ:</label>
+                                    <span id="detailStaff">田中 美容師</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Treatment Information Section -->
+                        <div class="detail-section">
+                            <h3>施術情報</h3>
+                            <div class="treatment-detail-grid">
+                                <div class="detail-item">
+                                    <label>施術内容:</label>
+                                    <div id="detailTreatments" class="treatment-tags">
+                                        <span class="treatment-tag cut">カット</span>
+                                        <span class="treatment-tag color">カラー</span>
+                                    </div>
+                                </div>
+                                <div class="detail-item">
+                                    <label>施術時間:</label>
+                                    <span id="detailDuration">120分</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>使用商品:</label>
+                                    <span id="detailProducts">イルミナカラー、オラプレックス</span>
+                                </div>
+                                <div class="detail-item">
+                                    <label>料金:</label>
+                                    <span id="detailPrice">¥12,000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Photos Section -->
+                        <div class="detail-section">
+                            <h3>施術写真</h3>
+                            <div class="photo-gallery" id="photoGallery">
+                                <div class="photo-item">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y4ZTVlMSIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkJFRk9SRTwvdGV4dD48L3N2Zz4=" alt="Before photo" class="photo-img">
+                                    <div class="photo-label">施術前</div>
+                                </div>
+                                <div class="photo-item">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Q0YTU3NCIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkFGVEVSPC90ZXh0Pjwvc3ZnPg==" alt="After photo" class="photo-img">
+                                    <div class="photo-label">施術後</div>
+                                </div>
+                                <div class="photo-item">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2U4YjRiOCIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkRFVEFJTDwvdGV4dD48L3N2Zz4=" alt="Detail photo" class="photo-img">
+                                    <div class="photo-label">詳細</div>
+                                </div>
+                                <div class="photo-upload-area" onclick="uploadPhoto()">
+                                    <span class="upload-icon">📷</span>
+                                    <span>写真を追加</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="detail-section">
+                            <h3>施術記録・メモ</h3>
+                            <div class="notes-section">
+                                <div class="note-item">
+                                    <div class="note-header">
+                                        <span class="note-type">カウンセリング</span>
+                                        <span class="note-time">10:00</span>
+                                    </div>
+                                    <div class="note-content">
+                                        前回のカラーの褪色具合を確認。今回は少し明るめにしたいとのご希望。
+                                        髪質は細くて柔らかい。カラーの入りは良好。
+                                    </div>
+                                </div>
+                                <div class="note-item">
+                                    <div class="note-header">
+                                        <span class="note-type">施術</span>
+                                        <span class="note-time">10:15</span>
+                                    </div>
+                                    <div class="note-content">
+                                        カット：前髪5mm、サイド10mm、バック15mmカット
+                                        カラー：イルミナカラー使用、7レベルのアッシュベージュ
+                                    </div>
+                                </div>
+                                <div class="note-item">
+                                    <div class="note-header">
+                                        <span class="note-type">仕上げ</span>
+                                        <span class="note-time">11:45</span>
+                                    </div>
+                                    <div class="note-content">
+                                        オラプレックストリートメント施術。
+                                        ブロー仕上げ。お客様大変満足していただけました。
+                                        次回は6週間後を目安にご提案。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="add-note-form">
+                                <textarea placeholder="新しいメモを追加..." class="note-textarea" id="newNoteText"></textarea>
+                                <div class="note-form-actions">
+                                    <select class="note-type-select" id="newNoteType">
+                                        <option value="general">一般</option>
+                                        <option value="counseling">カウンセリング</option>
+                                        <option value="treatment">施術</option>
+                                        <option value="finish">仕上げ</option>
+                                        <option value="aftercare">アフターケア</option>
+                                    </select>
+                                    <button class="btn btn-primary" onclick="addNote()">メモ追加</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Treatment History Section -->
+                        <div class="detail-section">
+                            <h3>施術履歴</h3>
+                            <div class="treatment-history">
+                                <div class="history-item">
+                                    <div class="history-date">2024-01-20</div>
+                                    <div class="history-treatment">カット + カラー</div>
+                                    <div class="history-note">前回施術から8週間</div>
+                                </div>
+                                <div class="history-item">
+                                    <div class="history-date">2023-11-25</div>
+                                    <div class="history-treatment">カット + パーマ + トリートメント</div>
+                                    <div class="history-note">初回来店</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="editRecord()">編集</button>
+                    <button class="btn btn-primary" onclick="printRecord()">印刷</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Record Modal -->
+        <div class="modal" id="editRecordModal">
+            <div class="modal-content record-edit-modal-content">
+                <div class="modal-header">
+                    <h2 id="editRecordModalTitle">カルテ編集</h2>
+                    <button class="close-btn" id="closeEditRecordModal">×</button>
+                </div>
+                <div class="modal-body">
+                    <form class="record-form" id="recordForm">
+                        <!-- Customer Selection -->
+                        <div class="form-section">
+                            <h3>顧客選択</h3>
+                            <div class="form-group">
+                                <label for="customerSelect">顧客を選択:</label>
+                                <select id="customerSelect" class="form-control" required>
+                                    <option value="">顧客を選択してください</option>
+                                    <option value="1">山田 花子 (090-1234-5678)</option>
+                                    <option value="2">佐藤 美咲 (080-9876-5432)</option>
+                                    <option value="3">鈴木 真由美 (070-1111-2222)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Visit Information -->
+                        <div class="form-section">
+                            <h3>来店情報</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="visitDate">来店日:</label>
+                                    <input type="date" id="visitDate" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="staffSelect">担当スタッフ:</label>
+                                    <select id="staffSelect" class="form-control" required>
+                                        <option value="">担当者を選択</option>
+                                        <option value="1">田中 美容師</option>
+                                        <option value="2">山本 美容師</option>
+                                        <option value="3">佐々木 美容師</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Treatment Information -->
+                        <div class="form-section">
+                            <h3>施術情報</h3>
+                            <div class="form-group">
+                                <label>施術内容:</label>
+                                <div class="treatment-checkboxes">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="cut"> カット
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="color"> カラー
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="perm"> パーマ
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="treatment"> トリートメント
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="spa"> ヘッドスパ
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="treatments" value="other"> その他
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="treatmentDuration">施術時間:</label>
+                                    <input type="number" id="treatmentDuration" class="form-control" placeholder="分" min="30" max="480">
+                                </div>
+                                <div class="form-group">
+                                    <label for="treatmentPrice">料金:</label>
+                                    <input type="number" id="treatmentPrice" class="form-control" placeholder="円" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="productsUsed">使用商品:</label>
+                                <input type="text" id="productsUsed" class="form-control" placeholder="使用した商品・薬剤を入力">
+                            </div>
+                        </div>
+
+                        <!-- Photos Section -->
+                        <div class="form-section">
+                            <h3>写真</h3>
+                            <div class="photo-upload-section">
+                                <input type="file" id="photoUpload" accept="image/*" multiple style="display: none;">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoUpload').click()">
+                                    📷 写真をアップロード
+                                </button>
+                                <div class="photo-preview-container" id="photoPreviewContainer">
+                                    <!-- Uploaded photos will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="form-section">
+                            <h3>施術記録</h3>
+                            <div class="form-group">
+                                <label for="counselingNotes">カウンセリング記録:</label>
+                                <textarea id="counselingNotes" class="form-control" rows="3" placeholder="カウンセリング内容、お客様のご要望などを記録"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="treatmentNotes">施術記録:</label>
+                                <textarea id="treatmentNotes" class="form-control" rows="3" placeholder="具体的な施術内容、技術的な記録を記入"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="finishNotes">仕上げ・その他:</label>
+                                <textarea id="finishNotes" class="form-control" rows="3" placeholder="仕上げの詳細、お客様の反応、次回の提案など"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">キャンセル</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Services Page -->
+        <div class="page" id="services">
+            <header class="header">
+                <h1 class="page-title">サービス管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showCreateServiceModal()">
+                        <span class="icon">➕</span>
+                        新規サービス追加
+                    </button>
+                    <button class="btn btn-secondary" onclick="showPackageModal()">
+                        <span class="icon">📦</span>
+                        パッケージ管理
+                    </button>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <!-- Service categories tabs -->
+                <div class="service-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0;">
+                    <button class="service-tab active" data-category="all" onclick="filterServices('all')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: 600;">すべて</button>
+                    <button class="service-tab" data-category="cut" onclick="filterServices('cut')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">カット</button>
+                    <button class="service-tab" data-category="color" onclick="filterServices('color')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">カラー</button>
+                    <button class="service-tab" data-category="perm" onclick="filterServices('perm')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">パーマ</button>
+                    <button class="service-tab" data-category="treatment" onclick="filterServices('treatment')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">トリートメント</button>
+                    <button class="service-tab" data-category="spa" onclick="filterServices('spa')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">スパ</button>
+                    <button class="service-tab" data-category="package" onclick="filterServices('package')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">パッケージ</button>
+                </div>
+
+                <!-- Services grid -->
+                <div class="services-grid" id="servicesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                    <!-- Services will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Create/Edit Service Modal -->
+            <div class="modal" id="serviceModal" style="display: none;">
+                <div class="modal-overlay" onclick="hideServiceModal()"></div>
+                <div class="modal-content" style="max-width: 600px; width: 90%;">
+                    <div class="modal-header">
+                        <h3 id="serviceModalTitle">新規サービス追加</h3>
+                        <button class="modal-close" onclick="hideServiceModal()">✕</button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <form id="serviceForm" class="form">
+                            <input type="hidden" id="serviceId">
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="serviceName">サービス名 *</label>
+                                    <input type="text" id="serviceName" required placeholder="例：レディースカット" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="serviceCategory">カテゴリ *</label>
+                                    <select id="serviceCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                        <option value="">選択...</option>
+                                        <option value="cut">カット</option>
+                                        <option value="color">カラー</option>
+                                        <option value="perm">パーマ</option>
+                                        <option value="treatment">トリートメント</option>
+                                        <option value="spa">スパ・ヘッドスパ</option>
+                                        <option value="facial">フェイシャル</option>
+                                        <option value="nail">ネイル</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="serviceDescription">サービス内容</label>
+                                <textarea id="serviceDescription" rows="3" placeholder="サービスの詳細説明..." style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; resize: vertical;"></textarea>
+                            </div>
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="serviceDuration">施術時間（分） *</label>
+                                    <input type="number" id="serviceDuration" required min="15" step="15" placeholder="60" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="servicePrice">料金（円） *</label>
+                                    <input type="number" id="servicePrice" required min="0" placeholder="5000" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="serviceDiscountPrice">割引料金（円）</label>
+                                    <input type="number" id="serviceDiscountPrice" min="0" placeholder="4500" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label>
+                                        <input type="checkbox" id="requiresSpecialist" style="margin-right: 0.5rem;">
+                                        専門スタッフ指定が必要
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="maxConcurrent">同時施術可能数</label>
+                                    <input type="number" id="maxConcurrent" min="1" max="10" value="1" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="hideServiceModal()">キャンセル</button>
+                        <button type="submit" form="serviceForm" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staff Page -->
+        <div class="page" id="staff">
+            <header class="header">
+                <h1 class="page-title">スタッフ管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showCreateStaffModal()">
+                        <span class="icon">👤</span>
+                        新規スタッフ追加
+                    </button>
+                    <button class="btn btn-secondary" onclick="showScheduleModal()">
+                        <span class="icon">📅</span>
+                        シフト管理
+                    </button>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <!-- Staff stats -->
+                <div class="stats-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStaff">5</div>
+                        <div class="stat-label">総スタッフ数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeStaff">4</div>
+                        <div class="stat-label">稼働中</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="onBreak">1</div>
+                        <div class="stat-label">休憩中</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="monthlyHours">850</div>
+                        <div class="stat-label">今月の総稼働時間</div>
+                    </div>
+                </div>
+
+                <!-- Staff list -->
+                <div class="staff-grid" id="staffGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- Staff cards will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Create/Edit Staff Modal -->
+            <div class="modal" id="staffModal" style="display: none;">
+                <div class="modal-overlay" onclick="hideStaffModal()"></div>
+                <div class="modal-content" style="max-width: 700px; width: 90%;">
+                    <div class="modal-header">
+                        <h3 id="staffModalTitle">新規スタッフ追加</h3>
+                        <button class="modal-close" onclick="hideStaffModal()">✕</button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <form id="staffForm" class="form">
+                            <input type="hidden" id="staffId">
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="staffName">氏名 *</label>
+                                    <input type="text" id="staffName" required placeholder="例：田中 美穂" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="staffRole">役職</label>
+                                    <select id="staffRole" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                        <option value="staff">スタッフ</option>
+                                        <option value="senior">シニアスタッフ</option>
+                                        <option value="manager">マネージャー</option>
+                                        <option value="receptionist">受付</option>
+                                        <option value="admin">管理者</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="staffEmail">メールアドレス *</label>
+                                    <input type="email" id="staffEmail" required placeholder="tanaka@salon.com" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="staffPhone">電話番号</label>
+                                    <input type="tel" id="staffPhone" placeholder="090-1234-5678" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="staffSpecializations">得意分野</label>
+                                <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                                    <label><input type="checkbox" name="specializations" value="cut"> カット</label>
+                                    <label><input type="checkbox" name="specializations" value="color"> カラー</label>
+                                    <label><input type="checkbox" name="specializations" value="perm"> パーマ</label>
+                                    <label><input type="checkbox" name="specializations" value="treatment"> トリートメント</label>
+                                    <label><input type="checkbox" name="specializations" value="spa"> ヘッドスパ</label>
+                                    <label><input type="checkbox" name="specializations" value="facial"> フェイシャル</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label for="staffHourlyRate">時給（円）</label>
+                                    <input type="number" id="staffHourlyRate" min="0" placeholder="2500" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="staffCommissionRate">歩合率（％）</label>
+                                    <input type="number" id="staffCommissionRate" min="0" max="50" step="0.5" placeholder="15" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="staffActive" checked style="margin-right: 0.5rem;">
+                                    アクティブ（稼働中）
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="hideStaffModal()">キャンセル</button>
+                        <button type="submit" form="staffForm" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Management Modal -->
+            <div class="modal" id="scheduleModal" style="display: none;">
+                <div class="modal-overlay" onclick="hideScheduleModal()"></div>
+                <div class="modal-content" style="max-width: 900px; width: 95%;">
+                    <div class="modal-header">
+                        <h3>シフト管理</h3>
+                        <button class="modal-close" onclick="hideScheduleModal()">✕</button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="schedule-controls" style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                            <div class="date-picker">
+                                <input type="week" id="scheduleWeek" style="padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSchedules()">
+                                スケジュール保存
+                            </button>
+                        </div>
+                        
+                        <div class="schedule-grid" id="scheduleGrid">
+                            <!-- Schedule grid will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Page -->
+        <div class="page" id="messages">
+            <header class="header">
+                <h1 class="page-title">メッセージ</h1>
+            </header>
+            <div class="content-area">
+                <p>メッセージ機能は準備中です。</p>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="page" id="analytics">
+            <header class="header">
+                <h1 class="page-title">分析・レポート</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="exportReport()">
+                        <span class="icon">📊</span>
+                        レポート出力
+                    </button>
+                    <select id="analyticsDateRange" onchange="updateAnalytics()" style="padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 8px;">
+                        <option value="7">過去7日</option>
+                        <option value="30" selected>過去30日</option>
+                        <option value="90">過去3ヶ月</option>
+                        <option value="365">過去1年</option>
+                    </select>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <!-- KPI Cards -->
+                <div class="analytics-kpis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 16px;">
+                        <div class="kpi-icon" style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                        <div class="kpi-value" id="totalRevenue" style="font-size: 2rem; font-weight: bold;">¥485,000</div>
+                        <div class="kpi-label" style="opacity: 0.9;">総売上</div>
+                        <div class="kpi-change" style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            <span style="color: #4ade80;">↗️ +12.5%</span> 前月比
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 16px;">
+                        <div class="kpi-icon" style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+                        <div class="kpi-value" id="totalCustomers" style="font-size: 2rem; font-weight: bold;">156</div>
+                        <div class="kpi-label" style="opacity: 0.9;">総顧客数</div>
+                        <div class="kpi-change" style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            <span style="color: #4ade80;">↗️ +8</span> 新規顧客
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 16px;">
+                        <div class="kpi-icon" style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                        <div class="kpi-value" id="totalAppointments" style="font-size: 2rem; font-weight: bold;">89</div>
+                        <div class="kpi-label" style="opacity: 0.9;">総予約数</div>
+                        <div class="kpi-change" style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            <span style="color: #4ade80;">↗️ +15%</span> 前月比
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 1.5rem; border-radius: 16px;">
+                        <div class="kpi-icon" style="font-size: 2rem; margin-bottom: 0.5rem;">⭐</div>
+                        <div class="kpi-value" id="avgRating" style="font-size: 2rem; font-weight: bold;">4.8</div>
+                        <div class="kpi-label" style="opacity: 0.9;">平均満足度</div>
+                        <div class="kpi-change" style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            <span style="color: #4ade80;">↗️ +0.2</span> 前月比
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div class="chart-container" style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow-md);">
+                        <h3 style="margin-bottom: 1rem; color: var(--text-dark);">売上推移</h3>
+                        <canvas id="revenueChart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="chart-container" style="background: white; padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow-md);">
+                        <h3 style="margin-bottom: 1rem; color: var(--text-dark);">サービス別売上</h3>
+                        <canvas id="serviceChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Analytics Tables -->
+                <div class="analytics-tables" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="analytics-table" style="background: white; border-radius: 16px; box-shadow: var(--shadow-md); overflow: hidden;">
+                        <div class="table-header" style="padding: 1rem 1.5rem; background: var(--gradient-1); border-bottom: 1px solid #e2e8f0;">
+                            <h3 style="margin: 0; color: var(--text-dark);">人気サービスランキング</h3>
+                        </div>
+                        <div class="table-body" style="padding: 0;">
+                            <div class="service-rank-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="rank-info">
+                                    <span class="rank-number" style="display: inline-block; width: 24px; height: 24px; background: #fbbf24; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: bold; margin-right: 0.5rem;">1</span>
+                                    <span class="service-name" style="font-weight: 500;">カット + カラー</span>
+                                </div>
+                                <div class="service-stats" style="text-align: right;">
+                                    <div class="service-count" style="font-weight: bold; color: var(--primary);">34件</div>
+                                    <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥272,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-rank-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="rank-info">
+                                    <span class="rank-number" style="display: inline-block; width: 24px; height: 24px; background: #9ca3af; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: bold; margin-right: 0.5rem;">2</span>
+                                    <span class="service-name" style="font-weight: 500;">カット</span>
+                                </div>
+                                <div class="service-stats" style="text-align: right;">
+                                    <div class="service-count" style="font-weight: bold; color: var(--primary);">28件</div>
+                                    <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥112,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="service-rank-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="rank-info">
+                                    <span class="rank-number" style="display: inline-block; width: 24px; height: 24px; background: #cd7f32; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: bold; margin-right: 0.5rem;">3</span>
+                                    <span class="service-name" style="font-weight: 500;">トリートメント</span>
+                                </div>
+                                <div class="service-stats" style="text-align: right;">
+                                    <div class="service-count" style="font-weight: bold; color: var(--primary);">18件</div>
+                                    <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥90,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-table" style="background: white; border-radius: 16px; box-shadow: var(--shadow-md); overflow: hidden;">
+                        <div class="table-header" style="padding: 1rem 1.5rem; background: var(--gradient-1); border-bottom: 1px solid #e2e8f0;">
+                            <h3 style="margin: 0; color: var(--text-dark);">スタッフ別パフォーマンス</h3>
+                        </div>
+                        <div class="table-body" style="padding: 0;">
+                            <div class="staff-performance-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="staff-info">
+                                    <div class="staff-name" style="font-weight: 500;">田中 美穂</div>
+                                    <div class="staff-role" style="font-size: 0.9rem; color: #666;">シニアスタッフ</div>
+                                </div>
+                                <div class="staff-stats" style="text-align: right;">
+                                    <div class="staff-appointments" style="font-weight: bold; color: var(--primary);">42件</div>
+                                    <div class="staff-revenue" style="font-size: 0.9rem; color: #666;">¥210,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="staff-performance-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="staff-info">
+                                    <div class="staff-name" style="font-weight: 500;">佐藤 健太</div>
+                                    <div class="staff-role" style="font-size: 0.9rem; color: #666;">スタッフ</div>
+                                </div>
+                                <div class="staff-stats" style="text-align: right;">
+                                    <div class="staff-appointments" style="font-weight: bold; color: var(--primary);">35件</div>
+                                    <div class="staff-revenue" style="font-size: 0.9rem; color: #666;">¥175,000</div>
+                                </div>
+                            </div>
+                            
+                            <div class="staff-performance-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem;">
+                                <div class="staff-info">
+                                    <div class="staff-name" style="font-weight: 500;">山田 さやか</div>
+                                    <div class="staff-role" style="font-size: 0.9rem; color: #666;">スタッフ</div>
+                                </div>
+                                <div class="staff-stats" style="text-align: right;">
+                                    <div class="staff-appointments" style="font-weight: bold; color: var(--primary);">29件</div>
+                                    <div class="staff-revenue" style="font-size: 0.9rem; color: #666;">¥145,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page" id="settings">
+            <header class="header">
+                <h1 class="page-title">設定</h1>
+            </header>
+            <div class="content-area">
+                <div class="settings-container">
+                    <div class="settings-nav">
+                        <div class="settings-nav-item active" data-tab="general">
+                            <i>⚙️</i>
+                            <span>一般設定</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="channels">
+                            <i>📡</i>
+                            <span>チャネル設定</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="notifications">
+                            <i>🔔</i>
+                            <span>通知設定</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="security">
+                            <i>🔒</i>
+                            <span>セキュリティ</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="integrations">
+                            <i>🔗</i>
+                            <span>外部連携</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="automation">
+                            <i>🤖</i>
+                            <span>自動化</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-content">
+                        <!-- General Settings Tab -->
+                        <div class="settings-tab active" id="general-tab">
+                            <div class="settings-section">
+                                <h3>一般設定</h3>
+                                <p>基本的なシステム設定を管理します。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Channel Settings Tab -->
+                        <div class="settings-tab" id="channels-tab">
+                            <div class="settings-section">
+                                <h3>チャネル設定</h3>
+                                <p>SMS、メール、LINE、Instagramの設定を管理します。</p>
+                                <div id="channel-config-container" class="channel-config-container">
+                                    <!-- Channel configuration will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notifications Tab -->
+                        <div class="settings-tab" id="notifications-tab">
+                            <div class="settings-section">
+                                <h3>通知設定</h3>
+                                <p>システム通知の設定を管理します。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Security Tab -->
+                        <div class="settings-tab" id="security-tab">
+                            <div class="settings-section">
+                                <h3>セキュリティ設定</h3>
+                                <p>セキュリティ関連の設定を管理します。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Integrations Tab -->
+                        <div class="settings-tab" id="integrations-tab">
+                            <div class="settings-section">
+                                <h3>外部サービス連携</h3>
+                                <p>ホットペッパービューティーやその他の外部サービスとの連携を設定します。</p>
+                                <div id="integrations-config-container" class="integrations-config-container">
+                                    <!-- Integration configuration will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Automation Tab -->
+                        <div class="settings-tab" id="automation-tab">
+                            <div class="settings-section">
+                                <h3>自動化設定</h3>
+                                <p>自動リマインダーやその他の自動化機能を設定します。</p>
+                                <div id="automation-config-container" class="automation-config-container">
+                                    <!-- Automation configuration will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include app-new.js for authentication and API handling -->
+    <script src="/js/calendar.js"></script>
+    <script src="/js/app-new.js"></script>
+    <script src="/js/settings.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Navigation is handled by app-new.js
+        // This prevents duplicate event listeners
+
+        // Logout - handled by app-new.js, this is a fallback
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn && !logoutBtn.hasAttribute('data-logout-handler')) {
+            logoutBtn.setAttribute('data-logout-handler', 'true');
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('salon_token');
+                localStorage.removeItem('salon_user');
+                sessionStorage.removeItem('salon_token');
+                sessionStorage.removeItem('salon_user');
+                window.location.href = '/login.html';
+            });
+        }
+
+        // Authentication is fully handled by app-new.js
+        // Removing fallback to prevent conflicts and race conditions
+
+        // Add hover effect to cards
+        document.querySelectorAll('.stat-card, .appointment-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+    
+</body>
+</html>

@@ -11,11 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
     <style>
-        /* 顧客管理ページ専用スタイル - 統一デザインシステム適用 */
+        /* 顧客管理ページ専用スタイル - 統一デザインシステム適用・改善版 */
         .customers-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: var(--spacing-md);
+            padding: var(--spacing-lg) var(--spacing-md);
             font-family: var(--font-family-primary);
         }
         
@@ -54,25 +54,32 @@
         
         .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: 80px; /* FABのスペース確保 */
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: 100px; /* FABのスペース確保 */
+            padding-top: var(--spacing-md);
         }
         
         .customer-card {
-            background: var(--white);
+            background: var(--gradient-3);
             border-radius: var(--border-radius-lg);
-            padding: var(--spacing-lg);
+            padding: var(--spacing-xl);
             box-shadow: var(--shadow-md);
-            border-left: 4px solid var(--votan-gold);
-            transition: all 0.3s ease;
+            border: 2px solid var(--primary-200);
+            border-left: 6px solid var(--votan-gold);
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
         }
         
         .customer-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-lg);
+            border-color: var(--primary-400);
+            background: white;
         }
         
         .customer-card::before {
@@ -86,31 +93,44 @@
         }
         
         .customer-avatar {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
-            background: var(--votan-gold);
+            background: var(--gradient-2);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: var(--spacing-md);
-            box-shadow: var(--shadow-sm);
+            margin: 0 auto var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            border: 3px solid white;
+            flex-shrink: 0;
         }
         
         .customer-stats {
-            display: flex;
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-md);
-            padding-top: var(--spacing-md);
-            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: auto;
+            padding-top: var(--spacing-lg);
+            border-top: 2px solid var(--primary-200);
         }
         
         .stat-item {
             text-align: center;
-            flex: 1;
+            padding: var(--spacing-sm);
+            background: white;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--primary-200);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background: var(--gradient-1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
         
         .stat-value {
@@ -156,68 +176,327 @@
         
         .customer-tags {
             display: flex;
-            gap: var(--spacing-xs);
-            margin-top: var(--spacing-sm);
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
             flex-wrap: wrap;
+            justify-content: center;
         }
         
         .customer-tag {
-            background: var(--info-light);
-            color: var(--info);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
+            background: var(--secondary-200);
+            color: var(--primary-700);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid var(--primary-300);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .customer-tag:hover {
+            background: var(--gradient-2);
+            color: white;
+            transform: translateY(-2px);
         }
         
         .customer-tag.vip {
-            background: var(--warning-light);
-            color: var(--warning);
+            background: var(--gradient-2);
+            color: white;
+            border-color: var(--primary-600);
+            box-shadow: var(--shadow-sm);
         }
         
-        /* モバイル対応 */
+        .customer-tag.service {
+            background: var(--info-light);
+            color: var(--info);
+            border-color: var(--info);
+        }
+        
+        .customer-tag.service:hover {
+            background: var(--info);
+            color: white;
+        }
+        
+        .customer-tag.regular {
+            background: var(--success-light);
+            color: var(--success);
+            border-color: var(--success);
+        }
+        
+        .customer-tag.regular:hover {
+            background: var(--success);
+            color: white;
+        }
+        
+        .customer-tag.new {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+        
+        .customer-tag.new:hover {
+            background: var(--warning);
+            color: white;
+        }
+        
+        /* 新しいデザイン要素のスタイル */
+        .customer-info {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .customer-name-title {
+            font-family: var(--font-family-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--votan-dark);
+            margin: 0 0 var(--spacing-md) 0;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .customer-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: white;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--primary-200);
+            transition: all 0.3s ease;
+        }
+        
+        .detail-item:hover {
+            background: var(--gradient-1);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .detail-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .detail-text {
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-family: var(--font-family-primary);
+        }
+        
+        .customer-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-sm);
+            margin-top: auto;
+        }
+        
+        .customer-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            border: 2px solid;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .customer-btn.btn-primary {
+            background: var(--gradient-2);
+            border-color: var(--primary-500);
+            color: white;
+        }
+        
+        .customer-btn.btn-primary:hover {
+            background: var(--primary-700);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .customer-btn.btn-accent {
+            background: var(--gradient-1);
+            border-color: var(--primary-300);
+            color: var(--primary-700);
+        }
+        
+        .customer-btn.btn-accent:hover {
+            background: var(--gradient-2);
+            color: white;
+            border-color: var(--primary-500);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .customer-btn.btn-secondary {
+            background: white;
+            border-color: var(--gray-300);
+            color: var(--gray-700);
+        }
+        
+        .customer-btn.btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-icon {
+            font-size: 16px;
+        }
+        
+        /* モバイル対応 - 改善版 */
         @media (max-width: 768px) {
             .customers-container {
-                padding: var(--spacing-sm);
+                padding: var(--spacing-md) var(--spacing-sm);
             }
             
             .customers-header {
-                padding: var(--spacing-lg);
+                padding: var(--spacing-lg) var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
             }
             
             .customers-grid {
                 grid-template-columns: 1fr;
-                gap: var(--spacing-md);
+                gap: var(--spacing-lg);
             }
             
             .customer-card {
-                padding: var(--spacing-md);
+                padding: var(--spacing-lg);
+                min-height: 280px;
+                border-radius: var(--border-radius);
+            }
+            
+            .customer-avatar {
+                width: 64px;
+                height: 64px;
+                font-size: 24px;
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .customer-name-title {
+                font-size: 1.3rem;
+            }
+            
+            .detail-text {
+                font-size: 15px;
+            }
+            
+            .customer-actions {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--spacing-sm);
+            }
+            
+            .customer-btn {
+                font-size: 13px;
+                padding: var(--spacing-sm);
+                min-height: 48px;
+                text-transform: none;
+                letter-spacing: normal;
             }
             
             .search-bar {
                 flex-direction: column;
+                gap: var(--spacing-md);
             }
             
             .search-input {
                 min-width: 100%;
+                font-size: 16px;
+                padding: var(--spacing-md);
             }
             
             .add-customer-btn {
                 bottom: 20px;
                 right: 20px;
-                width: 56px;
-                height: 56px;
-                font-size: 20px;
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
             }
         }
         
         @media (max-width: 480px) {
+            .customers-container {
+                padding: var(--spacing-sm);
+            }
+            
+            .customers-header h1 {
+                font-size: 2rem;
+            }
+            
+            .customer-card {
+                padding: var(--spacing-md);
+                min-height: 260px;
+            }
+            
+            .customer-avatar {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+            }
+            
+            .customer-name-title {
+                font-size: 1.2rem;
+            }
+            
+            .detail-text {
+                font-size: 14px;
+            }
+            
+            .customer-tag {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .customer-actions {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xs);
+            }
+            
+            .customer-btn {
+                font-size: 14px;
+                padding: var(--spacing-sm) var(--spacing-xs);
+                min-height: 44px;
+            }
+            
             .customer-stats {
+                grid-template-columns: 1fr 1fr;
                 gap: var(--spacing-sm);
             }
             
             .stat-value {
                 font-size: 16px;
+            }
+            
+            .stat-label {
+                font-size: 11px;
+            }
+            
+            .add-customer-btn {
+                width: 56px;
+                height: 56px;
+                font-size: 20px;
+                bottom: 16px;
+                right: 16px;
             }
         }
     </style>
@@ -328,20 +607,30 @@
                         ${getCustomerInitials(customer.name)}
                     </div>
                     
-                    <div>
-                        <h3 style="margin: 0; color: var(--votan-dark); font-size: 1.3rem; font-family: var(--font-family-primary);">${customer.name}</h3>
-                        <p style="margin: 5px 0; color: var(--text-medium); font-family: var(--font-family-primary);">📧 ${customer.email}</p>
-                        <p style="margin: 5px 0; color: var(--text-medium); font-family: var(--font-family-primary);">📞 ${customer.phone}</p>
-                        ${customer.lastVisit ? `
-                        <p style="margin: 5px 0; color: var(--text-medium); font-family: var(--font-family-primary);">
-                            📅 最終来店: ${formatDate(customer.lastVisit)}
-                        </p>
-                        ` : ''}
+                    <div class="customer-info">
+                        <h3 class="customer-name-title">${customer.name}</h3>
+                        <div class="customer-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📧</span>
+                                <span class="detail-text">${customer.email}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">📞</span>
+                                <span class="detail-text">${customer.phone}</span>
+                            </div>
+                            ${customer.lastVisit ? `
+                            <div class="detail-item">
+                                <span class="detail-icon">📅</span>
+                                <span class="detail-text">最終来店: ${formatDate(customer.lastVisit)}</span>
+                            </div>
+                            ` : ''}
+                        </div>
                     </div>
 
                     <div class="customer-tags">
-                        <span class="customer-tag">通常顧客</span>
-                        ${isVipCustomer(customer) ? '<span class="customer-tag vip">VIP</span>' : ''}
+                        ${getCustomerTags(customer).map(tag => `
+                            <span class="customer-tag ${tag.type}">${tag.label}</span>
+                        `).join('')}
                     </div>
 
                     <div class="customer-stats">
@@ -355,10 +644,19 @@
                         </div>
                     </div>
                     
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button class="btn-sm btn-primary" onclick="editCustomer(${customer.id})">編集</button>
-                        <button class="btn-sm btn-secondary" onclick="viewCustomerHistory(${customer.id})">履歴</button>
-                        <button class="btn-sm btn-accent" onclick="bookAppointment(${customer.id})">予約</button>
+                    <div class="customer-actions">
+                        <button class="customer-btn btn-primary" onclick="viewCustomerHistory(${customer.id})">
+                            <span class="btn-icon">📋</span>
+                            詳細・履歴
+                        </button>
+                        <button class="customer-btn btn-accent" onclick="bookAppointment(${customer.id})">
+                            <span class="btn-icon">📅</span>
+                            予約作成
+                        </button>
+                        <button class="customer-btn btn-secondary" onclick="editCustomer(${customer.id})">
+                            <span class="btn-icon">✏️</span>
+                            編集
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -395,6 +693,54 @@
         function getTotalSpending(customer) {
             // Mock data - in a real application, this would come from your backend
             return Math.floor(Math.random() * 150000) + 10000;
+        }
+
+        function getCustomerTags(customer) {
+            const tags = [];
+            const visitCount = getVisitCount(customer);
+            const totalSpending = getTotalSpending(customer);
+            
+            // VIPタグ
+            if (isVipCustomer(customer)) {
+                tags.push({ type: 'vip', label: 'VIP顧客' });
+            }
+            
+            // 新規顧客タグ
+            if (visitCount <= 3) {
+                tags.push({ type: 'new', label: '新規顧客' });
+            } else if (visitCount >= 10) {
+                tags.push({ type: 'regular', label: '常連様' });
+            }
+            
+            // サービス履歴に基づくタグ
+            const services = getCustomerServices(customer);
+            if (services.includes('カット')) {
+                tags.push({ type: 'service', label: 'カット' });
+            }
+            if (services.includes('カラー')) {
+                tags.push({ type: 'service', label: 'カラー' });
+            }
+            if (services.includes('パーマ')) {
+                tags.push({ type: 'service', label: 'パーマ' });
+            }
+            
+            return tags;
+        }
+        
+        function getCustomerServices(customer) {
+            // Mock data - 実際のアプリケーションではバックエンドから取得
+            const allServices = ['カット', 'カラー', 'パーマ', 'トリートメント', 'ヘッドスパ'];
+            const serviceCount = Math.floor(Math.random() * 3) + 1;
+            const customerServices = [];
+            
+            for (let i = 0; i < serviceCount; i++) {
+                const randomService = allServices[Math.floor(Math.random() * allServices.length)];
+                if (!customerServices.includes(randomService)) {
+                    customerServices.push(randomService);
+                }
+            }
+            
+            return customerServices;
         }
 
         function initializeSearch() {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#f8e5e1">
-    <title>カルテ管理 - Salon Lumière</title>
+    <title>カルテ管理 - 美容室VOTAN</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -150,11 +150,11 @@
 <body>
     <div class="records-container">
         <div class="records-header">
-            <h1 style="color: #8b4513; margin: 0; font-size: 2.5rem; font-family: 'Playfair Display', serif;">
+            <h1 style="color: var(--votan-dark); margin: 0; font-size: 2.8rem; font-family: var(--font-family-display); font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
                 📋 カルテ管理
             </h1>
-            <p style="color: #666; margin: 10px 0 0; font-size: 1.1rem;">
-                施術記録と顧客の美容履歴管理
+            <p style="color: var(--text-medium); margin: 16px 0 0; font-size: 1.2rem; font-weight: 500;">
+                美容室VOTANの施術記録と顧客美容履歴管理
             </p>
         </div>
 
@@ -248,14 +248,9 @@
         </div>
     </div>
 
+    <script src="/js/records.js"></script>
     <script>
-        // Initialize records page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadRecords();
-            loadCustomersForSelect();
-            initializeSearch();
-            setDefaultDates();
-        });
+        // VOTAN テーマ対応の初期化処理は records.js で実行
 
         async function loadRecords() {
             try {

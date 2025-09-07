@@ -182,6 +182,12 @@ function setupEventListeners() {
     
     // Forms
     document.getElementById('profileForm')?.addEventListener('submit', updateProfile);
+    
+    // Message buttons
+    document.getElementById('sendMessageBtn')?.addEventListener('click', sendMessage);
+    document.getElementById('saveDraftBtn')?.addEventListener('click', saveDraft);
+    document.getElementById('createMessageBtn')?.addEventListener('click', () => navigateToPage('messages'));
+    document.getElementById('sendBulkBtn')?.addEventListener('click', sendBulkMessage);
 }
 
 // Navigate to page
@@ -1125,6 +1131,31 @@ window.editCustomer = (id) => {
     window.location.href = `/customer-detail.html?id=${id}&mode=edit`;
 };
 
+window.viewCustomerDetail = (id) => {
+    console.log('Viewing customer detail:', id);
+    navigateToPage('customers');
+    // Show customer detail in the same page
+    showCustomerDetailModal(id);
+};
+
+window.viewCustomerRecords = (id) => {
+    console.log('Viewing customer records:', id);
+    // Navigate to records page with customer filter
+    navigateToPage('records');
+    // Filter records by customer
+    filterRecordsByCustomer(id);
+};
+
+window.bookAppointment = (id) => {
+    console.log('Booking appointment for customer:', id);
+    showAddAppointmentModalForCustomer(id);
+};
+
+window.sendReturnMessage = (id) => {
+    console.log('Sending return message to customer:', id);
+    showReturnMessageModal(id);
+};
+
 window.viewSale = (id) => {
     console.log('View sale:', id);
     // TODO: Implement
@@ -1266,10 +1297,136 @@ async function loadRecords() {
 async function loadSettings() {
     try {
         console.log('Loading settings');
-        // 設定機能の実装
+        
+        // Setup settings navigation tabs
+        setupSettingsNavigation();
+        
+        // Load current settings data
+        await loadSettingsData();
+        
+        console.log('Settings loaded successfully');
     } catch (error) {
         console.error('Settings load error:', error);
         showError('設定の読み込みに失敗しました');
+    }
+}
+
+// Setup settings navigation
+function setupSettingsNavigation() {
+    const navItems = document.querySelectorAll('.settings-nav-item');
+    const tabContents = document.querySelectorAll('.settings-tab');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Remove active class from all nav items and tabs
+            navItems.forEach(nav => nav.classList.remove('active'));
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Add active class to clicked nav item
+            item.classList.add('active');
+            
+            // Show corresponding tab content
+            const tabName = item.getAttribute('data-tab');
+            const tabContent = document.getElementById(`${tabName}-tab`);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+        });
+    });
+}
+
+// Load settings data
+async function loadSettingsData() {
+    try {
+        // In a real implementation, this would fetch from API
+        // For now, use the existing static content and add some functionality
+        
+        // Setup form handlers
+        setupSettingsFormHandlers();
+        
+        console.log('Settings data loaded');
+    } catch (error) {
+        console.error('Settings data load error:', error);
+    }
+}
+
+// Setup settings form handlers
+function setupSettingsFormHandlers() {
+    // General settings form
+    const generalForm = document.querySelector('#general-tab form');
+    if (generalForm) {
+        generalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveGeneralSettings(new FormData(generalForm));
+        });
+    }
+    
+    // Business hours form
+    const businessHoursForm = document.querySelector('#business-hours-tab form');
+    if (businessHoursForm) {
+        businessHoursForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveBusinessHours(new FormData(businessHoursForm));
+        });
+    }
+    
+    // Setup day toggle checkboxes
+    const dayCheckboxes = document.querySelectorAll('input[type="checkbox"][name$="_isOpen"]');
+    dayCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const dayContainer = e.target.closest('.hours-item');
+            const timeInputs = dayContainer.querySelectorAll('input[type="time"]');
+            
+            timeInputs.forEach(input => {
+                input.disabled = !e.target.checked;
+                if (e.target.checked) {
+                    input.parentElement.style.opacity = '1';
+                } else {
+                    input.parentElement.style.opacity = '0.5';
+                }
+            });
+        });
+    });
+}
+
+// Save general settings
+async function saveGeneralSettings(formData) {
+    try {
+        const data = Object.fromEntries(formData);
+        
+        await apiRequest('/settings/general', {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+        
+        showSuccess('基本設定を保存しました');
+    } catch (error) {
+        showError('設定の保存に失敗しました: ' + error.message);
+    }
+}
+
+// Save business hours
+async function saveBusinessHours(formData) {
+    try {
+        const businessHours = {};
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        
+        days.forEach(day => {
+            businessHours[day] = {
+                isOpen: formData.get(`${day}_isOpen`) === 'on',
+                openTime: formData.get(`${day}_open`) || '09:00',
+                closeTime: formData.get(`${day}_close`) || '19:00'
+            };
+        });
+        
+        await apiRequest('/settings/business-hours', {
+            method: 'PUT',
+            body: JSON.stringify({ businessHours })
+        });
+        
+        showSuccess('営業時間を保存しました');
+    } catch (error) {
+        showError('営業時間の保存に失敗しました: ' + error.message);
     }
 }
 
@@ -1300,25 +1457,108 @@ async function loadStaff() {
 async function loadMessages() {
     try {
         console.log('Loading messages page - function called successfully');
-        // For now, just show the messages section
-        // Later, we can add functionality to load message data
-        const messagesContent = document.querySelector('#messages .content-area');
-        console.log('Messages content element found:', !!messagesContent);
-        if (messagesContent) {
-            messagesContent.innerHTML = `
-                <div style="text-align: center; padding: 3rem;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 3rem; margin-bottom: 1rem;">💬</div>
-                    <h3 style="color: var(--text-dark); margin-bottom: 1rem; font-size: 1.5rem;">統合メッセージング</h3>
-                    <p style="color: var(--text-light); margin-bottom: 2rem;">LINE、SMS、メール、Instagramを統合管理</p>
-                    <button onclick="window.open('/messages.html', '_blank')" style="background: var(--gradient-2); color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: var(--shadow-md);">
-                        メッセージセンターを開く
-                    </button>
-                </div>
-            `;
-        }
+        
+        // Set up message tab functionality
+        setupMessageTabs();
+        
+        // Load recent message history
+        loadMessageHistory();
+        
+        // Set up character count for message composition
+        setupMessageCharacterCount();
+        
+        console.log('Messages page loaded successfully');
     } catch (error) {
         console.error('Messages load error:', error);
         showError('メッセージの読み込みに失敗しました');
+    }
+}
+
+// Setup message tabs functionality
+function setupMessageTabs() {
+    const tabs = document.querySelectorAll('.message-tab');
+    const contents = document.querySelectorAll('.message-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding content
+            const tabName = tab.getAttribute('data-tab');
+            const content = document.getElementById(`${tabName}-tab`);
+            if (content) {
+                content.classList.add('active');
+            }
+        });
+    });
+    
+    // Setup send timing radio buttons
+    const timingRadios = document.querySelectorAll('input[name="sendTiming"]');
+    const scheduleInput = document.querySelector('.schedule-input');
+    
+    timingRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.value === 'schedule') {
+                scheduleInput.style.display = 'block';
+            } else {
+                scheduleInput.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Load message history
+async function loadMessageHistory() {
+    try {
+        // This would normally fetch from API
+        // For now, the static HTML content in dashboard.html is sufficient
+        console.log('Message history loaded from static content');
+    } catch (error) {
+        console.error('Error loading message history:', error);
+    }
+}
+
+// Setup message character count
+function setupMessageCharacterCount() {
+    const messageTextarea = document.getElementById('messageContent');
+    const charCount = document.getElementById('charCount');
+    const previewContent = document.getElementById('previewContent');
+    
+    if (messageTextarea && charCount) {
+        messageTextarea.addEventListener('input', () => {
+            const length = messageTextarea.value.length;
+            charCount.textContent = length;
+            charCount.style.color = length > 160 ? 'red' : 'inherit';
+            
+            // Update preview
+            if (previewContent) {
+                previewContent.textContent = messageTextarea.value || 'メッセージを入力するとプレビューが表示されます';
+            }
+        });
+    }
+    
+    // Setup template selection
+    const templateSelect = document.getElementById('messageTemplate');
+    if (templateSelect) {
+        templateSelect.addEventListener('change', () => {
+            const templates = {
+                reminder: '{customer_name}様、明日の予約のご確認です。{date} {time}〜{service}でお待ちしております。変更がございましたらお気軽にご連絡ください。',
+                thanks: '{customer_name}様、本日はご来店ありがとうございました。{service}の仕上がりはいかがでしょうか？何かご質問がございましたらお気軽にご連絡ください。',
+                followup: '{customer_name}様、前回の{service}から{days}日が経ちました。お手入れの調子はいかがでしょうか？ご不明な点がございましたらお気軽にご連絡ください。',
+                promotion: '{customer_name}様、{month}月限定キャンペーンのご案内です。{service}が特別価格でご利用いただけます。この機会にぜひご来店ください。'
+            };
+            
+            const selectedTemplate = templates[templateSelect.value];
+            if (selectedTemplate && messageTextarea) {
+                messageTextarea.value = selectedTemplate;
+                messageTextarea.dispatchEvent(new Event('input'));
+            }
+        });
     }
 }
 
@@ -1332,3 +1572,559 @@ async function loadAnalytics() {
         showError('分析の読み込みに失敗しました');
     }
 }
+
+// Customer detail modal
+function showCustomerDetailModal(customerId) {
+    console.log('Showing customer detail modal for ID:', customerId);
+    
+    // For now, show a placeholder modal
+    const content = `
+        <div class="customer-detail-modal">
+            <div class="customer-info-section">
+                <h3>顧客詳細情報</h3>
+                <div class="loading-message">顧客情報を読み込み中...</div>
+            </div>
+            <div class="customer-actions">
+                <button class="btn btn-primary" onclick="viewCustomerRecords('${customerId}')">カルテ履歴を表示</button>
+                <button class="btn btn-secondary" onclick="bookAppointment('${customerId}')">新規予約</button>
+                <button class="btn btn-secondary" onclick="editCustomer('${customerId}')">編集</button>
+            </div>
+        </div>
+    `;
+    
+    showModal('顧客詳細', content);
+    
+    // Load actual customer data
+    loadCustomerDetailData(customerId);
+}
+
+// Load customer detail data
+async function loadCustomerDetailData(customerId) {
+    try {
+        const data = await apiRequest(`/customers/${customerId}`);
+        const customer = data.customer;
+        
+        // Update modal content with real data
+        const modalBody = document.getElementById('modalBody');
+        if (modalBody) {
+            modalBody.innerHTML = `
+                <div class="customer-detail-modal">
+                    <div class="customer-info-section">
+                        <h3>顧客詳細情報</h3>
+                        <div class="customer-basic-info">
+                            <div class="info-group">
+                                <label>氏名:</label>
+                                <span>${customer.lastName} ${customer.firstName}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>フリガナ:</label>
+                                <span>${customer.lastNameKana || ''} ${customer.firstNameKana || ''}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>電話番号:</label>
+                                <span>${customer.phoneNumber}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>メールアドレス:</label>
+                                <span>${customer.email || '未登録'}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>最終来店日:</label>
+                                <span>${customer.lastVisitDate ? formatDate(customer.lastVisitDate) : '来店履歴なし'}</span>
+                            </div>
+                            <div class="info-group">
+                                <label>来店回数:</label>
+                                <span>${customer.visitCount || 0}回</span>
+                            </div>
+                            <div class="info-group">
+                                <label>累計金額:</label>
+                                <span>¥${customer.totalAmount ? customer.totalAmount.toLocaleString() : '0'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="customer-actions">
+                        <button class="btn btn-primary" onclick="viewCustomerRecords('${customerId}')">カルテ履歴を表示</button>
+                        <button class="btn btn-secondary" onclick="bookAppointment('${customerId}')">新規予約</button>
+                        <button class="btn btn-secondary" onclick="editCustomer('${customerId}')">編集</button>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Customer detail load error:', error);
+        const modalBody = document.getElementById('modalBody');
+        if (modalBody) {
+            modalBody.innerHTML = `
+                <div class="error-message">
+                    <p>顧客情報の読み込みに失敗しました: ${error.message}</p>
+                    <button class="btn btn-primary" onclick="closeModal()">閉じる</button>
+                </div>
+            `;
+        }
+    }
+}
+
+// Filter records by customer
+function filterRecordsByCustomer(customerId) {
+    console.log('Filtering records for customer:', customerId);
+    
+    // Hide other customer records and show only the selected customer's records
+    const recordCards = document.querySelectorAll('.record-card');
+    recordCards.forEach(card => {
+        const recordCustomerId = card.getAttribute('data-customer-id');
+        if (recordCustomerId && recordCustomerId !== customerId.toString()) {
+            card.style.display = 'none';
+        } else {
+            card.style.display = 'block';
+        }
+    });
+    
+    // Update page title to indicate filtering
+    const pageTitle = document.querySelector('#records .page-title');
+    if (pageTitle) {
+        pageTitle.textContent = 'カルテ管理 (顧客でフィルタ中)';
+    }
+    
+    // Add a notice
+    const contentArea = document.querySelector('#records .content-area');
+    if (contentArea) {
+        const existingNotice = contentArea.querySelector('.filter-notice');
+        if (!existingNotice) {
+            const notice = document.createElement('div');
+            notice.className = 'filter-notice';
+            notice.innerHTML = `
+                <div style="background: #e3f2fd; border: 1px solid #2196f3; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
+                    <span>特定の顧客のカルテのみ表示中</span>
+                    <button onclick="clearRecordFilter()" style="margin-left: 1rem; padding: 0.25rem 0.5rem; border: none; background: #2196f3; color: white; border-radius: 4px; cursor: pointer;">フィルタを解除</button>
+                </div>
+            `;
+            contentArea.insertBefore(notice, contentArea.firstChild);
+        }
+    }
+}
+
+// Clear record filter
+window.clearRecordFilter = function() {
+    const recordCards = document.querySelectorAll('.record-card');
+    recordCards.forEach(card => {
+        card.style.display = 'block';
+    });
+    
+    const pageTitle = document.querySelector('#records .page-title');
+    if (pageTitle) {
+        pageTitle.textContent = 'カルテ管理';
+    }
+    
+    const notice = document.querySelector('.filter-notice');
+    if (notice) {
+        notice.remove();
+    }
+};
+
+// Show add appointment modal for specific customer
+function showAddAppointmentModalForCustomer(customerId) {
+    console.log('Showing appointment modal for customer:', customerId);
+    
+    const selectedDate = new Date().toISOString().split('T')[0];
+    const selectedTime = '10:00';
+    
+    const content = `
+        <form id="appointmentForm">
+            <div class="form-group">
+                <label>顧客</label>
+                <select name="customerId" id="appointmentCustomer" required disabled>
+                    <option value="${customerId}">選択された顧客</option>
+                </select>
+                <input type="hidden" name="customerId" value="${customerId}">
+            </div>
+            <div class="form-group">
+                <label>予約日</label>
+                <input type="date" name="appointmentDate" value="${selectedDate}" required>
+            </div>
+            <div class="form-group">
+                <label>開始時刻</label>
+                <input type="time" name="startTime" value="${selectedTime}" required>
+            </div>
+            <div class="form-group">
+                <label>終了時刻</label>
+                <input type="time" name="endTime" value="11:00" required>
+            </div>
+            <div class="form-group">
+                <label>サービス</label>
+                <div id="servicesList">
+                    <div class="service-item">
+                        <input type="text" name="serviceName[]" placeholder="サービス名" required>
+                        <input type="number" name="servicePrice[]" placeholder="価格" required>
+                        <button type="button" class="btn btn-sm" onclick="removeService(this)">削除</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm" onclick="addService()">サービス追加</button>
+            </div>
+            <div class="form-group">
+                <label>備考</label>
+                <textarea name="notes" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">予約登録</button>
+        </form>
+    `;
+    
+    showModal('新規予約', content);
+    
+    // Load customer info and populate the form
+    loadCustomerForAppointment(customerId);
+    
+    document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        // Build services array
+        const services = [];
+        const serviceNames = formData.getAll('serviceName[]');
+        const servicePrices = formData.getAll('servicePrice[]');
+        
+        for (let i = 0; i < serviceNames.length; i++) {
+            if (serviceNames[i]) {
+                services.push({
+                    name: serviceNames[i],
+                    price: parseInt(servicePrices[i]) || 0
+                });
+            }
+        }
+        
+        const appointmentData = {
+            customerId: customerId, // Use the passed customer ID
+            appointmentDate: formData.get('appointmentDate'),
+            startTime: formData.get('startTime'),
+            endTime: formData.get('endTime'),
+            services: services,
+            notes: formData.get('notes'),
+            totalAmount: services.reduce((sum, s) => sum + s.price, 0)
+        };
+        
+        try {
+            await apiRequest('/appointments', {
+                method: 'POST',
+                body: JSON.stringify(appointmentData)
+            });
+            
+            closeModal();
+            
+            // Reload calendar if available
+            if (window.calendar) {
+                window.calendar.loadAppointments();
+            }
+            
+            showSuccess('予約を登録しました');
+        } catch (error) {
+            showError(error.message);
+        }
+    });
+}
+
+// Load customer info for appointment
+async function loadCustomerForAppointment(customerId) {
+    try {
+        const data = await apiRequest(`/customers/${customerId}`);
+        const customer = data.customer;
+        
+        const select = document.getElementById('appointmentCustomer');
+        if (select) {
+            select.innerHTML = `<option value="${customerId}">${customer.lastName} ${customer.firstName}</option>`;
+        }
+    } catch (error) {
+        console.error('Load customer for appointment error:', error);
+    }
+}
+
+// Show return message modal
+function showReturnMessageModal(customerId) {
+    console.log('Showing return message modal for customer:', customerId);
+    
+    const content = `
+        <div class="return-message-modal">
+            <div class="form-group">
+                <label>メッセージテンプレート</label>
+                <select id="returnMessageTemplate" class="form-control" onchange="updateReturnMessageContent()">
+                    <option value="">テンプレートを選択...</option>
+                    <option value="general">一般的な復帰促進</option>
+                    <option value="special_offer">特別オファー</option>
+                    <option value="season">季節のご案内</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>メッセージ内容</label>
+                <textarea id="returnMessageContent" class="form-control" rows="4" placeholder="復帰促進メッセージを入力してください..."></textarea>
+                <div class="character-count">
+                    <span id="returnCharCount">0</span>/160文字
+                </div>
+            </div>
+            <div class="message-preview">
+                <h4>プレビュー</h4>
+                <div class="preview-phone">
+                    <div class="preview-header">Salon Lumière</div>
+                    <div class="preview-content" id="returnPreviewContent">
+                        メッセージを入力するとプレビューが表示されます
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="sendReturnMessageToCustomer('${customerId}')">送信</button>
+            </div>
+        </div>
+    `;
+    
+    showModal('復帰促進メッセージ', content);
+    
+    // Add event listeners for real-time updates
+    const textarea = document.getElementById('returnMessageContent');
+    if (textarea) {
+        textarea.addEventListener('input', updateReturnMessagePreview);
+    }
+}
+
+// Update return message content based on template
+window.updateReturnMessageContent = function() {
+    const template = document.getElementById('returnMessageTemplate').value;
+    const textarea = document.getElementById('returnMessageContent');
+    
+    const templates = {
+        general: 'お久しぶりです！最近いかがお過ごしでしょうか？髪のお手入れはいかがですか？ご都合の良い時にぜひお越しください。',
+        special_offer: 'ご無沙汰しております！今月限定で前回ご利用いただいたサービスを10%オフでご提供いたします。ぜひこの機会にご来店ください。',
+        season: '季節の変わり目ですが、お元気でお過ごしでしょうか？この時期は髪のダメージが気になりませんか？お気軽にご相談ください。'
+    };
+    
+    if (template && templates[template]) {
+        textarea.value = templates[template];
+        updateReturnMessagePreview();
+    }
+};
+
+// Update return message preview
+function updateReturnMessagePreview() {
+    const content = document.getElementById('returnMessageContent').value;
+    const charCount = document.getElementById('returnCharCount');
+    const preview = document.getElementById('returnPreviewContent');
+    
+    if (charCount) {
+        charCount.textContent = content.length;
+        charCount.style.color = content.length > 160 ? 'red' : 'inherit';
+    }
+    
+    if (preview) {
+        preview.textContent = content || 'メッセージを入力するとプレビューが表示されます';
+    }
+}
+
+// Send return message to customer
+window.sendReturnMessageToCustomer = async function(customerId) {
+    const content = document.getElementById('returnMessageContent').value;
+    
+    if (!content.trim()) {
+        showError('メッセージを入力してください');
+        return;
+    }
+    
+    if (content.length > 160) {
+        showError('メッセージは160文字以内で入力してください');
+        return;
+    }
+    
+    try {
+        await apiRequest('/messages/send', {
+            method: 'POST',
+            body: JSON.stringify({
+                customerId: customerId,
+                content: content,
+                type: 'return_promotion'
+            })
+        });
+        
+        closeModal();
+        showSuccess('復帰促進メッセージを送信しました');
+    } catch (error) {
+        showError('メッセージの送信に失敗しました: ' + error.message);
+    }
+};
+
+// Send message function
+async function sendMessage() {
+    const customerId = document.getElementById('customerSelect')?.value;
+    const content = document.getElementById('messageContent')?.value;
+    const sendTiming = document.querySelector('input[name="sendTiming"]:checked')?.value;
+    const scheduleTime = document.getElementById('scheduleTime')?.value;
+    
+    if (!customerId) {
+        showError('送信先を選択してください');
+        return;
+    }
+    
+    if (!content || !content.trim()) {
+        showError('メッセージ内容を入力してください');
+        return;
+    }
+    
+    if (content.length > 160) {
+        showError('メッセージは160文字以内で入力してください');
+        return;
+    }
+    
+    if (sendTiming === 'schedule' && !scheduleTime) {
+        showError('送信日時を設定してください');
+        return;
+    }
+    
+    try {
+        const messageData = {
+            customerId: customerId,
+            content: content.trim(),
+            type: 'manual',
+            sendTiming: sendTiming
+        };
+        
+        if (sendTiming === 'schedule') {
+            messageData.scheduledAt = scheduleTime;
+        }
+        
+        await apiRequest('/messages/send', {
+            method: 'POST',
+            body: JSON.stringify(messageData)
+        });
+        
+        // Clear form
+        document.getElementById('customerSelect').value = '';
+        document.getElementById('messageContent').value = '';
+        document.getElementById('messageTemplate').value = '';
+        document.getElementById('charCount').textContent = '0';
+        document.getElementById('previewContent').textContent = 'メッセージを入力するとプレビューが表示されます';
+        
+        if (sendTiming === 'schedule') {
+            showSuccess('メッセージを予約送信しました');
+        } else {
+            showSuccess('メッセージを送信しました');
+        }
+        
+        // Refresh message history
+        loadMessageHistory();
+    } catch (error) {
+        showError('メッセージの送信に失敗しました: ' + error.message);
+    }
+}
+
+// Save draft function
+async function saveDraft() {
+    const customerId = document.getElementById('customerSelect')?.value;
+    const content = document.getElementById('messageContent')?.value;
+    
+    if (!content || !content.trim()) {
+        showError('保存するメッセージ内容を入力してください');
+        return;
+    }
+    
+    try {
+        await apiRequest('/messages/draft', {
+            method: 'POST',
+            body: JSON.stringify({
+                customerId: customerId || null,
+                content: content.trim(),
+                type: 'draft'
+            })
+        });
+        
+        showSuccess('下書きを保存しました');
+    } catch (error) {
+        showError('下書きの保存に失敗しました: ' + error.message);
+    }
+}
+
+// Send bulk message function
+async function sendBulkMessage() {
+    const content = document.getElementById('bulkMessageContent')?.value;
+    const selectedCount = document.getElementById('selectedCount')?.textContent;
+    
+    if (!content || !content.trim()) {
+        showError('メッセージ内容を入力してください');
+        return;
+    }
+    
+    if (content.length > 160) {
+        showError('メッセージは160文字以内で入力してください');
+        return;
+    }
+    
+    if (!selectedCount || selectedCount === '0') {
+        showError('送信対象を選択してください');
+        return;
+    }
+    
+    if (!confirm(`${selectedCount}名の顧客にメッセージを送信しますか？`)) {
+        return;
+    }
+    
+    try {
+        // Get selected customer filters
+        const selectAll = document.getElementById('selectAll')?.checked;
+        const selectActive = document.getElementById('selectActive')?.checked;
+        const selectInactive = document.getElementById('selectInactive')?.checked;
+        
+        const filterData = {
+            all: selectAll,
+            active: selectActive,
+            inactive: selectInactive
+        };
+        
+        await apiRequest('/messages/bulk-send', {
+            method: 'POST',
+            body: JSON.stringify({
+                content: content.trim(),
+                filters: filterData,
+                type: 'bulk'
+            })
+        });
+        
+        // Clear form
+        document.getElementById('bulkMessageContent').value = '';
+        document.getElementById('bulkTemplate').value = '';
+        
+        showSuccess(`${selectedCount}名の顧客にメッセージを送信しました`);
+        
+        // Refresh message history
+        loadMessageHistory();
+    } catch (error) {
+        showError('一括送信に失敗しました: ' + error.message);
+    }
+}
+
+// Update selected count for bulk send
+function updateSelectedCount() {
+    const selectAll = document.getElementById('selectAll')?.checked;
+    const selectActive = document.getElementById('selectActive')?.checked;
+    const selectInactive = document.getElementById('selectInactive')?.checked;
+    const selectedCountElement = document.getElementById('selectedCount');
+    
+    let count = 0;
+    if (selectAll) count = 156; // Total customers from dashboard
+    else {
+        if (selectActive) count += 120; // Estimated active customers
+        if (selectInactive) count += 36; // Estimated inactive customers
+    }
+    
+    if (selectedCountElement) {
+        selectedCountElement.textContent = count;
+    }
+}
+
+// Setup bulk message selection
+window.addEventListener('DOMContentLoaded', () => {
+    // Setup bulk message checkboxes
+    const bulkCheckboxes = ['selectAll', 'selectActive', 'selectInactive'];
+    bulkCheckboxes.forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+            checkbox.addEventListener('change', updateSelectedCount);
+        }
+    });
+    
+    // Initial count update
+    setTimeout(updateSelectedCount, 500);
+});

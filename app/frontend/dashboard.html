@@ -61,7 +61,7 @@
 
         <nav class="nav-menu">
             <a href="#" class="nav-item active" data-page="dashboard">
-                <span class="nav-icon">📊</span>
+                <span class="nav-icon">🏠</span>
                 <span>ダッシュボード</span>
             </a>
             <a href="#" class="nav-item" data-page="appointments">
@@ -72,24 +72,12 @@
                 <span class="nav-icon">👥</span>
                 <span>顧客管理</span>
             </a>
-            <a href="#" class="nav-item" data-page="records">
-                <span class="nav-icon">📋</span>
-                <span>カルテ管理</span>
-            </a>
-            <a href="#" class="nav-item" data-page="services">
-                <span class="nav-icon">✂️</span>
-                <span>サービス管理</span>
-            </a>
-            <a href="#" class="nav-item" data-page="staff">
-                <span class="nav-icon">👨‍💼</span>
-                <span>スタッフ管理</span>
-            </a>
             <a href="#" class="nav-item" data-page="messages">
                 <span class="nav-icon">💬</span>
                 <span>メッセージ</span>
             </a>
             <a href="#" class="nav-item" data-page="analytics">
-                <span class="nav-icon">📈</span>
+                <span class="nav-icon">📊</span>
                 <span>分析・レポート</span>
             </a>
             <a href="#" class="nav-item" data-page="settings">
@@ -234,22 +222,144 @@
         <div class="page" id="customers">
             <header class="header">
                 <h1 class="page-title">顧客管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="addCustomerBtn">
+                        <span>➕ 新規顧客</span>
+                    </button>
+                    <div class="search-box">
+                        <input type="text" id="customerSearchInput" placeholder="顧客名、電話番号で検索..." class="search-input">
+                        <button class="search-btn" id="customerSearchBtn">🔍</button>
+                    </div>
+                </div>
             </header>
             <div class="content-area">
-                <table class="customers-table">
-                    <thead>
-                        <tr>
-                            <th>顧客名</th>
-                            <th>電話番号</th>
-                            <th>メール</th>
-                            <th>最終来店日</th>
-                            <th>アクション</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerTableBody">
-                        <!-- Customer data will be loaded here -->
-                    </tbody>
-                </table>
+                <div class="customers-grid" id="customersGrid">
+                    <!-- Customer cards will be loaded here -->
+                    <div class="customer-card" data-customer-id="1">
+                        <div class="customer-header">
+                            <div class="customer-info">
+                                <h3>山田 花子 様</h3>
+                                <div class="customer-details">
+                                    <span class="phone">090-1234-5678</span>
+                                    <span class="email">yamada@email.com</span>
+                                </div>
+                            </div>
+                            <div class="customer-status active">アクティブ</div>
+                        </div>
+                        <div class="customer-body">
+                            <div class="visit-info">
+                                <div class="info-item">
+                                    <label>最終来店:</label>
+                                    <span>2024-03-15</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>来店回数:</label>
+                                    <span>12回</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>累計金額:</label>
+                                    <span>¥145,000</span>
+                                </div>
+                            </div>
+                            <div class="service-tags">
+                                <span class="service-tag">カット</span>
+                                <span class="service-tag">カラー</span>
+                                <span class="service-tag">トリートメント</span>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="btn-action" onclick="viewCustomerDetail(1)">詳細</button>
+                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(1)">カルテ履歴</button>
+                            <button class="btn-action" onclick="editCustomer(1)">編集</button>
+                            <button class="btn-action" onclick="bookAppointment(1)">予約</button>
+                        </div>
+                    </div>
+
+                    <div class="customer-card" data-customer-id="2">
+                        <div class="customer-header">
+                            <div class="customer-info">
+                                <h3>佐藤 美咲 様</h3>
+                                <div class="customer-details">
+                                    <span class="phone">080-9876-5432</span>
+                                    <span class="email">sato@email.com</span>
+                                </div>
+                            </div>
+                            <div class="customer-status active">アクティブ</div>
+                        </div>
+                        <div class="customer-body">
+                            <div class="visit-info">
+                                <div class="info-item">
+                                    <label>最終来店:</label>
+                                    <span>2024-03-14</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>来店回数:</label>
+                                    <span>8回</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>累計金額:</label>
+                                    <span>¥98,000</span>
+                                </div>
+                            </div>
+                            <div class="service-tags">
+                                <span class="service-tag">パーマ</span>
+                                <span class="service-tag">トリートメント</span>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="btn-action" onclick="viewCustomerDetail(2)">詳細</button>
+                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(2)">カルテ履歴</button>
+                            <button class="btn-action" onclick="editCustomer(2)">編集</button>
+                            <button class="btn-action" onclick="bookAppointment(2)">予約</button>
+                        </div>
+                    </div>
+
+                    <div class="customer-card" data-customer-id="3">
+                        <div class="customer-header">
+                            <div class="customer-info">
+                                <h3>鈴木 真由美 様</h3>
+                                <div class="customer-details">
+                                    <span class="phone">070-1111-2222</span>
+                                    <span class="email">suzuki@email.com</span>
+                                </div>
+                            </div>
+                            <div class="customer-status inactive">しばらく来店なし</div>
+                        </div>
+                        <div class="customer-body">
+                            <div class="visit-info">
+                                <div class="info-item">
+                                    <label>最終来店:</label>
+                                    <span>2024-01-10</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>来店回数:</label>
+                                    <span>15回</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>累計金額:</label>
+                                    <span>¥220,000</span>
+                                </div>
+                            </div>
+                            <div class="service-tags">
+                                <span class="service-tag">ヘッドスパ</span>
+                                <span class="service-tag">トリートメント</span>
+                            </div>
+                        </div>
+                        <div class="customer-actions">
+                            <button class="btn-action" onclick="viewCustomerDetail(3)">詳細</button>
+                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(3)">カルテ履歴</button>
+                            <button class="btn-action" onclick="editCustomer(3)">編集</button>
+                            <button class="btn-action btn-warning" onclick="sendReturnMessage(3)">復帰促進</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="pagination-btn" id="customersPrevPage" disabled>← 前へ</button>
+                    <span class="page-info">1 / 1 ページ</span>
+                    <button class="pagination-btn" id="customersNextPage" disabled>次へ →</button>
+                </div>
             </div>
         </div>
 
@@ -296,7 +406,7 @@
 
                 <!-- Records Grid -->
                 <div class="records-grid" id="recordsGrid">
-                    <div class="record-card" data-record-id="1">
+                    <div class="record-card" data-record-id="1" data-customer-id="1">
                         <div class="record-header">
                             <div class="customer-info">
                                 <h3>山田 花子 様</h3>
@@ -323,7 +433,7 @@
                         </div>
                     </div>
 
-                    <div class="record-card" data-record-id="2">
+                    <div class="record-card" data-record-id="2" data-customer-id="2">
                         <div class="record-header">
                             <div class="customer-info">
                                 <h3>佐藤 美咲 様</h3>
@@ -350,7 +460,7 @@
                         </div>
                     </div>
 
-                    <div class="record-card" data-record-id="3">
+                    <div class="record-card" data-record-id="3" data-customer-id="3">
                         <div class="record-header">
                             <div class="customer-info">
                                 <h3>鈴木 真由美 様</h3>
@@ -669,280 +779,253 @@
         </div>
 
 
-        <!-- Services Page -->
-        <div class="page" id="services">
-            <header class="header">
-                <h1 class="page-title">サービス管理</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="showCreateServiceModal()">
-                        <span class="icon">➕</span>
-                        新規サービス追加
-                    </button>
-                    <button class="btn btn-secondary" onclick="showPackageModal()">
-                        <span class="icon">📦</span>
-                        パッケージ管理
-                    </button>
-                </div>
-            </header>
-            
-            <div class="content-area">
-                <!-- Service categories tabs -->
-                <div class="service-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #e2e8f0;">
-                    <button class="service-tab active" data-category="all" onclick="filterServices('all')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid var(--primary); color: var(--primary); font-weight: 600;">すべて</button>
-                    <button class="service-tab" data-category="cut" onclick="filterServices('cut')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">カット</button>
-                    <button class="service-tab" data-category="color" onclick="filterServices('color')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">カラー</button>
-                    <button class="service-tab" data-category="perm" onclick="filterServices('perm')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">パーマ</button>
-                    <button class="service-tab" data-category="treatment" onclick="filterServices('treatment')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">トリートメント</button>
-                    <button class="service-tab" data-category="spa" onclick="filterServices('spa')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">スパ</button>
-                    <button class="service-tab" data-category="package" onclick="filterServices('package')" style="padding: 1rem 2rem; border: none; background: transparent; cursor: pointer; color: #666;">パッケージ</button>
-                </div>
 
-                <!-- Services grid -->
-                <div class="services-grid" id="servicesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
-                    <!-- Services will be loaded here -->
-                </div>
-            </div>
-
-            <!-- Create/Edit Service Modal -->
-            <div class="modal" id="serviceModal" style="display: none;">
-                <div class="modal-overlay" onclick="hideServiceModal()"></div>
-                <div class="modal-content" style="max-width: 600px; width: 90%;">
-                    <div class="modal-header">
-                        <h3 id="serviceModalTitle">新規サービス追加</h3>
-                        <button class="modal-close" onclick="hideServiceModal()">✕</button>
-                    </div>
-                    
-                    <div class="modal-body">
-                        <form id="serviceForm" class="form">
-                            <input type="hidden" id="serviceId">
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="serviceName">サービス名 *</label>
-                                    <input type="text" id="serviceName" required placeholder="例：レディースカット" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="serviceCategory">カテゴリ *</label>
-                                    <select id="serviceCategory" required style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                        <option value="">選択...</option>
-                                        <option value="cut">カット</option>
-                                        <option value="color">カラー</option>
-                                        <option value="perm">パーマ</option>
-                                        <option value="treatment">トリートメント</option>
-                                        <option value="spa">スパ・ヘッドスパ</option>
-                                        <option value="facial">フェイシャル</option>
-                                        <option value="nail">ネイル</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="serviceDescription">サービス内容</label>
-                                <textarea id="serviceDescription" rows="3" placeholder="サービスの詳細説明..." style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; resize: vertical;"></textarea>
-                            </div>
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="serviceDuration">施術時間（分） *</label>
-                                    <input type="number" id="serviceDuration" required min="15" step="15" placeholder="60" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="servicePrice">料金（円） *</label>
-                                    <input type="number" id="servicePrice" required min="0" placeholder="5000" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="serviceDiscountPrice">割引料金（円）</label>
-                                    <input type="number" id="serviceDiscountPrice" min="0" placeholder="4500" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                            </div>
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" id="requiresSpecialist" style="margin-right: 0.5rem;">
-                                        専門スタッフ指定が必要
-                                    </label>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="maxConcurrent">同時施術可能数</label>
-                                    <input type="number" id="maxConcurrent" min="1" max="10" value="1" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="hideServiceModal()">キャンセル</button>
-                        <button type="submit" form="serviceForm" class="btn btn-primary">保存</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Staff Page -->
-        <div class="page" id="staff">
-            <header class="header">
-                <h1 class="page-title">スタッフ管理</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="showCreateStaffModal()">
-                        <span class="icon">👤</span>
-                        新規スタッフ追加
-                    </button>
-                    <button class="btn btn-secondary" onclick="showScheduleModal()">
-                        <span class="icon">📅</span>
-                        シフト管理
-                    </button>
-                </div>
-            </header>
-            
-            <div class="content-area">
-                <!-- Staff stats -->
-                <div class="stats-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalStaff">5</div>
-                        <div class="stat-label">総スタッフ数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="activeStaff">4</div>
-                        <div class="stat-label">稼働中</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="onBreak">1</div>
-                        <div class="stat-label">休憩中</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="monthlyHours">850</div>
-                        <div class="stat-label">今月の総稼働時間</div>
-                    </div>
-                </div>
-
-                <!-- Staff list -->
-                <div class="staff-grid" id="staffGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-                    <!-- Staff cards will be loaded here -->
-                </div>
-            </div>
-
-            <!-- Create/Edit Staff Modal -->
-            <div class="modal" id="staffModal" style="display: none;">
-                <div class="modal-overlay" onclick="hideStaffModal()"></div>
-                <div class="modal-content" style="max-width: 700px; width: 90%;">
-                    <div class="modal-header">
-                        <h3 id="staffModalTitle">新規スタッフ追加</h3>
-                        <button class="modal-close" onclick="hideStaffModal()">✕</button>
-                    </div>
-                    
-                    <div class="modal-body">
-                        <form id="staffForm" class="form">
-                            <input type="hidden" id="staffId">
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="staffName">氏名 *</label>
-                                    <input type="text" id="staffName" required placeholder="例：田中 美穂" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="staffRole">役職</label>
-                                    <select id="staffRole" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                        <option value="staff">スタッフ</option>
-                                        <option value="senior">シニアスタッフ</option>
-                                        <option value="manager">マネージャー</option>
-                                        <option value="receptionist">受付</option>
-                                        <option value="admin">管理者</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="staffEmail">メールアドレス *</label>
-                                    <input type="email" id="staffEmail" required placeholder="tanaka@salon.com" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="staffPhone">電話番号</label>
-                                    <input type="tel" id="staffPhone" placeholder="090-1234-5678" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="staffSpecializations">得意分野</label>
-                                <div class="checkbox-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-                                    <label><input type="checkbox" name="specializations" value="cut"> カット</label>
-                                    <label><input type="checkbox" name="specializations" value="color"> カラー</label>
-                                    <label><input type="checkbox" name="specializations" value="perm"> パーマ</label>
-                                    <label><input type="checkbox" name="specializations" value="treatment"> トリートメント</label>
-                                    <label><input type="checkbox" name="specializations" value="spa"> ヘッドスパ</label>
-                                    <label><input type="checkbox" name="specializations" value="facial"> フェイシャル</label>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="staffHourlyRate">時給（円）</label>
-                                    <input type="number" id="staffHourlyRate" min="0" placeholder="2500" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="staffCommissionRate">歩合率（％）</label>
-                                    <input type="number" id="staffCommissionRate" min="0" max="50" step="0.5" placeholder="15" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px;">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>
-                                    <input type="checkbox" id="staffActive" checked style="margin-right: 0.5rem;">
-                                    アクティブ（稼働中）
-                                </label>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="hideStaffModal()">キャンセル</button>
-                        <button type="submit" form="staffForm" class="btn btn-primary">保存</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Schedule Management Modal -->
-            <div class="modal" id="scheduleModal" style="display: none;">
-                <div class="modal-overlay" onclick="hideScheduleModal()"></div>
-                <div class="modal-content" style="max-width: 900px; width: 95%;">
-                    <div class="modal-header">
-                        <h3>シフト管理</h3>
-                        <button class="modal-close" onclick="hideScheduleModal()">✕</button>
-                    </div>
-                    
-                    <div class="modal-body">
-                        <div class="schedule-controls" style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
-                            <div class="date-picker">
-                                <input type="week" id="scheduleWeek" style="padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            </div>
-                            <button class="btn btn-primary" onclick="saveSchedules()">
-                                スケジュール保存
-                            </button>
-                        </div>
-                        
-                        <div class="schedule-grid" id="scheduleGrid">
-                            <!-- Schedule grid will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Messages Page -->
         <div class="page" id="messages">
             <header class="header">
                 <h1 class="page-title">メッセージ</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="createMessageBtn">
+                        <span>✉️ 新規メッセージ</span>
+                    </button>
+                    <button class="btn btn-secondary" id="templateManagerBtn">
+                        <span>📝 テンプレート管理</span>
+                    </button>
+                </div>
             </header>
             <div class="content-area">
-                <p>メッセージ機能は準備中です。</p>
+                <!-- Message Tabs -->
+                <div class="message-tabs">
+                    <button class="message-tab active" data-tab="compose">作成</button>
+                    <button class="message-tab" data-tab="history">送信履歴</button>
+                    <button class="message-tab" data-tab="templates">テンプレート</button>
+                    <button class="message-tab" data-tab="bulk">一括送信</button>
+                </div>
+
+                <!-- Compose Message Tab -->
+                <div class="message-content active" id="compose-tab">
+                    <div class="compose-section">
+                        <div class="message-form">
+                            <div class="recipient-section">
+                                <h3>送信先選択</h3>
+                                <div class="recipient-options">
+                                    <label class="radio-label">
+                                        <input type="radio" name="recipientType" value="individual" checked>
+                                        個別送信
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="recipientType" value="group">
+                                        グループ送信
+                                    </label>
+                                </div>
+                                <div class="recipient-input">
+                                    <select id="customerSelect" class="form-control">
+                                        <option value="">顧客を選択...</option>
+                                        <option value="1">山田 花子 様 (090-1234-5678)</option>
+                                        <option value="2">佐藤 美咲 様 (080-9876-5432)</option>
+                                        <option value="3">鈴木 真由美 様 (070-1111-2222)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="message-template-section">
+                                <h3>テンプレート選択</h3>
+                                <select id="messageTemplate" class="form-control">
+                                    <option value="">テンプレートを選択...</option>
+                                    <option value="reminder">予約リマインダー</option>
+                                    <option value="thanks">来店お礼</option>
+                                    <option value="followup">アフターフォロー</option>
+                                    <option value="promotion">キャンペーン案内</option>
+                                </select>
+                            </div>
+
+                            <div class="message-compose-section">
+                                <h3>メッセージ内容</h3>
+                                <textarea id="messageContent" class="message-textarea" 
+                                         placeholder="メッセージを入力してください..."
+                                         maxlength="160"></textarea>
+                                <div class="character-count">
+                                    <span id="charCount">0</span>/160文字
+                                </div>
+                            </div>
+
+                            <div class="send-timing-section">
+                                <h3>送信タイミング</h3>
+                                <div class="timing-options">
+                                    <label class="radio-label">
+                                        <input type="radio" name="sendTiming" value="now" checked>
+                                        今すぐ送信
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="sendTiming" value="schedule">
+                                        予約送信
+                                    </label>
+                                </div>
+                                <div class="schedule-input" style="display: none;">
+                                    <input type="datetime-local" id="scheduleTime" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="preview-section">
+                                <h3>プレビュー</h3>
+                                <div class="message-preview">
+                                    <div class="preview-phone">
+                                        <div class="preview-header">Salon Lumière</div>
+                                        <div class="preview-content" id="previewContent">
+                                            メッセージを入力するとプレビューが表示されます
+                                        </div>
+                                        <div class="preview-time">今</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="send-actions">
+                                <button class="btn btn-secondary" id="saveDraftBtn">下書き保存</button>
+                                <button class="btn btn-primary" id="sendMessageBtn">送信</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message History Tab -->
+                <div class="message-content" id="history-tab">
+                    <div class="history-filters">
+                        <div class="filter-row">
+                            <select id="historyFilter" class="form-control">
+                                <option value="all">すべて</option>
+                                <option value="sent">送信済み</option>
+                                <option value="failed">送信失敗</option>
+                                <option value="scheduled">送信予定</option>
+                            </select>
+                            <input type="date" id="dateFilter" class="form-control">
+                            <input type="text" id="searchFilter" class="form-control" placeholder="顧客名、電話番号で検索">
+                        </div>
+                    </div>
+
+                    <div class="message-history-list">
+                        <div class="history-item sent">
+                            <div class="history-header">
+                                <div class="recipient-info">
+                                    <strong>山田 花子 様</strong>
+                                    <span class="phone">090-1234-5678</span>
+                                </div>
+                                <div class="send-info">
+                                    <span class="status success">送信済み</span>
+                                    <span class="send-time">2024-03-15 14:30</span>
+                                </div>
+                            </div>
+                            <div class="message-content-preview">
+                                山田様、明日の予約のご確認です。3月16日 10:00〜カット+カラーでお待ちしております。変更がございましたらお気軽にご連絡ください。
+                            </div>
+                            <div class="history-actions">
+                                <button class="btn-resend">再送信</button>
+                                <button class="btn-detail">詳細</button>
+                            </div>
+                        </div>
+
+                        <div class="history-item sent">
+                            <div class="history-header">
+                                <div class="recipient-info">
+                                    <strong>佐藤 美咲 様</strong>
+                                    <span class="phone">080-9876-5432</span>
+                                </div>
+                                <div class="send-info">
+                                    <span class="status success">送信済み</span>
+                                    <span class="send-time">2024-03-14 16:45</span>
+                                </div>
+                            </div>
+                            <div class="message-content-preview">
+                                佐藤様、本日はご来店ありがとうございました。パーマの仕上がりはいかがでしょうか？何かご質問がございましたらお気軽にご連絡ください。
+                            </div>
+                            <div class="history-actions">
+                                <button class="btn-resend">再送信</button>
+                                <button class="btn-detail">詳細</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Templates Tab -->
+                <div class="message-content" id="templates-tab">
+                    <div class="template-actions">
+                        <button class="btn btn-primary" id="createTemplateBtn">➕ 新規テンプレート</button>
+                    </div>
+
+                    <div class="templates-grid">
+                        <div class="template-card">
+                            <div class="template-header">
+                                <h4>予約リマインダー</h4>
+                                <div class="template-category">リマインダー</div>
+                            </div>
+                            <div class="template-preview">
+                                {customer_name}様、明日の予約のご確認です。{date} {time}〜{service}でお待ちしております。
+                            </div>
+                            <div class="template-actions">
+                                <button class="btn-use">使用</button>
+                                <button class="btn-edit">編集</button>
+                                <button class="btn-delete">削除</button>
+                            </div>
+                        </div>
+
+                        <div class="template-card">
+                            <div class="template-header">
+                                <h4>来店お礼</h4>
+                                <div class="template-category">お礼</div>
+                            </div>
+                            <div class="template-preview">
+                                {customer_name}様、本日はご来店ありがとうございました。{service}の仕上がりはいかがでしょうか？
+                            </div>
+                            <div class="template-actions">
+                                <button class="btn-use">使用</button>
+                                <button class="btn-edit">編集</button>
+                                <button class="btn-delete">削除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Send Tab -->
+                <div class="message-content" id="bulk-tab">
+                    <div class="bulk-send-section">
+                        <div class="recipient-selection">
+                            <h3>送信対象選択</h3>
+                            <div class="selection-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="selectAll"> すべての顧客
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="selectActive"> アクティブ顧客のみ
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="selectInactive"> しばらく来店のない顧客
+                                </label>
+                            </div>
+                            
+                            <div class="selected-count">
+                                選択中: <span id="selectedCount">0</span>名
+                            </div>
+                        </div>
+
+                        <div class="bulk-message-section">
+                            <h3>メッセージ内容</h3>
+                            <select id="bulkTemplate" class="form-control">
+                                <option value="">テンプレートを選択...</option>
+                                <option value="campaign">キャンペーン案内</option>
+                                <option value="season">季節のお知らせ</option>
+                                <option value="comeback">復帰促進</option>
+                            </select>
+                            <textarea id="bulkMessageContent" class="message-textarea" 
+                                     placeholder="一括送信メッセージを入力してください..."
+                                     maxlength="160"></textarea>
+                        </div>
+
+                        <div class="bulk-send-actions">
+                            <button class="btn btn-secondary" id="previewBulkBtn">プレビュー</button>
+                            <button class="btn btn-primary" id="sendBulkBtn">一括送信</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1056,6 +1139,28 @@
                                     <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥90,000</div>
                                 </div>
                             </div>
+
+                            <div class="service-rank-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                                <div class="rank-info">
+                                    <span class="rank-number" style="display: inline-block; width: 24px; height: 24px; background: #6b7280; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: bold; margin-right: 0.5rem;">4</span>
+                                    <span class="service-name" style="font-weight: 500;">パーマ</span>
+                                </div>
+                                <div class="service-stats" style="text-align: right;">
+                                    <div class="service-count" style="font-weight: bold; color: var(--primary);">15件</div>
+                                    <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥105,000</div>
+                                </div>
+                            </div>
+
+                            <div class="service-rank-item" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem;">
+                                <div class="rank-info">
+                                    <span class="rank-number" style="display: inline-block; width: 24px; height: 24px; background: #9ca3af; color: white; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: bold; margin-right: 0.5rem;">5</span>
+                                    <span class="service-name" style="font-weight: 500;">ヘッドスパ</span>
+                                </div>
+                                <div class="service-stats" style="text-align: right;">
+                                    <div class="service-count" style="font-weight: bold; color: var(--primary);">12件</div>
+                                    <div class="service-revenue" style="font-size: 0.9rem; color: #666;">¥72,000</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1111,28 +1216,36 @@
                 <div class="settings-container">
                     <div class="settings-nav">
                         <div class="settings-nav-item active" data-tab="general">
-                            <i>⚙️</i>
-                            <span>一般設定</span>
+                            <i>🏪</i>
+                            <span>基本設定</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="services">
+                            <i>✂️</i>
+                            <span>サービス管理</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="staff">
+                            <i>👨‍💼</i>
+                            <span>スタッフ管理</span>
+                        </div>
+                        <div class="settings-nav-item" data-tab="business-hours">
+                            <i>🕒</i>
+                            <span>営業時間設定</span>
                         </div>
                         <div class="settings-nav-item" data-tab="channels">
-                            <i>📡</i>
-                            <span>チャネル設定</span>
+                            <i>💬</i>
+                            <span>メッセージ設定</span>
                         </div>
                         <div class="settings-nav-item" data-tab="notifications">
                             <i>🔔</i>
                             <span>通知設定</span>
                         </div>
-                        <div class="settings-nav-item" data-tab="security">
-                            <i>🔒</i>
-                            <span>セキュリティ</span>
-                        </div>
                         <div class="settings-nav-item" data-tab="integrations">
                             <i>🔗</i>
                             <span>外部連携</span>
                         </div>
-                        <div class="settings-nav-item" data-tab="automation">
-                            <i>🤖</i>
-                            <span>自動化</span>
+                        <div class="settings-nav-item" data-tab="security">
+                            <i>🔒</i>
+                            <span>セキュリティ</span>
                         </div>
                     </div>
                     
@@ -1140,18 +1253,126 @@
                         <!-- General Settings Tab -->
                         <div class="settings-tab active" id="general-tab">
                             <div class="settings-section">
-                                <h3>一般設定</h3>
-                                <p>基本的なシステム設定を管理します。</p>
+                                <h3>基本設定</h3>
+                                <p>サロンの基本情報と営業設定を管理します。</p>
+                                <div class="form-group">
+                                    <label>サロン名</label>
+                                    <input type="text" class="form-control" value="Salon Lumière" placeholder="サロン名を入力">
+                                </div>
+                                <div class="form-group">
+                                    <label>電話番号</label>
+                                    <input type="tel" class="form-control" value="03-1234-5678" placeholder="電話番号を入力">
+                                </div>
+                                <div class="form-group">
+                                    <label>住所</label>
+                                    <input type="text" class="form-control" value="東京都渋谷区表参道1-2-3" placeholder="住所を入力">
+                                </div>
+                                <div class="form-group">
+                                    <label>営業日</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" checked> 月曜日</label>
+                                        <label><input type="checkbox" checked> 火曜日</label>
+                                        <label><input type="checkbox" checked> 水曜日</label>
+                                        <label><input type="checkbox" checked> 木曜日</label>
+                                        <label><input type="checkbox" checked> 金曜日</label>
+                                        <label><input type="checkbox" checked> 土曜日</label>
+                                        <label><input type="checkbox"> 日曜日</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Services Settings Tab -->
+                        <div class="settings-tab" id="services-tab">
+                            <div class="settings-section">
+                                <h3>サービス管理</h3>
+                                <p>提供するサービス・メニューの設定を管理します。</p>
+                                <div class="service-management">
+                                    <button class="btn btn-primary" onclick="showCreateServiceModal()">➕ 新規サービス追加</button>
+                                    <div class="services-list">
+                                        <!-- Services configuration will be loaded here -->
+                                        <div class="service-item">
+                                            <div class="service-info">
+                                                <h4>カット</h4>
+                                                <p>60分 / ¥4,500</p>
+                                            </div>
+                                            <div class="service-actions">
+                                                <button class="btn-edit">編集</button>
+                                                <button class="btn-delete">削除</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Staff Settings Tab -->
+                        <div class="settings-tab" id="staff-tab">
+                            <div class="settings-section">
+                                <h3>スタッフ管理</h3>
+                                <p>スタッフの登録・管理とスケジュール設定を行います。</p>
+                                <div class="staff-management">
+                                    <button class="btn btn-primary" onclick="showCreateStaffModal()">➕ 新規スタッフ追加</button>
+                                    <div class="staff-list">
+                                        <!-- Staff configuration will be loaded here -->
+                                        <div class="staff-item">
+                                            <div class="staff-info">
+                                                <h4>田中 美穂</h4>
+                                                <p>シニアスタッフ</p>
+                                            </div>
+                                            <div class="staff-actions">
+                                                <button class="btn-edit">編集</button>
+                                                <button class="btn-schedule">スケジュール</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Hours Tab -->
+                        <div class="settings-tab" id="business-hours-tab">
+                            <div class="settings-section">
+                                <h3>営業時間設定</h3>
+                                <p>曜日別の営業時間と休憩時間を設定します。</p>
+                                <div class="business-hours">
+                                    <div class="hours-item">
+                                        <div class="day-label">月曜日</div>
+                                        <div class="time-settings">
+                                            <label>開始時間: <input type="time" value="09:00" class="form-control"></label>
+                                            <label>終了時間: <input type="time" value="19:00" class="form-control"></label>
+                                            <label><input type="checkbox"> 定休日</label>
+                                        </div>
+                                    </div>
+                                    <div class="hours-item">
+                                        <div class="day-label">火曜日</div>
+                                        <div class="time-settings">
+                                            <label>開始時間: <input type="time" value="09:00" class="form-control"></label>
+                                            <label>終了時間: <input type="time" value="19:00" class="form-control"></label>
+                                            <label><input type="checkbox"> 定休日</label>
+                                        </div>
+                                    </div>
+                                    <!-- Additional days would follow the same pattern -->
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Channel Settings Tab -->
                         <div class="settings-tab" id="channels-tab">
                             <div class="settings-section">
-                                <h3>チャネル設定</h3>
+                                <h3>メッセージ設定</h3>
                                 <p>SMS、メール、LINE、Instagramの設定を管理します。</p>
                                 <div id="channel-config-container" class="channel-config-container">
-                                    <!-- Channel configuration will be loaded here -->
+                                    <div class="channel-item">
+                                        <h4>📱 SMS設定</h4>
+                                        <div class="form-group">
+                                            <label>送信者名</label>
+                                            <input type="text" class="form-control" value="Salon Lumière" placeholder="送信者名を入力">
+                                        </div>
+                                        <div class="form-group">
+                                            <label><input type="checkbox" checked> SMS機能を有効にする</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1160,15 +1381,14 @@
                         <div class="settings-tab" id="notifications-tab">
                             <div class="settings-section">
                                 <h3>通知設定</h3>
-                                <p>システム通知の設定を管理します。</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Security Tab -->
-                        <div class="settings-tab" id="security-tab">
-                            <div class="settings-section">
-                                <h3>セキュリティ設定</h3>
-                                <p>セキュリティ関連の設定を管理します。</p>
+                                <p>自動リマインダーやシステム通知の設定を管理します。</p>
+                                <div class="notification-settings">
+                                    <div class="notification-item">
+                                        <h4>予約リマインダー</h4>
+                                        <label><input type="checkbox" checked> 予約前日にリマインダーを送信</label>
+                                        <label><input type="checkbox" checked> 予約当日にリマインダーを送信</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -1178,18 +1398,26 @@
                                 <h3>外部サービス連携</h3>
                                 <p>ホットペッパービューティーやその他の外部サービスとの連携を設定します。</p>
                                 <div id="integrations-config-container" class="integrations-config-container">
-                                    <!-- Integration configuration will be loaded here -->
+                                    <div class="integration-item">
+                                        <h4>🔗 ホットペッパービューティー</h4>
+                                        <p>予約情報を自動同期します</p>
+                                        <button class="btn btn-secondary">連携設定</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Automation Tab -->
-                        <div class="settings-tab" id="automation-tab">
+                        <!-- Security Tab -->
+                        <div class="settings-tab" id="security-tab">
                             <div class="settings-section">
-                                <h3>自動化設定</h3>
-                                <p>自動リマインダーやその他の自動化機能を設定します。</p>
-                                <div id="automation-config-container" class="automation-config-container">
-                                    <!-- Automation configuration will be loaded here -->
+                                <h3>セキュリティ設定</h3>
+                                <p>アクセス権限とセキュリティ関連の設定を管理します。</p>
+                                <div class="security-settings">
+                                    <div class="form-group">
+                                        <label>パスワード変更</label>
+                                        <input type="password" class="form-control" placeholder="現在のパスワード">
+                                        <input type="password" class="form-control" placeholder="新しいパスワード">
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -20,66 +20,141 @@
         }
         
         .customers-header {
-            background: var(--gradient-1);
-            padding: var(--spacing-xl);
-            border-radius: var(--border-radius-lg);
-            margin-bottom: var(--spacing-xl);
+            background: linear-gradient(135deg, 
+                rgba(248, 229, 225, 0.95) 0%, 
+                rgba(253, 240, 237, 0.95) 30%,
+                rgba(255, 249, 247, 0.95) 70%,
+                rgba(248, 229, 225, 0.95) 100%);
+            padding: 48px 40px;
+            border-radius: 24px;
+            margin-bottom: 48px;
             text-align: center;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 12px 40px rgba(212, 165, 116, 0.2), 0 4px 16px rgba(0, 0, 0, 0.05);
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .customers-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--votan-gold), var(--votan-accent), var(--primary-400), var(--votan-gold));
+            z-index: -1;
+            margin: -3px;
+            border-radius: 24px;
+        }
+        
+        .customers-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 50%, var(--votan-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 16px 0;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-family: var(--font-family-display);
+        }
+        
+        .customers-header p {
+            font-size: 1.3rem;
+            color: var(--text-medium);
+            margin: 0;
+            font-weight: 500;
+            opacity: 0.9;
+            font-family: var(--font-family-primary);
         }
         
         .search-bar {
             display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
+            gap: 20px;
+            margin-bottom: 40px;
             flex-wrap: wrap;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,229,225,0.4) 100%);
+            padding: 24px 32px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(212,165,116,0.15), 0 4px 16px rgba(0,0,0,0.05);
+            border: 2px solid rgba(212,165,116,0.2);
+            backdrop-filter: blur(10px);
         }
         
         .search-input {
             flex: 1;
-            min-width: 250px;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border: 2px solid var(--votan-gold);
-            border-radius: 25px;
+            min-width: 300px;
+            padding: 16px 24px;
+            border: 3px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                       linear-gradient(135deg, var(--votan-gold), var(--votan-accent)) border-box;
+            border-radius: 30px;
             font-size: 16px;
             outline: none;
             font-family: var(--font-family-primary);
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 16px rgba(212,165,116,0.1);
         }
         
         .search-input:focus {
-            border-color: var(--primary-600);
-            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+            box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.2), 0 8px 32px rgba(212,165,116,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-medium);
+            opacity: 0.7;
+        }
+        
+        .search-bar .btn-primary {
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
+            min-height: 56px;
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 6px 24px rgba(212,165,116,0.3);
+            transition: all 0.4s ease;
+        }
+        
+        .search-bar .btn-primary:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(212,165,116,0.4);
         }
         
         .customers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: var(--spacing-xl);
-            margin-bottom: 100px; /* FABのスペース確保 */
-            padding-top: var(--spacing-md);
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: var(--spacing-2xl); /* より大きなギャップ */
+            margin-bottom: 120px; /* FABのスペース確保 */
+            padding: var(--spacing-xl) 0;
         }
         
         .customer-card {
-            background: var(--gradient-3);
-            border-radius: var(--border-radius-lg);
-            padding: var(--spacing-xl);
-            box-shadow: var(--shadow-md);
-            border: 2px solid var(--primary-200);
-            border-left: 6px solid var(--votan-gold);
-            transition: all 0.4s ease;
+            background: linear-gradient(145deg, #ffffff 0%, rgba(248, 229, 225, 0.4) 50%, rgba(253, 240, 237, 0.6) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(212, 165, 116, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
+            border: 3px solid transparent;
+            background-clip: padding-box;
             position: relative;
             overflow: hidden;
-            min-height: 320px;
+            min-height: 420px;
             display: flex;
             flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         .customer-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-400);
-            background: white;
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(212, 165, 116, 0.25), 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #ffffff 0%, rgba(248, 229, 225, 0.6) 50%, rgba(253, 240, 237, 0.8) 100%);
         }
         
         .customer-card::before {
@@ -88,313 +163,443 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
-            background: var(--gradient-2);
+            height: 6px;
+            background: linear-gradient(90deg, var(--votan-gold) 0%, var(--primary-400) 50%, var(--votan-accent) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .customer-card::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(232, 180, 184, 0.1) 100%);
+            border-radius: 50%;
+            z-index: 1;
         }
         
         .customer-avatar {
-            width: 72px;
-            height: 72px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
-            background: var(--gradient-2);
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 50%, var(--votan-accent) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
-            font-size: 28px;
-            font-weight: bold;
-            margin: 0 auto var(--spacing-lg);
-            box-shadow: var(--shadow-md);
-            border: 3px solid white;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 10px auto 24px;
+            box-shadow: 0 8px 24px rgba(212, 165, 116, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 4px solid white;
             flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .customer-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            background: linear-gradient(45deg, var(--votan-gold), var(--votan-accent), var(--primary-400));
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .customer-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--spacing-md);
+            gap: 16px;
             margin-top: auto;
-            padding-top: var(--spacing-lg);
-            border-top: 2px solid var(--primary-200);
+            padding-top: 24px;
+            border-top: 3px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                       linear-gradient(90deg, var(--votan-gold), var(--votan-accent)) border-box;
         }
         
         .stat-item {
             text-align: center;
-            padding: var(--spacing-sm);
-            background: white;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--primary-200);
-            transition: all 0.3s ease;
+            padding: 20px 16px;
+            background: linear-gradient(135deg, rgba(248,229,225,0.4) 0%, rgba(253,240,237,0.6) 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(212,165,116,0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--votan-gold) 0%, var(--votan-accent) 100%);
         }
         
         .stat-item:hover {
-            background: var(--gradient-1);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--votan-accent) 100%);
+            color: white;
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(212,165,116,0.3);
+        }
+        
+        .stat-item:hover .stat-value,
+        .stat-item:hover .stat-label {
+            color: white;
         }
         
         .stat-value {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             color: var(--votan-gold);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            font-family: var(--font-family-display);
+            transition: color 0.3s ease;
         }
         
         .stat-label {
-            font-size: 12px;
-            color: var(--text-light);
+            font-size: 13px;
+            color: var(--text-medium);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
         
         .add-customer-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: var(--votan-gold);
-            color: var(--white);
-            border: none;
+            bottom: 40px;
+            right: 40px;
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 50%, var(--votan-accent) 100%);
+            color: white;
+            border: 4px solid white;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s ease;
+            box-shadow: 0 12px 40px rgba(212, 165, 116, 0.4), 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .add-customer-btn::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, var(--votan-gold), var(--votan-accent), var(--primary-400), var(--votan-gold));
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotate 4s linear infinite;
         }
         
         .add-customer-btn:hover {
-            background: var(--primary-600);
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
+            transform: scale(1.15) rotate(180deg);
+            box-shadow: 0 20px 60px rgba(212, 165, 116, 0.5), 0 8px 32px rgba(0, 0, 0, 0.15);
         }
         
         .add-customer-btn:active {
-            transform: scale(0.95);
+            transform: scale(1.05) rotate(180deg);
         }
         
         .customer-tags {
             display: flex;
-            gap: var(--spacing-sm);
-            margin: var(--spacing-md) 0;
+            gap: 10px;
+            margin: 20px 0 24px;
             flex-wrap: wrap;
             justify-content: center;
         }
         
         .customer-tag {
-            background: var(--secondary-200);
-            color: var(--primary-700);
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-size: 13px;
-            font-weight: 600;
-            border: 2px solid var(--primary-300);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: capitalize;
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+        
+        .customer-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .customer-tag:hover::before {
+            left: 100%;
         }
         
         .customer-tag:hover {
-            background: var(--gradient-2);
-            color: white;
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
         
         .customer-tag.vip {
-            background: var(--gradient-2);
-            color: white;
-            border-color: var(--primary-600);
-            box-shadow: var(--shadow-sm);
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #8B4513;
+            border-color: #FFD700;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
         }
         
         .customer-tag.service {
-            background: var(--info-light);
-            color: var(--info);
-            border-color: var(--info);
-        }
-        
-        .customer-tag.service:hover {
-            background: var(--info);
+            background: linear-gradient(135deg, var(--votan-accent) 0%, #E8B4B8 100%);
             color: white;
+            border-color: var(--votan-accent);
+            box-shadow: 0 4px 16px rgba(232, 180, 184, 0.3);
         }
         
         .customer-tag.regular {
-            background: var(--success-light);
-            color: var(--success);
-            border-color: var(--success);
-        }
-        
-        .customer-tag.regular:hover {
-            background: var(--success);
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             color: white;
+            border-color: #10B981;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
         }
         
         .customer-tag.new {
-            background: var(--warning-light);
-            color: var(--warning);
-            border-color: var(--warning);
-        }
-        
-        .customer-tag.new:hover {
-            background: var(--warning);
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
             color: white;
+            border-color: #F59E0B;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
         }
         
         /* 新しいデザイン要素のスタイル */
         .customer-info {
             text-align: center;
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 2;
         }
         
         .customer-name-title {
             font-family: var(--font-family-display);
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-weight: 800;
             color: var(--votan-dark);
-            margin: 0 0 var(--spacing-md) 0;
-            background: var(--gradient-2);
+            margin: 0 0 16px 0;
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 50%, var(--votan-accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: -0.5px;
+        }
+        
+        .customer-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            font-weight: 500;
+            margin-bottom: 20px;
+            opacity: 0.8;
         }
         
         .customer-details {
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-sm);
+            gap: 12px;
+            margin-bottom: 24px;
         }
         
         .detail-item {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            background: white;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid var(--primary-200);
-            transition: all 0.3s ease;
+            gap: 12px;
+            padding: 16px 18px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(248,229,225,0.3) 100%);
+            border-radius: 12px;
+            border: 2px solid rgba(212,165,116,0.2);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
         }
         
         .detail-item:hover {
-            background: var(--gradient-1);
-            transform: translateX(4px);
-            box-shadow: var(--shadow-sm);
+            background: linear-gradient(145deg, rgba(248,229,225,0.6) 0%, rgba(253,240,237,0.8) 100%);
+            transform: translateX(8px) translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212,165,116,0.2);
+            border-color: var(--votan-gold);
         }
         
         .detail-icon {
-            font-size: 16px;
-            width: 20px;
+            font-size: 18px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             flex-shrink: 0;
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-500) 100%);
+            border-radius: 50%;
+            color: white;
+            font-weight: 600;
         }
         
         .detail-text {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-dark);
-            font-weight: 500;
+            font-weight: 600;
             font-family: var(--font-family-primary);
+            letter-spacing: 0.25px;
         }
         
         .customer-actions {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--spacing-sm);
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-top: auto;
+            padding-top: 16px;
         }
         
         .customer-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--spacing-xs);
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--border-radius-sm);
+            gap: 8px;
+            padding: 14px 18px;
+            border-radius: 12px;
             border: 2px solid;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 44px;
-            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 48px;
+            text-transform: capitalize;
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .customer-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .customer-btn:hover::before {
+            left: 100%;
         }
         
         .customer-btn.btn-primary {
-            background: var(--gradient-2);
-            border-color: var(--primary-500);
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-600) 100%);
+            border-color: var(--votan-gold);
             color: white;
+            box-shadow: 0 4px 16px rgba(212,165,116,0.3);
         }
         
         .customer-btn.btn-primary:hover {
-            background: var(--primary-700);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--votan-gold) 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(212,165,116,0.4);
         }
         
         .customer-btn.btn-accent {
-            background: var(--gradient-1);
-            border-color: var(--primary-300);
-            color: var(--primary-700);
+            background: linear-gradient(135deg, var(--votan-accent) 0%, rgba(232,180,184,0.8) 100%);
+            border-color: var(--votan-accent);
+            color: white;
+            box-shadow: 0 4px 16px rgba(232,180,184,0.3);
         }
         
         .customer-btn.btn-accent:hover {
-            background: var(--gradient-2);
+            background: linear-gradient(135deg, rgba(232,180,184,0.9) 0%, var(--votan-accent) 100%);
             color: white;
-            border-color: var(--primary-500);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            border-color: var(--votan-accent);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(232,180,184,0.4);
         }
         
         .customer-btn.btn-secondary {
-            background: white;
-            border-color: var(--gray-300);
-            color: var(--gray-700);
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+            border-color: rgba(212,165,116,0.4);
+            color: var(--text-dark);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .customer-btn.btn-secondary:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-400);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+            background: linear-gradient(135deg, var(--votan-gold) 0%, var(--primary-500) 100%);
+            border-color: var(--votan-gold);
+            color: white;
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(212,165,116,0.3);
         }
         
         .btn-icon {
             font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+        
+        .customer-btn:hover .btn-icon {
+            transform: scale(1.1);
         }
         
         /* モバイル対応 - 改善版 */
         @media (max-width: 768px) {
             .customers-container {
-                padding: var(--spacing-md) var(--spacing-sm);
+                padding: 24px 16px;
             }
             
             .customers-header {
-                padding: var(--spacing-lg) var(--spacing-md);
-                margin-bottom: var(--spacing-lg);
+                padding: 32px 24px;
+                margin-bottom: 32px;
+                border-radius: 20px;
+            }
+            
+            .customers-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .customers-header p {
+                font-size: 1.1rem;
             }
             
             .customers-grid {
                 grid-template-columns: 1fr;
-                gap: var(--spacing-lg);
+                gap: 32px;
+                padding: 24px 0;
             }
             
             .customer-card {
-                padding: var(--spacing-lg);
-                min-height: 280px;
-                border-radius: var(--border-radius);
+                padding: 32px;
+                min-height: 360px;
+                border-radius: 18px;
             }
             
             .customer-avatar {
-                width: 64px;
-                height: 64px;
-                font-size: 24px;
-                margin-bottom: var(--spacing-md);
+                width: 76px;
+                height: 76px;
+                font-size: 28px;
+                margin-bottom: 20px;
             }
             
             .customer-name-title {
-                font-size: 1.3rem;
+                font-size: 1.6rem;
             }
             
             .detail-text {
@@ -402,60 +607,75 @@
             }
             
             .customer-actions {
-                grid-template-columns: 1fr 1fr;
-                gap: var(--spacing-sm);
+                grid-template-columns: 1fr;
+                gap: 12px;
             }
             
             .customer-btn {
-                font-size: 13px;
-                padding: var(--spacing-sm);
-                min-height: 48px;
-                text-transform: none;
-                letter-spacing: normal;
+                font-size: 14px;
+                padding: 16px 20px;
+                min-height: 52px;
+                text-transform: capitalize;
             }
             
             .search-bar {
                 flex-direction: column;
-                gap: var(--spacing-md);
+                gap: 20px;
+                padding: 20px 24px;
+                border-radius: 16px;
             }
             
             .search-input {
                 min-width: 100%;
                 font-size: 16px;
-                padding: var(--spacing-md);
+                padding: 16px 20px;
+            }
+            
+            .search-bar .btn-primary {
+                min-height: 52px;
+                border-radius: 26px;
             }
             
             .add-customer-btn {
-                bottom: 20px;
-                right: 20px;
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
+                bottom: 24px;
+                right: 24px;
+                width: 68px;
+                height: 68px;
+                font-size: 26px;
             }
         }
         
         @media (max-width: 480px) {
             .customers-container {
-                padding: var(--spacing-sm);
+                padding: 16px 12px;
+            }
+            
+            .customers-header {
+                padding: 28px 20px;
+                margin-bottom: 28px;
             }
             
             .customers-header h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
+            }
+            
+            .customers-header p {
+                font-size: 1rem;
             }
             
             .customer-card {
-                padding: var(--spacing-md);
-                min-height: 260px;
+                padding: 28px 24px;
+                min-height: 340px;
             }
             
             .customer-avatar {
-                width: 56px;
-                height: 56px;
-                font-size: 20px;
+                width: 72px;
+                height: 72px;
+                font-size: 26px;
             }
             
             .customer-name-title {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
             }
             
             .detail-text {
@@ -463,40 +683,44 @@
             }
             
             .customer-tag {
-                padding: 6px 12px;
+                padding: 8px 14px;
                 font-size: 12px;
             }
             
             .customer-actions {
                 grid-template-columns: 1fr;
-                gap: var(--spacing-xs);
+                gap: 10px;
             }
             
             .customer-btn {
                 font-size: 14px;
-                padding: var(--spacing-sm) var(--spacing-xs);
-                min-height: 44px;
+                padding: 14px 16px;
+                min-height: 48px;
             }
             
             .customer-stats {
                 grid-template-columns: 1fr 1fr;
-                gap: var(--spacing-sm);
+                gap: 12px;
             }
             
             .stat-value {
-                font-size: 16px;
+                font-size: 20px;
             }
             
             .stat-label {
-                font-size: 11px;
+                font-size: 12px;
+            }
+            
+            .search-bar {
+                padding: 16px 20px;
             }
             
             .add-customer-btn {
-                width: 56px;
-                height: 56px;
-                font-size: 20px;
-                bottom: 16px;
-                right: 16px;
+                width: 64px;
+                height: 64px;
+                font-size: 24px;
+                bottom: 20px;
+                right: 20px;
             }
         }
     </style>
@@ -609,21 +833,27 @@
                     
                     <div class="customer-info">
                         <h3 class="customer-name-title">${customer.name}</h3>
+                        <div class="customer-subtitle">美容室VOTAN 大切なお客様</div>
                         <div class="customer-details">
                             <div class="detail-item">
-                                <span class="detail-icon">📧</span>
+                                <span class="detail-icon">✉</span>
                                 <span class="detail-text">${customer.email}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-icon">📞</span>
+                                <span class="detail-icon">📱</span>
                                 <span class="detail-text">${customer.phone}</span>
                             </div>
                             ${customer.lastVisit ? `
                             <div class="detail-item">
-                                <span class="detail-icon">📅</span>
+                                <span class="detail-icon">💫</span>
                                 <span class="detail-text">最終来店: ${formatDate(customer.lastVisit)}</span>
                             </div>
-                            ` : ''}
+                            ` : `
+                            <div class="detail-item">
+                                <span class="detail-icon">🌸</span>
+                                <span class="detail-text">新規のお客様です</span>
+                            </div>
+                            `}
                         </div>
                     </div>
 
@@ -646,16 +876,16 @@
                     
                     <div class="customer-actions">
                         <button class="customer-btn btn-primary" onclick="viewCustomerHistory(${customer.id})">
-                            <span class="btn-icon">📋</span>
-                            詳細・履歴
+                            <span class="btn-icon">💼</span>
+                            詳細履歴
                         </button>
                         <button class="customer-btn btn-accent" onclick="bookAppointment(${customer.id})">
-                            <span class="btn-icon">📅</span>
+                            <span class="btn-icon">✨</span>
                             予約作成
                         </button>
                         <button class="customer-btn btn-secondary" onclick="editCustomer(${customer.id})">
-                            <span class="btn-icon">✏️</span>
-                            編集
+                            <span class="btn-icon">🎨</span>
+                            情報編集
                         </button>
                     </div>
                 </div>

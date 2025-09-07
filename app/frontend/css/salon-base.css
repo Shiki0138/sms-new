@@ -1,0 +1,395 @@
+/*
+ * SMS 美容室管理システム - Base Layer
+ * 
+ * SMACSS Layer 2: Base
+ * - Modern CSS Reset/Normalize
+ * - Base element styles
+ * - Typography foundation
+ */
+
+/* ========== MODERN CSS RESET ========== */
+
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Prevent font size inflation */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  scroll-behavior: smooth;
+}
+
+/* Remove default margin in favour of better control in authored CSS */
+body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements with a list role */
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  line-height: var(--sms-leading-normal);
+  font-family: var(--sms-font-sans);
+  font-size: var(--sms-text-base);
+  font-weight: var(--sms-font-normal);
+  color: var(--sms-neutral-700);
+  background-color: var(--sms-neutral-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Set shorter line heights on headings and interactive elements */
+h1, h2, h3, h4, button, input, label {
+  line-height: var(--sms-leading-tight);
+}
+
+/* Balance text wrapping on headings */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+  color: var(--sms-primary-600);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.1em;
+  transition: color var(--sms-duration-200) var(--sms-ease-out);
+}
+
+a:not([class]):hover {
+  color: var(--sms-primary-700);
+  text-decoration-thickness: 0.15em;
+}
+
+/* Make images easier to work with */
+img,
+picture,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+  min-height: 10em;
+}
+
+/* Anything that has been anchored to should have extra scroll margin */
+:target {
+  scroll-margin-block: 5ex;
+}
+
+/* ========== TYPOGRAPHY FOUNDATION ========== */
+
+/* Headings */
+h1 {
+  font-family: var(--sms-font-serif);
+  font-size: var(--sms-text-4xl);
+  font-weight: var(--sms-font-bold);
+  color: var(--sms-neutral-800);
+  margin-bottom: var(--sms-space-6);
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-family: var(--sms-font-serif);
+  font-size: var(--sms-text-3xl);
+  font-weight: var(--sms-font-semibold);
+  color: var(--sms-neutral-800);
+  margin-bottom: var(--sms-space-5);
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: var(--sms-text-2xl);
+  font-weight: var(--sms-font-semibold);
+  color: var(--sms-neutral-700);
+  margin-bottom: var(--sms-space-4);
+}
+
+h4 {
+  font-size: var(--sms-text-xl);
+  font-weight: var(--sms-font-medium);
+  color: var(--sms-neutral-700);
+  margin-bottom: var(--sms-space-3);
+}
+
+h5 {
+  font-size: var(--sms-text-lg);
+  font-weight: var(--sms-font-medium);
+  color: var(--sms-neutral-600);
+  margin-bottom: var(--sms-space-3);
+}
+
+h6 {
+  font-size: var(--sms-text-base);
+  font-weight: var(--sms-font-medium);
+  color: var(--sms-neutral-600);
+  margin-bottom: var(--sms-space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Paragraphs and text elements */
+p {
+  margin-bottom: var(--sms-space-4);
+  line-height: var(--sms-leading-relaxed);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+small {
+  font-size: var(--sms-text-sm);
+  color: var(--sms-neutral-500);
+}
+
+strong {
+  font-weight: var(--sms-font-semibold);
+  color: var(--sms-neutral-800);
+}
+
+em {
+  font-style: italic;
+}
+
+mark {
+  background-color: var(--sms-warning-100);
+  color: var(--sms-warning-800);
+  padding: 0.125em 0.25em;
+  border-radius: var(--sms-radius-sm);
+}
+
+/* Code elements */
+code {
+  font-family: var(--sms-font-mono);
+  font-size: 0.9em;
+  background-color: var(--sms-neutral-100);
+  color: var(--sms-neutral-700);
+  padding: 0.125em 0.375em;
+  border-radius: var(--sms-radius-sm);
+}
+
+pre {
+  font-family: var(--sms-font-mono);
+  background-color: var(--sms-neutral-900);
+  color: var(--sms-neutral-100);
+  padding: var(--sms-space-4);
+  border-radius: var(--sms-radius-lg);
+  overflow-x: auto;
+  margin-bottom: var(--sms-space-4);
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+/* Lists */
+ul, ol {
+  padding-left: var(--sms-space-5);
+  margin-bottom: var(--sms-space-4);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+li {
+  margin-bottom: var(--sms-space-1);
+  line-height: var(--sms-leading-relaxed);
+}
+
+li:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested lists */
+li ul, li ol {
+  margin-top: var(--sms-space-1);
+  margin-bottom: var(--sms-space-1);
+}
+
+/* Definition lists */
+dt {
+  font-weight: var(--sms-font-semibold);
+  color: var(--sms-neutral-800);
+  margin-bottom: var(--sms-space-1);
+}
+
+dd {
+  margin-left: var(--sms-space-4);
+  margin-bottom: var(--sms-space-3);
+  color: var(--sms-neutral-600);
+}
+
+/* Quotes */
+blockquote {
+  border-left: 4px solid var(--sms-primary-300);
+  padding-left: var(--sms-space-4);
+  margin: var(--sms-space-6) 0;
+  font-style: italic;
+  font-size: var(--sms-text-lg);
+  color: var(--sms-neutral-600);
+}
+
+blockquote p {
+  margin-bottom: var(--sms-space-2);
+}
+
+blockquote cite {
+  display: block;
+  font-style: normal;
+  font-size: var(--sms-text-sm);
+  color: var(--sms-neutral-500);
+  margin-top: var(--sms-space-2);
+}
+
+blockquote cite::before {
+  content: "— ";
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--sms-neutral-200),
+    transparent
+  );
+  margin: var(--sms-space-8) 0;
+}
+
+/* ========== FORM ELEMENTS FOUNDATION ========== */
+
+/* Form base styles - detailed styling in components */
+input, textarea, select {
+  border: var(--sms-border-width-1) solid var(--sms-neutral-300);
+  border-radius: var(--sms-radius-md);
+  padding: var(--sms-space-3) var(--sms-space-4);
+  background-color: white;
+  transition: 
+    border-color var(--sms-duration-200) var(--sms-ease-out),
+    box-shadow var(--sms-duration-200) var(--sms-ease-out);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--sms-primary-400);
+  box-shadow: 0 0 0 3px var(--sms-primary-100);
+}
+
+input:disabled, textarea:disabled, select:disabled {
+  background-color: var(--sms-neutral-100);
+  color: var(--sms-neutral-400);
+  cursor: not-allowed;
+}
+
+label {
+  display: block;
+  font-size: var(--sms-text-sm);
+  font-weight: var(--sms-font-medium);
+  color: var(--sms-neutral-700);
+  margin-bottom: var(--sms-space-2);
+}
+
+/* ========== ACCESSIBILITY ========== */
+
+/* Focus visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--sms-primary-500);
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sms-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip to content link */
+.sms-skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--sms-neutral-900);
+  color: white;
+  padding: var(--sms-space-2) var(--sms-space-4);
+  border-radius: var(--sms-radius-md);
+  text-decoration: none;
+  z-index: var(--sms-z-tooltip);
+  transition: top var(--sms-duration-200) var(--sms-ease-out);
+}
+
+.sms-skip-to-content:focus {
+  top: 6px;
+}
+
+/* ========== PRINT STYLES ========== */
+
+@media print {
+  body {
+    color: black;
+    background: white;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    color: black;
+  }
+  
+  blockquote, pre, img {
+    page-break-inside: avoid;
+  }
+  
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  a {
+    text-decoration: underline;
+    color: black;
+  }
+  
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+  }
+}

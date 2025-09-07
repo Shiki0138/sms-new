@@ -9,9 +9,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907
     <style>
-        /* Page visibility - navigation functionality only */
+        /* Dashboard page specific styles - extends main-unified.css?v=20250907
+
+        /* Dashboard specific extensions to unified CSS */
+        .dashboard-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: 1fr;
+        }
+        
+        /* Enhance stat cards with dashboard-specific styling */
+        .dashboard .stat-card {
+            border-radius: 20px;
+        }
+        
+        .dashboard .stat-card::before {
+            opacity: 1;
+        }
+        
+        /* Enhanced appointment cards */
+        .dashboard .appointment-card {
+            background: var(--gradient-3);
+        }
+        
+        .dashboard .appointment-card:hover {
+            transform: translateX(10px);
+        }
+
+        /* Page visibility - kept for navigation functionality */
         .page {
             display: none;
         }
@@ -20,11 +47,29 @@
             display: block;
         }
         
-        /* Smooth animations for better UX */
+        /* Dashboard-specific content area */
+        .dashboard .content-area {
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* Dashboard specific mobile overrides */
+        @media (max-width: 768px) {
+            .dashboard .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .dashboard .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Dashboard animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -32,25 +77,26 @@
             }
         }
 
-        .stat-card {
-            animation: fadeInUp 0.4s ease-out;
+        .dashboard .stat-card {
+            animation: fadeInUp 0.6s ease-out;
             animation-fill-mode: both;
         }
 
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.15s; }
-        .stat-card:nth-child(3) { animation-delay: 0.2s; }
-        .stat-card:nth-child(4) { animation-delay: 0.25s; }
+        .dashboard .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .dashboard .stat-card:nth-child(4) { animation-delay: 0.4s; }
 
-        .schedule-section {
-            animation: fadeInUp 0.4s ease-out 0.3s;
+        .dashboard .schedule-section {
+            animation: fadeInUp 0.6s ease-out 0.5s;
             animation-fill-mode: both;
         }
+
+        /* Settings styles are now handled by main-unified.css?v=20250907
     </style>
 </head>
 <body>
     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -116,14 +162,14 @@
             <header class="header">
                 <h1 class="page-title">こんにちは、素敵な一日を！</h1>
                 <div class="header-actions">
-                    <button class="icon-button" aria-label="検索">
+                    <button class="icon-button">
                         🔍
                     </button>
-                    <button class="icon-button" aria-label="通知">
+                    <button class="icon-button">
                         🔔
                         <span class="notification-badge"></span>
                     </button>
-                    <button class="icon-button" aria-label="新規追加">
+                    <button class="icon-button">
                         ➕
                     </button>
                 </div>
@@ -167,10 +213,10 @@
             </div>
         </div>
 
-        <section class="schedule-section">
+        <div class="schedule-section">
             <div class="section-header">
                 <h2 class="section-title">本日の予約</h2>
-                <a href="#" class="view-all-btn" data-page="appointments">すべて見る →</a>
+                <a href="#" class="view-all-btn">すべて見る →</a>
             </div>
             <div class="appointment-list">
                 <div class="appointment-card">
@@ -182,7 +228,7 @@
                         <div class="customer-name">山田 花子 様</div>
                         <div class="service-name">カット + カラー + トリートメント</div>
                     </div>
-                    <div class="appointment-status" aria-label="予約確定"></div>
+                    <div class="appointment-status"></div>
                 </div>
 
                 <div class="appointment-card">
@@ -194,7 +240,7 @@
                         <div class="customer-name">佐藤 美咲 様</div>
                         <div class="service-name">カット + パーマ</div>
                     </div>
-                    <div class="appointment-status" aria-label="予約確定"></div>
+                    <div class="appointment-status"></div>
                 </div>
 
                 <div class="appointment-card">
@@ -206,10 +252,10 @@
                         <div class="customer-name">鈴木 真由美 様</div>
                         <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
                     </div>
-                    <div class="appointment-status" aria-label="予約確定"></div>
+                    <div class="appointment-status"></div>
                 </div>
             </div>
-        </section>
+        </div>
         </div>
 
         <!-- Appointments Page -->
@@ -1207,56 +1253,48 @@
         // Mobile menu toggle with improved accessibility
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-        if (mobileMenuToggle && sidebar && sidebarOverlay) {
+        if (mobileMenuToggle && sidebar) {
             // Set up ARIA attributes for accessibility
             mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
             mobileMenuToggle.setAttribute('aria-expanded', 'false');
             sidebar.setAttribute('role', 'navigation');
             sidebar.setAttribute('aria-label', 'メインナビゲーション');
 
-            function closeSidebar() {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
-                document.body.style.overflow = '';
-            }
-
-            function openSidebar() {
-                sidebar.classList.add('mobile-open');
-                sidebarOverlay.classList.add('active');
-                mobileMenuToggle.setAttribute('aria-expanded', 'true');
-                mobileMenuToggle.setAttribute('aria-label', 'メニューを閉じる');
-                document.body.style.overflow = 'hidden';
-            }
-
             mobileMenuToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const isOpen = sidebar.classList.contains('mobile-open');
                 
                 if (isOpen) {
-                    closeSidebar();
+                    sidebar.classList.remove('mobile-open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
+                    document.body.style.overflow = ''; // Re-enable scrolling
                 } else {
-                    openSidebar();
+                    sidebar.classList.add('mobile-open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'true');
+                    mobileMenuToggle.setAttribute('aria-label', 'メニューを閉じる');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
                 }
             });
-
-            // Close sidebar when clicking overlay
-            sidebarOverlay.addEventListener('click', closeSidebar);
 
             // Close sidebar when clicking outside
             document.addEventListener('click', (e) => {
                 if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target) && sidebar.classList.contains('mobile-open')) {
-                    closeSidebar();
+                    sidebar.classList.remove('mobile-open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
+                    document.body.style.overflow = '';
                 }
             });
 
             // Close sidebar on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
-                    closeSidebar();
+                    sidebar.classList.remove('mobile-open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenuToggle.setAttribute('aria-label', 'メニューを開く');
+                    document.body.style.overflow = '';
                     mobileMenuToggle.focus(); // Return focus to toggle button
                 }
             });

@@ -1,0 +1,330 @@
+/*
+ * SMS 美容室管理システム - Main Stylesheet
+ * 
+ * Architecture: SMACSS + BEM + Design System
+ * Single entry point for all styles
+ * 
+ * Import Order (Critical for cascade):
+ * 1. Design System (CSS Variables)
+ * 2. Base (Reset & Typography)
+ * 3. Layout (Grid & Container systems)
+ * 4. Components (Reusable UI elements)
+ * 5. State (Interactive states)
+ * 6. Utilities (Helper classes)
+ * 7. Page-specific styles (loaded separately)
+ * 
+ * Version: 2.0.0
+ * Last Updated: 2025-09-07
+ */
+
+/* ========== 1. DESIGN SYSTEM FOUNDATION ========== */
+@import url('./salon-design-system.css');
+
+/* ========== 2. BASE LAYER ========== */
+@import url('./salon-base.css');
+
+/* ========== 3. LAYOUT LAYER ========== */
+@import url('./salon-layout.css');
+
+/* ========== 4. COMPONENTS LAYER ========== */
+@import url('./salon-components.css');
+
+/* ========== 5. STATE LAYER ========== */
+
+/* Loading states */
+.is-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.is-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--sms-neutral-200);
+  border-top: 2px solid var(--sms-primary-500);
+  border-radius: var(--sms-radius-full);
+  animation: sms-spin 1s linear infinite;
+  z-index: 1;
+}
+
+/* Error states */
+.has-error {
+  border-color: var(--sms-error-500) !important;
+  background-color: var(--sms-error-50);
+}
+
+.has-error:focus {
+  box-shadow: 0 0 0 3px var(--sms-error-100) !important;
+}
+
+/* Success states */
+.has-success {
+  border-color: var(--sms-success-500) !important;
+  background-color: var(--sms-success-50);
+}
+
+.has-success:focus {
+  box-shadow: 0 0 0 3px var(--sms-success-100) !important;
+}
+
+/* Active states */
+.is-active {
+  background-color: var(--sms-primary-100);
+  color: var(--sms-primary-700);
+}
+
+/* Disabled states */
+.is-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Hidden states */
+.is-hidden {
+  display: none !important;
+}
+
+.is-invisible {
+  visibility: hidden;
+}
+
+/* Focus states */
+.is-focused {
+  outline: 2px solid var(--sms-primary-500);
+  outline-offset: 2px;
+}
+
+/* ========== 6. UTILITIES LAYER ========== */
+
+/* Display utilities */
+.sms-block { display: block !important; }
+.sms-inline-block { display: inline-block !important; }
+.sms-inline { display: inline !important; }
+.sms-flex { display: flex !important; }
+.sms-inline-flex { display: inline-flex !important; }
+.sms-grid { display: grid !important; }
+.sms-hidden { display: none !important; }
+
+/* Position utilities */
+.sms-static { position: static !important; }
+.sms-relative { position: relative !important; }
+.sms-absolute { position: absolute !important; }
+.sms-fixed { position: fixed !important; }
+.sms-sticky { position: sticky !important; }
+
+/* Text utilities */
+.sms-text-left { text-align: left !important; }
+.sms-text-center { text-align: center !important; }
+.sms-text-right { text-align: right !important; }
+.sms-text-justify { text-align: justify !important; }
+
+.sms-text-xs { font-size: var(--sms-text-xs) !important; }
+.sms-text-sm { font-size: var(--sms-text-sm) !important; }
+.sms-text-base { font-size: var(--sms-text-base) !important; }
+.sms-text-lg { font-size: var(--sms-text-lg) !important; }
+.sms-text-xl { font-size: var(--sms-text-xl) !important; }
+.sms-text-2xl { font-size: var(--sms-text-2xl) !important; }
+.sms-text-3xl { font-size: var(--sms-text-3xl) !important; }
+
+.sms-font-light { font-weight: var(--sms-font-light) !important; }
+.sms-font-normal { font-weight: var(--sms-font-normal) !important; }
+.sms-font-medium { font-weight: var(--sms-font-medium) !important; }
+.sms-font-semibold { font-weight: var(--sms-font-semibold) !important; }
+.sms-font-bold { font-weight: var(--sms-font-bold) !important; }
+
+.sms-uppercase { text-transform: uppercase !important; }
+.sms-lowercase { text-transform: lowercase !important; }
+.sms-capitalize { text-transform: capitalize !important; }
+.sms-normal-case { text-transform: none !important; }
+
+.sms-underline { text-decoration: underline !important; }
+.sms-line-through { text-decoration: line-through !important; }
+.sms-no-underline { text-decoration: none !important; }
+
+/* Color utilities */
+.sms-text-primary { color: var(--sms-primary-600) !important; }
+.sms-text-secondary { color: var(--sms-secondary-600) !important; }
+.sms-text-success { color: var(--sms-success-600) !important; }
+.sms-text-warning { color: var(--sms-warning-600) !important; }
+.sms-text-error { color: var(--sms-error-600) !important; }
+.sms-text-info { color: var(--sms-info-600) !important; }
+
+.sms-text-neutral-400 { color: var(--sms-neutral-400) !important; }
+.sms-text-neutral-500 { color: var(--sms-neutral-500) !important; }
+.sms-text-neutral-600 { color: var(--sms-neutral-600) !important; }
+.sms-text-neutral-700 { color: var(--sms-neutral-700) !important; }
+.sms-text-neutral-800 { color: var(--sms-neutral-800) !important; }
+
+.sms-bg-white { background-color: white !important; }
+.sms-bg-primary { background-color: var(--sms-primary-500) !important; }
+.sms-bg-secondary { background-color: var(--sms-secondary-500) !important; }
+.sms-bg-success { background-color: var(--sms-success-500) !important; }
+.sms-bg-warning { background-color: var(--sms-warning-500) !important; }
+.sms-bg-error { background-color: var(--sms-error-500) !important; }
+
+.sms-bg-primary-50 { background-color: var(--sms-primary-50) !important; }
+.sms-bg-neutral-50 { background-color: var(--sms-neutral-50) !important; }
+.sms-bg-neutral-100 { background-color: var(--sms-neutral-100) !important; }
+
+/* Border utilities */
+.sms-border { border: var(--sms-border-width-1) solid var(--sms-neutral-200) !important; }
+.sms-border-0 { border: 0 !important; }
+.sms-border-t { border-top: var(--sms-border-width-1) solid var(--sms-neutral-200) !important; }
+.sms-border-r { border-right: var(--sms-border-width-1) solid var(--sms-neutral-200) !important; }
+.sms-border-b { border-bottom: var(--sms-border-width-1) solid var(--sms-neutral-200) !important; }
+.sms-border-l { border-left: var(--sms-border-width-1) solid var(--sms-neutral-200) !important; }
+
+.sms-border-primary { border-color: var(--sms-primary-300) !important; }
+.sms-border-secondary { border-color: var(--sms-secondary-300) !important; }
+.sms-border-success { border-color: var(--sms-success-300) !important; }
+.sms-border-warning { border-color: var(--sms-warning-300) !important; }
+.sms-border-error { border-color: var(--sms-error-300) !important; }
+
+/* Border radius utilities */
+.sms-rounded-none { border-radius: 0 !important; }
+.sms-rounded-sm { border-radius: var(--sms-radius-sm) !important; }
+.sms-rounded { border-radius: var(--sms-radius-base) !important; }
+.sms-rounded-md { border-radius: var(--sms-radius-md) !important; }
+.sms-rounded-lg { border-radius: var(--sms-radius-lg) !important; }
+.sms-rounded-xl { border-radius: var(--sms-radius-xl) !important; }
+.sms-rounded-full { border-radius: var(--sms-radius-full) !important; }
+
+/* Shadow utilities */
+.sms-shadow-none { box-shadow: none !important; }
+.sms-shadow-sm { box-shadow: var(--sms-shadow-sm) !important; }
+.sms-shadow { box-shadow: var(--sms-shadow-base) !important; }
+.sms-shadow-md { box-shadow: var(--sms-shadow-md) !important; }
+.sms-shadow-lg { box-shadow: var(--sms-shadow-lg) !important; }
+.sms-shadow-xl { box-shadow: var(--sms-shadow-xl) !important; }
+
+/* Width and height utilities */
+.sms-w-auto { width: auto !important; }
+.sms-w-full { width: 100% !important; }
+.sms-w-screen { width: 100vw !important; }
+.sms-w-fit { width: fit-content !important; }
+
+.sms-h-auto { height: auto !important; }
+.sms-h-full { height: 100% !important; }
+.sms-h-screen { height: 100vh !important; }
+.sms-h-fit { height: fit-content !important; }
+
+/* Min/Max utilities */
+.sms-min-w-0 { min-width: 0 !important; }
+.sms-min-w-full { min-width: 100% !important; }
+.sms-min-h-0 { min-height: 0 !important; }
+.sms-min-h-full { min-height: 100% !important; }
+.sms-min-h-screen { min-height: 100vh !important; }
+
+.sms-max-w-none { max-width: none !important; }
+.sms-max-w-xs { max-width: 20rem !important; }
+.sms-max-w-sm { max-width: 24rem !important; }
+.sms-max-w-md { max-width: 28rem !important; }
+.sms-max-w-lg { max-width: 32rem !important; }
+.sms-max-w-xl { max-width: 36rem !important; }
+.sms-max-w-2xl { max-width: 42rem !important; }
+.sms-max-w-full { max-width: 100% !important; }
+
+/* Overflow utilities */
+.sms-overflow-auto { overflow: auto !important; }
+.sms-overflow-hidden { overflow: hidden !important; }
+.sms-overflow-visible { overflow: visible !important; }
+.sms-overflow-scroll { overflow: scroll !important; }
+
+.sms-overflow-x-auto { overflow-x: auto !important; }
+.sms-overflow-x-hidden { overflow-x: hidden !important; }
+.sms-overflow-y-auto { overflow-y: auto !important; }
+.sms-overflow-y-hidden { overflow-y: hidden !important; }
+
+/* Z-index utilities */
+.sms-z-0 { z-index: 0 !important; }
+.sms-z-10 { z-index: 10 !important; }
+.sms-z-20 { z-index: 20 !important; }
+.sms-z-30 { z-index: 30 !important; }
+.sms-z-40 { z-index: 40 !important; }
+.sms-z-50 { z-index: 50 !important; }
+.sms-z-auto { z-index: auto !important; }
+
+/* Cursor utilities */
+.sms-cursor-auto { cursor: auto !important; }
+.sms-cursor-pointer { cursor: pointer !important; }
+.sms-cursor-not-allowed { cursor: not-allowed !important; }
+.sms-cursor-wait { cursor: wait !important; }
+.sms-cursor-text { cursor: text !important; }
+.sms-cursor-move { cursor: move !important; }
+
+/* User select utilities */
+.sms-select-none { user-select: none !important; }
+.sms-select-text { user-select: text !important; }
+.sms-select-all { user-select: all !important; }
+.sms-select-auto { user-select: auto !important; }
+
+/* ========== 7. RESPONSIVE UTILITIES ========== */
+
+/* Mobile first responsive prefixes */
+@media (min-width: 640px) {
+  .sm\:sms-block { display: block !important; }
+  .sm\:sms-hidden { display: none !important; }
+  .sm\:sms-flex { display: flex !important; }
+  .sm\:sms-text-left { text-align: left !important; }
+  .sm\:sms-text-center { text-align: center !important; }
+  .sm\:sms-text-right { text-align: right !important; }
+}
+
+@media (min-width: 768px) {
+  .md\:sms-block { display: block !important; }
+  .md\:sms-hidden { display: none !important; }
+  .md\:sms-flex { display: flex !important; }
+  .md\:sms-text-left { text-align: left !important; }
+  .md\:sms-text-center { text-align: center !important; }
+  .md\:sms-text-right { text-align: right !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:sms-block { display: block !important; }
+  .lg\:sms-hidden { display: none !important; }
+  .lg\:sms-flex { display: flex !important; }
+  .lg\:sms-text-left { text-align: left !important; }
+  .lg\:sms-text-center { text-align: center !important; }
+  .lg\:sms-text-right { text-align: right !important; }
+}
+
+/* ========== 8. PERFORMANCE OPTIMIZATIONS ========== */
+
+/* GPU acceleration for smoother animations */
+.sms-transform-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Prevent layout thrashing */
+.sms-layout-stable {
+  contain: layout style paint;
+}
+
+/* Optimize font rendering */
+.sms-text-render-optimized {
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+
+/* ========== 9. DEBUG UTILITIES (Development only) ========== */
+
+@media screen and (max-width: 100000px) {
+  .debug-outline * {
+    outline: 1px solid rgba(255, 0, 0, 0.3) !important;
+  }
+  
+  .debug-grid {
+    background-image: 
+      linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+}

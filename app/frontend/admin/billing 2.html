@@ -46,8 +46,8 @@
                 </div>
             </div>
             
-            <div class="salon-grid salon-grid-2">
-                <div class="salon-grid-item">
+            <div class="row">
+                <div class="col-md-6">
                     <div class="usage-item">
                         <div class="usage-label">
                             <span>予約数</span>
@@ -58,7 +58,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="salon-grid-item">
+                <div class="col-md-6">
                     <div class="usage-item">
                         <div class="usage-label">
                             <span>SMS送信数</span>
@@ -78,19 +78,19 @@
         </div>
 
         <!-- Plan Cards -->
-        <h2 class="salon-heading">プランを選択</h2>
-        <div class="salon-grid salon-grid-3 salon-plan-grid">
+        <h2 class="h4 mb-4">プランを選択</h2>
+        <div class="row g-4 mb-5">
             <!-- Light Plan -->
-            <div class="salon-grid-item">
-                <div class="salon-plan-card plan-light" data-plan="LIGHT">
-                    <div class="salon-current-badge" style="display: none;">現在のプラン</div>
-                    <div class="salon-plan-header">
-                        <div class="salon-plan-name">ライトプラン</div>
-                        <div class="salon-plan-price">¥2,980<small>/月</small></div>
+            <div class="col-md-4">
+                <div class="plan-card plan-light" data-plan="LIGHT">
+                    <div class="current-badge" style="display: none;">現在のプラン</div>
+                    <div class="plan-header">
+                        <div class="plan-name">ライトプラン</div>
+                        <div class="plan-price">¥2,980<small>/月</small></div>
                         <div>基本機能で始める</div>
                     </div>
-                    <div class="salon-plan-body">
-                        <ul class="salon-feature-list">
+                    <div class="card-body">
+                        <ul class="feature-list">
                             <li><i class="fas fa-check check"></i> オンライン予約</li>
                             <li><i class="fas fa-check check"></i> 予約ウィジェット</li>
                             <li><i class="fas fa-check check"></i> Googleカレンダー連携</li>
@@ -102,7 +102,7 @@
                             <li><i class="fas fa-times times"></i> 高度な分析</li>
                             <li><i class="fas fa-times times"></i> WhatsApp/LINE連携</li>
                         </ul>
-                        <button class="salon-btn salon-btn-outline salon-btn-full-width" onclick="selectPlan('LIGHT')">
+                        <button class="btn btn-outline-primary w-100" onclick="selectPlan('LIGHT')">
                             選択する
                         </button>
                     </div>
@@ -110,16 +110,16 @@
             </div>
 
             <!-- Standard Plan -->
-            <div class="salon-grid-item">
-                <div class="salon-plan-card plan-standard" data-plan="STANDARD">
-                    <div class="salon-current-badge" style="display: none;">現在のプラン</div>
-                    <div class="salon-plan-header">
-                        <div class="salon-plan-name">スタンダードプラン</div>
-                        <div class="salon-plan-price">¥5,980<small>/月</small></div>
+            <div class="col-md-4">
+                <div class="plan-card plan-standard" data-plan="STANDARD">
+                    <div class="current-badge" style="display: none;">現在のプラン</div>
+                    <div class="plan-header">
+                        <div class="plan-name">スタンダードプラン</div>
+                        <div class="plan-price">¥5,980<small>/月</small></div>
                         <div>人気No.1</div>
                     </div>
-                    <div class="salon-plan-body">
-                        <ul class="salon-feature-list">
+                    <div class="card-body">
+                        <ul class="feature-list">
                             <li><i class="fas fa-check check"></i> ライトプランの全機能</li>
                             <li><i class="fas fa-check check"></i> 高度な分析レポート</li>
                             <li><i class="fas fa-check check"></i> WhatsApp連携</li>
@@ -131,7 +131,7 @@
                             <li><i class="fas fa-check check"></i> スタッフ数: 10名まで</li>
                             <li><i class="fas fa-check check"></i> カスタムブランディング</li>
                         </ul>
-                        <button class="salon-btn salon-btn-primary salon-btn-full-width" onclick="selectPlan('STANDARD')">
+                        <button class="btn btn-upgrade w-100" onclick="selectPlan('STANDARD')">
                             アップグレード
                         </button>
                     </div>
@@ -139,16 +139,16 @@
             </div>
 
             <!-- Premium Plan -->
-            <div class="salon-grid-item">
-                <div class="salon-plan-card plan-premium" data-plan="PREMIUM">
-                    <div class="salon-current-badge" style="display: none;">現在のプラン</div>
-                    <div class="salon-plan-header">
-                        <div class="salon-plan-name">プレミアムプラン</div>
-                        <div class="salon-plan-price">¥9,980<small>/月</small></div>
+            <div class="col-md-4">
+                <div class="plan-card plan-premium" data-plan="PREMIUM">
+                    <div class="current-badge" style="display: none;">現在のプラン</div>
+                    <div class="plan-header">
+                        <div class="plan-name">プレミアムプラン</div>
+                        <div class="plan-price">¥9,980<small>/月</small></div>
                         <div>全機能を利用可能</div>
                     </div>
-                    <div class="salon-plan-body">
-                        <ul class="salon-feature-list">
+                    <div class="card-body">
+                        <ul class="feature-list">
                             <li><i class="fas fa-check check"></i> 全ての機能が利用可能</li>
                             <li><i class="fas fa-check check"></i> 複数店舗管理</li>
                             <li><i class="fas fa-check check"></i> APIアクセス</li>
@@ -160,7 +160,7 @@
                             <li><i class="fas fa-check check"></i> 顧客数: 無制限</li>
                             <li><i class="fas fa-check check"></i> バルクSMS送信</li>
                         </ul>
-                        <button class="salon-btn salon-btn-primary salon-btn-full-width" onclick="selectPlan('PREMIUM')">
+                        <button class="btn btn-upgrade w-100" onclick="selectPlan('PREMIUM')">
                             アップグレード
                         </button>
                     </div>
@@ -169,13 +169,13 @@
         </div>
 
         <!-- Feature Comparison -->
-        <div class="salon-card salon-comparison-card">
-            <div class="salon-card-header">
-                <h3 class="salon-card-title">機能比較</h3>
+        <div class="card mb-5">
+            <div class="card-header">
+                <h3 class="h5 mb-0">機能比較</h3>
             </div>
-            <div class="salon-card-body">
-                <div class="salon-table-wrapper">
-                    <table class="salon-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>機能</th>
@@ -235,23 +235,23 @@
     </div>
 
     <!-- Plan Selection Modal -->
-    <div class="salon-modal" id="planModal" style="display: none;">
-        <div class="salon-modal-dialog">
-            <div class="salon-modal-content">
-                <div class="salon-modal-header">
-                    <h5 class="salon-modal-title">プラン変更の確認</h5>
-                    <button type="button" class="salon-modal-close" onclick="closeModal()">×</button>
+    <div class="modal fade" id="planModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">プラン変更の確認</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="salon-modal-body">
+                <div class="modal-body">
                     <p id="planChangeMessage"></p>
-                    <div class="salon-alert salon-alert-info">
+                    <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> 
                         プラン変更は次回の請求日から適用されます。
                     </div>
                 </div>
-                <div class="salon-modal-footer">
-                    <button type="button" class="salon-btn salon-btn-secondary" onclick="closeModal()">キャンセル</button>
-                    <button type="button" class="salon-btn salon-btn-primary" onclick="confirmPlanChange()">変更を確定</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmPlanChange()">変更を確定</button>
                 </div>
             </div>
         </div>
@@ -366,17 +366,12 @@
             }
             
             selectedPlan = planId;
-            const modal = document.getElementById('planModal');
+            const modal = new bootstrap.Modal(document.getElementById('planModal'));
             
             const message = `${getPlanName(currentSubscription.planId)}から${getPlanName(planId)}に変更しますか？`;
             document.getElementById('planChangeMessage').textContent = message;
             
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('planModal');
-            modal.style.display = 'none';
+            modal.show();
         }
 
         async function confirmPlanChange() {
@@ -406,7 +401,8 @@
                 alert('プラン変更中にエラーが発生しました。');
             }
             
-            closeModal();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('planModal'));
+            modal.hide();
         }
 
         function getPlanName(planId) {

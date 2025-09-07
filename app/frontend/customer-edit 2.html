@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>顧客詳細 - Salon Lumière</title>
-    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907
     <style>
-        /* Customer detail page specific styles */
+        /* Customer edit page specific styles */
         .app-container {
             display: flex;
             min-height: 100vh;
@@ -17,42 +17,49 @@
             flex: 1;
         }
 
-        .customer-detail-container {
-            max-width: 1000px;
+        .customer-edit-container {
+            max-width: 800px;
             margin: 0 auto;
         }
 
-        .customer-header {
-            margin-bottom: 2rem;
-        }
-
-        .customer-info {
+        .edit-form {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
-        .info-section {
-            padding: 1.5rem;
+        .form-group {
+            display: flex;
+            flex-direction: column;
         }
 
-        .info-section h3 {
-            color: var(--gray-800);
-            margin-bottom: 1rem;
-        }
-
-        .info-item {
-            margin-bottom: 1rem;
-        }
-
-        .info-label {
+        .form-group label {
             font-weight: 600;
             color: var(--gray-700);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
 
-        .info-value {
-            color: var(--gray-600);
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
         }
     </style>
 </head>

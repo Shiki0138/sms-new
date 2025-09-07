@@ -1,0 +1,211 @@
+/*
+ * SMS 美容室管理システム - Design System Foundation
+ * 
+ * Architecture: SMACSS + BEM + Design Tokens
+ * Purpose: Single Source of Truth for all design elements
+ * 
+ * Layers:
+ * 1. Design Tokens (CSS Variables)
+ * 2. Base (Reset/Normalize)
+ * 3. Layout (Grid/Container system)
+ * 4. Module (Reusable components)
+ * 5. State (Interactive states)
+ * 6. Theme (Contextual variations)
+ */
+
+/* ========== 1. DESIGN TOKENS (CSS Variables) ========== */
+
+:root {
+  /* === Color System === */
+  /* Primary: Elegant Rose Gold (美容室メインカラー) */
+  --sms-primary-50: #fdf9f7;
+  --sms-primary-100: #f9f0e8;
+  --sms-primary-200: #f2e4d1;
+  --sms-primary-300: #e8c5a0;
+  --sms-primary-400: #d4a574;
+  --sms-primary-500: #d4a574; /* Primary base */
+  --sms-primary-600: #b8935f;
+  --sms-primary-700: #a0804d;
+  --sms-primary-800: #876d3e;
+  --sms-primary-900: #6e5a32;
+
+  /* Secondary: Soft Blush Pink */
+  --sms-secondary-50: #fff9f7;
+  --sms-secondary-100: #fdf0ed;
+  --sms-secondary-200: #f8e5e1;
+  --sms-secondary-300: #e8b4b8;
+  --sms-secondary-400: #e8b4b8;
+  --sms-secondary-500: #e8b4b8; /* Secondary base */
+  --sms-secondary-600: #d9a0a4;
+  --sms-secondary-700: #c98b90;
+  --sms-secondary-800: #b5777d;
+  --sms-secondary-900: #a0636a;
+
+  /* Neutral: Professional Grays (WCAG AA compliant) */
+  --sms-neutral-50: #f9fafb;
+  --sms-neutral-100: #f3f4f6;
+  --sms-neutral-200: #e5e7eb;
+  --sms-neutral-300: #d1d5db;
+  --sms-neutral-400: #9ca3af;
+  --sms-neutral-500: #475569; /* Text secondary */
+  --sms-neutral-600: #334155; /* Text primary */
+  --sms-neutral-700: #1e293b;
+  --sms-neutral-800: #0f172a;
+  --sms-neutral-900: #020617;
+
+  /* Semantic Colors */
+  --sms-success-50: #f0fdf4;
+  --sms-success-500: #22c55e;
+  --sms-success-600: #16a34a;
+  --sms-success-700: #15803d;
+
+  --sms-warning-50: #fffbeb;
+  --sms-warning-500: #f59e0b;
+  --sms-warning-600: #d97706;
+  --sms-warning-700: #b45309;
+
+  --sms-error-50: #fef2f2;
+  --sms-error-500: #ef4444;
+  --sms-error-600: #dc2626;
+  --sms-error-700: #b91c1c;
+
+  --sms-info-50: #eff6ff;
+  --sms-info-500: #3b82f6;
+  --sms-info-600: #2563eb;
+  --sms-info-700: #1d4ed8;
+
+  /* === Typography System === */
+  /* Font Families */
+  --sms-font-sans: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --sms-font-serif: 'Playfair Display', 'Times New Roman', serif;
+  --sms-font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+
+  /* Font Sizes (Modular Scale 1.25) */
+  --sms-text-xs: 0.75rem;   /* 12px */
+  --sms-text-sm: 0.875rem;  /* 14px */
+  --sms-text-base: 1rem;    /* 16px */
+  --sms-text-lg: 1.125rem;  /* 18px */
+  --sms-text-xl: 1.25rem;   /* 20px */
+  --sms-text-2xl: 1.5rem;   /* 24px */
+  --sms-text-3xl: 1.875rem; /* 30px */
+  --sms-text-4xl: 2.25rem;  /* 36px */
+  --sms-text-5xl: 3rem;     /* 48px */
+  --sms-text-6xl: 3.75rem;  /* 60px */
+
+  /* Font Weights */
+  --sms-font-light: 300;
+  --sms-font-normal: 400;
+  --sms-font-medium: 500;
+  --sms-font-semibold: 600;
+  --sms-font-bold: 700;
+  --sms-font-extrabold: 800;
+
+  /* Line Heights */
+  --sms-leading-tight: 1.25;
+  --sms-leading-snug: 1.375;
+  --sms-leading-normal: 1.5;
+  --sms-leading-relaxed: 1.625;
+  --sms-leading-loose: 2;
+
+  /* === Spacing System (8px grid) === */
+  --sms-space-0: 0;
+  --sms-space-1: 0.25rem;  /* 4px */
+  --sms-space-2: 0.5rem;   /* 8px */
+  --sms-space-3: 0.75rem;  /* 12px */
+  --sms-space-4: 1rem;     /* 16px */
+  --sms-space-5: 1.25rem;  /* 20px */
+  --sms-space-6: 1.5rem;   /* 24px */
+  --sms-space-8: 2rem;     /* 32px */
+  --sms-space-10: 2.5rem;  /* 40px */
+  --sms-space-12: 3rem;    /* 48px */
+  --sms-space-16: 4rem;    /* 64px */
+  --sms-space-20: 5rem;    /* 80px */
+  --sms-space-24: 6rem;    /* 96px */
+
+  /* === Border System === */
+  --sms-border-width-0: 0;
+  --sms-border-width-1: 1px;
+  --sms-border-width-2: 2px;
+  --sms-border-width-4: 4px;
+
+  /* Border Radius */
+  --sms-radius-none: 0;
+  --sms-radius-sm: 0.125rem;   /* 2px */
+  --sms-radius-base: 0.25rem;  /* 4px */
+  --sms-radius-md: 0.375rem;   /* 6px */
+  --sms-radius-lg: 0.5rem;     /* 8px */
+  --sms-radius-xl: 0.75rem;    /* 12px */
+  --sms-radius-2xl: 1rem;      /* 16px */
+  --sms-radius-full: 9999px;
+
+  /* === Shadow System === */
+  --sms-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --sms-shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --sms-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --sms-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --sms-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --sms-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* === Z-index Scale === */
+  --sms-z-dropdown: 1000;
+  --sms-z-sticky: 1020;
+  --sms-z-fixed: 1030;
+  --sms-z-modal-backdrop: 1040;
+  --sms-z-modal: 1050;
+  --sms-z-popover: 1060;
+  --sms-z-tooltip: 1070;
+  --sms-z-toast: 1080;
+
+  /* === Breakpoints === */
+  --sms-breakpoint-sm: 640px;
+  --sms-breakpoint-md: 768px;
+  --sms-breakpoint-lg: 1024px;
+  --sms-breakpoint-xl: 1280px;
+  --sms-breakpoint-2xl: 1536px;
+
+  /* === Animation === */
+  --sms-duration-75: 75ms;
+  --sms-duration-100: 100ms;
+  --sms-duration-150: 150ms;
+  --sms-duration-200: 200ms;
+  --sms-duration-300: 300ms;
+  --sms-duration-500: 500ms;
+  --sms-duration-700: 700ms;
+  --sms-duration-1000: 1000ms;
+
+  --sms-ease-linear: linear;
+  --sms-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --sms-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --sms-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === Theme Variations === */
+/* Dark Theme Support (Future Enhancement) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Define dark theme tokens here when needed */
+  }
+}
+
+/* === Accessibility === */
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --sms-duration-75: 0ms;
+    --sms-duration-100: 0ms;
+    --sms-duration-150: 0ms;
+    --sms-duration-200: 0ms;
+    --sms-duration-300: 0ms;
+    --sms-duration-500: 0ms;
+    --sms-duration-700: 0ms;
+    --sms-duration-1000: 0ms;
+  }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  :root {
+    --sms-neutral-500: var(--sms-neutral-700);
+    --sms-neutral-600: var(--sms-neutral-800);
+  }
+}

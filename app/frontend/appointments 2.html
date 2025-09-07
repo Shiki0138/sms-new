@@ -69,43 +69,11 @@
             background: #c49660;
             transform: scale(1.1);
         }
-        .main-controls {
-            margin-bottom: 30px;
-        }
-        .view-toggle {
-            display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            justify-content: center;
-            background: #f5f5f5;
-            border-radius: 25px;
-            padding: 4px;
-            max-width: 300px;
-            margin: 0 auto 20px;
-        }
-        .view-toggle-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            background: transparent;
-            color: #666;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        .view-toggle-btn.active {
-            background: #d4a574;
-            color: white;
-            box-shadow: 0 2px 8px rgba(212, 165, 116, 0.3);
-        }
         .filter-bar {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-            justify-content: center;
         }
         .filter-btn {
             padding: 8px 16px;
@@ -115,17 +83,10 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
         .filter-btn.active {
             background: #d4a574;
             color: white;
-        }
-        .calendar-view {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -140,30 +101,17 @@
             </p>
         </div>
 
-        <div class="main-controls">
-            <div class="view-toggle">
-                <button id="listViewBtn" class="view-toggle-btn active" data-view="list">📋 リスト</button>
-                <button id="calendarViewBtn" class="view-toggle-btn" data-view="calendar">📅 カレンダー</button>
-            </div>
-            
-            <div id="listFilters" class="filter-bar">
-                <button class="filter-btn active" data-filter="all">全て</button>
-                <button class="filter-btn" data-filter="today">今日</button>
-                <button class="filter-btn" data-filter="tomorrow">明日</button>
-                <button class="filter-btn" data-filter="this-week">今週</button>
-                <button class="filter-btn" data-filter="confirmed">確定済み</button>
-                <button class="filter-btn" data-filter="pending">保留中</button>
-            </div>
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">全て</button>
+            <button class="filter-btn" data-filter="today">今日</button>
+            <button class="filter-btn" data-filter="tomorrow">明日</button>
+            <button class="filter-btn" data-filter="this-week">今週</button>
+            <button class="filter-btn" data-filter="confirmed">確定済み</button>
+            <button class="filter-btn" data-filter="pending">保留中</button>
         </div>
 
-        <!-- リスト表示 -->
-        <div id="listView" class="appointments-grid">
+        <div class="appointments-grid" id="appointmentsGrid">
             <!-- Appointment cards will be loaded here -->
-        </div>
-        
-        <!-- カレンダー表示 -->
-        <div id="calendarView" class="calendar-view" style="display: none;">
-            <div id="appointmentCalendar"></div>
         </div>
 
         <button class="add-appointment-btn" onclick="openNewAppointmentModal()">
@@ -220,25 +168,13 @@
         </div>
     </div>
 
-    <script src="/js/calendar.js"></script>
     <script src="/js/appointments.js"></script>
     <script>
         // Initialize appointments page
         document.addEventListener('DOMContentLoaded', function() {
             loadAppointments();
             initializeFilters();
-            initializeViewToggle();
         });
-        
-        function initializeViewToggle() {
-            const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
-            viewToggleBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const viewType = this.dataset.view;
-                    switchView(viewType);
-                });
-            });
-        }
 
         async function loadAppointments() {
             try {
@@ -252,7 +188,7 @@
         }
 
         function displayAppointments(appointments) {
-            const grid = document.getElementById('listView');
+            const grid = document.getElementById('appointmentsGrid');
             
             if (appointments.length === 0) {
                 grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">予約がありません</div>';
@@ -404,89 +340,8 @@
         }
 
         function displayError(message) {
-            const grid = document.getElementById('listView');
+            const grid = document.getElementById('appointmentsGrid');
             grid.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">${message}</div>`;
-        }
-        
-        // グローバルカレンダーインスタンス
-        let calendar = null;
-        
-        function initializeCalendar() {
-            if (calendar) {
-                return; // 既に初期化済み
-            }
-            
-            calendar = new AppointmentCalendar('appointmentCalendar', {
-                view: 'month',
-                onDateClick: function(date) {
-                    console.log('Date clicked:', date);
-                    // 日付クリック時の処理
-                    openNewAppointmentModal();
-                    // クリックした日付をフォームに設定
-                    const appointmentDate = document.getElementById('appointmentDate');
-                    if (appointmentDate) {
-                        const dateStr = date.toISOString().split('T')[0];
-                        appointmentDate.value = dateStr;
-                    }
-                    if (date.getHours() > 0) {
-                        const startTime = document.getElementById('startTime');
-                        if (startTime) {
-                            const hours = String(date.getHours()).padStart(2, '0');
-                            const minutes = String(date.getMinutes()).padStart(2, '0');
-                            startTime.value = `${hours}:${minutes}`;
-                        }
-                    }
-                },
-                onAppointmentClick: function(appointment) {
-                    console.log('Appointment clicked:', appointment);
-                    viewAppointmentDetails(appointment.id);
-                }
-            });
-        }
-        
-        function switchView(viewType) {
-            const listView = document.getElementById('listView');
-            const calendarView = document.getElementById('calendarView');
-            const listFilters = document.getElementById('listFilters');
-            const listViewBtn = document.getElementById('listViewBtn');
-            const calendarViewBtn = document.getElementById('calendarViewBtn');
-            
-            // 現在のビューにフェードアウトクラスを追加
-            if (viewType === 'calendar') {
-                listView.classList.add('fade-out');
-                listFilters.style.opacity = '0';
-                
-                setTimeout(() => {
-                    listView.style.display = 'none';
-                    listFilters.style.display = 'none';
-                    calendarView.style.display = 'block';
-                    listViewBtn.classList.remove('active');
-                    calendarViewBtn.classList.add('active');
-                    
-                    // カレンダーを初期化（初回のみ）
-                    initializeCalendar();
-                    
-                    setTimeout(() => {
-                        calendarView.classList.remove('fade-out');
-                    }, 50);
-                }, 200);
-                
-            } else {
-                calendarView.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    calendarView.style.display = 'none';
-                    listView.style.display = 'block';
-                    listFilters.style.display = 'flex';
-                    listViewBtn.classList.add('active');
-                    calendarViewBtn.classList.remove('active');
-                    
-                    setTimeout(() => {
-                        listView.classList.remove('fade-out');
-                        listFilters.style.opacity = '1';
-                    }, 50);
-                }, 200);
-            }
         }
 
         // Handle new appointment form submission

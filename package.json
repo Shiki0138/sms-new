@@ -38,7 +38,7 @@
     "sharp": "^0.33.0",
     "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4",
-    "twilio": "^4.20.0",
+    "twilio": "^5.9.0",
     "uuid": "^9.0.1",
     "validator": "^13.11.0"
   },

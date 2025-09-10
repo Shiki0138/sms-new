@@ -19,10 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Check authentication
 function checkAuth() {
+    // Development mode: 開発環境では認証をバイパス
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('Development mode: Setting demo authentication for messages');
+        authToken = 'demo_token_messages_development';
+        currentUser = {
+            id: 'demo_user',
+            name: '管理者',
+            email: 'admin@salon-lumiere.com',
+            role: 'admin',
+            salonName: 'Salon Lumière',
+            planType: 'premium'
+        };
+        localStorage.setItem('salon_token', authToken);
+        localStorage.setItem('salon_user', JSON.stringify(currentUser));
+        updateUserInfo();
+        return;
+    }
+    
     authToken = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
     const userStr = localStorage.getItem('salon_user') || sessionStorage.getItem('salon_user');
     
     if (!authToken || !userStr) {
+        console.warn('No authentication found, redirecting to login');
         window.location.href = '/login.html';
         return;
     }
@@ -39,9 +58,17 @@ function checkAuth() {
 // Update user info
 function updateUserInfo() {
     if (currentUser) {
-        document.getElementById('userName').textContent = currentUser.name || 'Admin';
-        document.getElementById('salonName').textContent = currentUser.salonName || 'Salon Lumière';
-        document.getElementById('userPlan').textContent = (currentUser.planType || 'light').toUpperCase();
+        // 安全にDOM要素を更新（要素が存在しない場合はスキップ）
+        const userName = document.getElementById('userName');
+        if (userName) userName.textContent = currentUser.name || 'Admin';
+        
+        const salonName = document.getElementById('salonName');
+        if (salonName) salonName.textContent = currentUser.salonName || 'Salon Lumière';
+        
+        const userPlan = document.getElementById('userPlan');
+        if (userPlan) userPlan.textContent = (currentUser.planType || 'premium').toUpperCase();
+        
+        console.log('User info updated successfully for messages page');
     }
 }
 

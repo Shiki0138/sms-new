@@ -13,11 +13,36 @@
     <style>
         /* Page visibility - navigation functionality only */
         .page {
-            display: none;
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
         
         .page.active {
-            display: block;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Force visibility for debugging */
+        .page#customers,
+        .page#staff,
+        .page#services,
+        .page#analytics,
+        .page#settings {
+            min-height: 100px;
+            background: var(--bg-light) !important;
+        }
+        
+        .page#customers.active,
+        .page#staff.active,
+        .page#services.active,
+        .page#analytics.active,
+        .page#settings.active {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         /* Smooth animations for better UX */
@@ -60,27 +85,35 @@
         </div>
 
         <nav class="nav-menu">
-            <a href="#" class="nav-item active" data-page="dashboard">
+            <a href="/dashboard.html" class="nav-item active">
                 <span class="nav-icon">🏠</span>
                 <span>ダッシュボード</span>
             </a>
-            <a href="#" class="nav-item" data-page="appointments">
+            <a href="/appointments.html" class="nav-item">
                 <span class="nav-icon">📅</span>
                 <span>予約管理</span>
             </a>
-            <a href="#" class="nav-item" data-page="customers">
+            <a href="/customers.html" class="nav-item">
                 <span class="nav-icon">👥</span>
                 <span>顧客管理</span>
             </a>
-            <a href="#" class="nav-item" data-page="messages">
+            <a href="/messages.html" class="nav-item">
                 <span class="nav-icon">💬</span>
                 <span>メッセージ</span>
             </a>
-            <a href="#" class="nav-item" data-page="analytics">
-                <span class="nav-icon">📊</span>
-                <span>分析・レポート</span>
+            <a href="/staff.html" class="nav-item">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
             </a>
-            <a href="#" class="nav-item" data-page="settings">
+            <a href="/services.html" class="nav-item">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>レポート</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
                 <span class="nav-icon">⚙️</span>
                 <span>設定</span>
             </a>
@@ -158,7 +191,7 @@
         <section class="schedule-section">
             <div class="section-header">
                 <h2 class="section-title">本日の予約</h2>
-                <a href="#" class="view-all-btn" data-page="appointments">すべて見る →</a>
+                <a href="/appointments.html" class="view-all-btn">すべて見る →</a>
             </div>
             <div class="appointment-list">
                 <div class="appointment-card">
@@ -214,815 +247,713 @@
                 </div>
             </header>
             <div class="content-area">
-                <div id="appointmentCalendar"></div>
-            </div>
-        </div>
-
-        <!-- Customers Page -->
-        <div class="page" id="customers">
-            <header class="header">
-                <h1 class="page-title">顧客管理</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" id="addCustomerBtn">
-                        <span>➕ 新規顧客</span>
-                    </button>
-                    <div class="search-box">
-                        <input type="text" id="customerSearchInput" placeholder="顧客名、電話番号で検索..." class="search-input">
-                        <button class="search-btn" id="customerSearchBtn">🔍</button>
-                    </div>
-                </div>
-            </header>
-            <div class="content-area">
-                <div class="customers-grid" id="customersGrid">
-                    <!-- Customer cards will be loaded here -->
-                    <div class="customer-card" data-customer-id="1">
-                        <div class="customer-header">
-                            <div class="customer-info">
-                                <h3>山田 花子 様</h3>
-                                <div class="customer-details">
-                                    <span class="phone">090-1234-5678</span>
-                                    <span class="email">yamada@email.com</span>
-                                </div>
-                            </div>
-                            <div class="customer-status active">アクティブ</div>
+                <!-- Today's Schedule Overview -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <!-- Time Slot 1 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border-left: 4px solid #10b981;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-dark);">10:00</div>
+                            <div style="background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">確定</div>
                         </div>
-                        <div class="customer-body">
-                            <div class="visit-info">
-                                <div class="info-item">
-                                    <label>最終来店:</label>
-                                    <span>2024-03-15</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>来店回数:</label>
-                                    <span>12回</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>累計金額:</label>
-                                    <span>¥145,000</span>
-                                </div>
-                            </div>
-                            <div class="service-tags">
-                                <span class="service-tag">カット</span>
-                                <span class="service-tag">カラー</span>
-                                <span class="service-tag">トリートメント</span>
-                            </div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">山田 花子 様</h3>
+                        <p style="margin: 0 0 1rem 0; color: var(--text-light); font-size: 0.9rem;">📱 090-1234-5678</p>
+                        <div style="background: var(--gray-50); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">🎨 カット + カラー + トリートメント</div>
+                            <div style="font-size: 0.9rem; color: var(--text-medium);">⏰ 90分 | 💰 ¥12,000 | 👨‍💼 田中スタッフ</div>
                         </div>
-                        <div class="customer-actions">
-                            <button class="btn-action" onclick="viewCustomerDetail(1)">詳細</button>
-                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(1)">カルテ履歴</button>
-                            <button class="btn-action" onclick="editCustomer(1)">編集</button>
-                            <button class="btn-action" onclick="bookAppointment(1)">予約</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">✏️ 編集</button>
                         </div>
                     </div>
-
-                    <div class="customer-card" data-customer-id="2">
-                        <div class="customer-header">
-                            <div class="customer-info">
-                                <h3>佐藤 美咲 様</h3>
-                                <div class="customer-details">
-                                    <span class="phone">080-9876-5432</span>
-                                    <span class="email">sato@email.com</span>
-                                </div>
-                            </div>
-                            <div class="customer-status active">アクティブ</div>
+                    
+                    <!-- Time Slot 2 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border-left: 4px solid #3b82f6;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-dark);">13:00</div>
+                            <div style="background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">確定</div>
                         </div>
-                        <div class="customer-body">
-                            <div class="visit-info">
-                                <div class="info-item">
-                                    <label>最終来店:</label>
-                                    <span>2024-03-14</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>来店回数:</label>
-                                    <span>8回</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>累計金額:</label>
-                                    <span>¥98,000</span>
-                                </div>
-                            </div>
-                            <div class="service-tags">
-                                <span class="service-tag">パーマ</span>
-                                <span class="service-tag">トリートメント</span>
-                            </div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">佐藤 美咲 様</h3>
+                        <p style="margin: 0 0 1rem 0; color: var(--text-light); font-size: 0.9rem;">📱 080-9876-5432</p>
+                        <div style="background: var(--gray-50); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">🌊 パーマ + トリートメント</div>
+                            <div style="font-size: 0.9rem; color: var(--text-medium);">⏰ 120分 | 💰 ¥17,000 | 👨‍💼 佐藤スタッフ</div>
                         </div>
-                        <div class="customer-actions">
-                            <button class="btn-action" onclick="viewCustomerDetail(2)">詳細</button>
-                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(2)">カルテ履歴</button>
-                            <button class="btn-action" onclick="editCustomer(2)">編集</button>
-                            <button class="btn-action" onclick="bookAppointment(2)">予約</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">✏️ 編集</button>
                         </div>
                     </div>
-
-                    <div class="customer-card" data-customer-id="3">
-                        <div class="customer-header">
-                            <div class="customer-info">
-                                <h3>鈴木 真由美 様</h3>
-                                <div class="customer-details">
-                                    <span class="phone">070-1111-2222</span>
-                                    <span class="email">suzuki@email.com</span>
-                                </div>
-                            </div>
-                            <div class="customer-status inactive">しばらく来店なし</div>
+                    
+                    <!-- Time Slot 3 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border-left: 4px solid #f59e0b;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-dark);">15:30</div>
+                            <div style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">待機</div>
                         </div>
-                        <div class="customer-body">
-                            <div class="visit-info">
-                                <div class="info-item">
-                                    <label>最終来店:</label>
-                                    <span>2024-01-10</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>来店回数:</label>
-                                    <span>15回</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>累計金額:</label>
-                                    <span>¥220,000</span>
-                                </div>
-                            </div>
-                            <div class="service-tags">
-                                <span class="service-tag">ヘッドスパ</span>
-                                <span class="service-tag">トリートメント</span>
-                            </div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">高橋 由紀 様</h3>
+                        <p style="margin: 0 0 1rem 0; color: var(--text-light); font-size: 0.9rem;">📱 090-3333-4444</p>
+                        <div style="background: var(--gray-50); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">✂️ カット</div>
+                            <div style="font-size: 0.9rem; color: var(--text-medium);">⏰ 60分 | 💰 ¥4,500 | 👨‍💼 山田スタッフ</div>
                         </div>
-                        <div class="customer-actions">
-                            <button class="btn-action" onclick="viewCustomerDetail(3)">詳細</button>
-                            <button class="btn-action btn-primary" onclick="viewCustomerRecords(3)">カルテ履歴</button>
-                            <button class="btn-action" onclick="editCustomer(3)">編集</button>
-                            <button class="btn-action btn-warning" onclick="sendReturnMessage(3)">復帰促進</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">✏️ 編集</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Pagination -->
-                <div class="pagination">
-                    <button class="pagination-btn" id="customersPrevPage" disabled>← 前へ</button>
-                    <span class="page-info">1 / 1 ページ</span>
-                    <button class="pagination-btn" id="customersNextPage" disabled>次へ →</button>
+                
+                <!-- Weekly Calendar View -->
+                <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="margin: 0; color: var(--text-dark);">📅 今週の予約状況</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary">← 前週</button>
+                            <button class="btn btn-secondary">次週 →</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--gray-200); border-radius: 8px; overflow: hidden;">
+                        <!-- Day Headers -->
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">月</div>
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">火</div>
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">水</div>
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">木</div>
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">金</div>
+                        <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">土</div>
+                        <div style="background: var(--gray-400); color: white; padding: 1rem; text-align: center; font-weight: 500;">日</div>
+                        
+                        <!-- Day Cells -->
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">11</div>
+                            <div style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;">10:00 山田様</div>
+                            <div style="font-size: 0.8rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px;">15:00 田中様</div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">12</div>
+                            <div style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;">11:00 佐藤様</div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">13</div>
+                            <div style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 4px;">14:00 鈴木様</div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem; color: var(--primary);">14</div>
+                            <div style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;">10:00 山田様</div>
+                            <div style="font-size: 0.8rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;">13:00 佐藤様</div>
+                            <div style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px;">15:30 高橋様</div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">15</div>
+                            <div style="font-size: 0.8rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px;">09:30 中村様</div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">16</div>
+                            <div style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px;">10:00 新規様</div>
+                            <div style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px;">14:00 伊藤様</div>
+                        </div>
+                        <div style="background: var(--gray-100); padding: 0.75rem; min-height: 120px;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem; color: var(--text-light);">17</div>
+                            <div style="font-size: 0.8rem; color: var(--text-light);">定休日</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Records Page -->
-        <div class="page" id="records">
-            <header class="header">
-                <h1 class="page-title">カルテ管理</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" id="addRecordBtn">
-                        <span>➕ 新規カルテ</span>
-                    </button>
-                    <div class="search-box">
-                        <input type="text" id="recordSearchInput" placeholder="顧客名、電話番号で検索..." class="search-input">
-                        <button class="search-btn" id="recordSearchBtn">🔍</button>
+        <!-- Messages Page -->
+        <div class="page" id="messages">
+            <header class="header" style="background: var(--gradient-1); border-radius: 12px; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="background: var(--primary); border-radius: 12px; padding: 12px; color: white; font-size: 1.5rem;">💬</div>
+                    <div>
+                        <h1 class="page-title" style="margin: 0; color: var(--text-dark);">メッセージ送信</h1>
+                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">お客様へのメッセージを送信・管理</p>
                     </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="historyBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📋</span>
+                        送信履歴
+                    </button>
+                    <button class="btn btn-primary" id="quickSendBtn" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚡</span>
+                        かんたん送信
+                    </button>
                 </div>
             </header>
             
             <div class="content-area">
-                <!-- Filter Section -->
-                <div class="filter-section">
-                    <div class="filter-group">
-                        <label for="dateFilter">期間で絞り込み:</label>
-                        <select id="dateFilter" class="filter-select">
-                            <option value="all">すべて</option>
-                            <option value="today">今日</option>
-                            <option value="week">今週</option>
-                            <option value="month">今月</option>
-                            <option value="quarter">3か月以内</option>
-                        </select>
+                <!-- Quick Action Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="quick-action-card" onclick="selectQuickAction('reminder')" style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        box-shadow: var(--shadow-md);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">予約リマインダー</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">明日の予約のお客様にリマインド</p>
                     </div>
-                    <div class="filter-group">
-                        <label for="treatmentFilter">施術で絞り込み:</label>
-                        <select id="treatmentFilter" class="filter-select">
-                            <option value="all">すべての施術</option>
-                            <option value="cut">カット</option>
-                            <option value="color">カラー</option>
-                            <option value="perm">パーマ</option>
-                            <option value="treatment">トリートメント</option>
-                            <option value="spa">ヘッドスパ</option>
-                        </select>
+                    
+                    <div class="quick-action-card" onclick="selectQuickAction('thanks')" style="
+                        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                        color: white;
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        box-shadow: var(--shadow-md);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🙏</div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">来店お礼</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">今日来店されたお客様にお礼</p>
                     </div>
-                </div>
-
-                <!-- Records Grid -->
-                <div class="records-grid" id="recordsGrid">
-                    <div class="record-card" data-record-id="1" data-customer-id="1">
-                        <div class="record-header">
-                            <div class="customer-info">
-                                <h3>山田 花子 様</h3>
-                                <span class="phone-number">090-1234-5678</span>
-                            </div>
-                            <div class="record-date">2024-03-15</div>
-                        </div>
-                        <div class="record-body">
-                            <div class="treatment-info">
-                                <span class="treatment-tag cut">カット</span>
-                                <span class="treatment-tag color">カラー</span>
-                            </div>
-                            <div class="record-summary">
-                                前髪を少し短めにカット。カラーはブラウン系で全体的に明るく...
-                            </div>
-                            <div class="photo-preview">
-                                <div class="photo-count">📷 写真 4枚</div>
-                            </div>
-                        </div>
-                        <div class="record-actions">
-                            <button class="btn-view" onclick="viewRecord(1)">詳細</button>
-                            <button class="btn-edit" onclick="editRecord(1)">編集</button>
-                            <button class="btn-copy" onclick="copyRecord(1)">複製</button>
-                        </div>
-                    </div>
-
-                    <div class="record-card" data-record-id="2" data-customer-id="2">
-                        <div class="record-header">
-                            <div class="customer-info">
-                                <h3>佐藤 美咲 様</h3>
-                                <span class="phone-number">080-9876-5432</span>
-                            </div>
-                            <div class="record-date">2024-03-14</div>
-                        </div>
-                        <div class="record-body">
-                            <div class="treatment-info">
-                                <span class="treatment-tag perm">パーマ</span>
-                                <span class="treatment-tag treatment">トリートメント</span>
-                            </div>
-                            <div class="record-summary">
-                                デジタルパーマでゆるめのウェーブ。ダメージケア用トリートメント施術...
-                            </div>
-                            <div class="photo-preview">
-                                <div class="photo-count">📷 写真 6枚</div>
-                            </div>
-                        </div>
-                        <div class="record-actions">
-                            <button class="btn-view" onclick="viewRecord(2)">詳細</button>
-                            <button class="btn-edit" onclick="editRecord(2)">編集</button>
-                            <button class="btn-copy" onclick="copyRecord(2)">複製</button>
-                        </div>
-                    </div>
-
-                    <div class="record-card" data-record-id="3" data-customer-id="3">
-                        <div class="record-header">
-                            <div class="customer-info">
-                                <h3>鈴木 真由美 様</h3>
-                                <span class="phone-number">070-1111-2222</span>
-                            </div>
-                            <div class="record-date">2024-03-13</div>
-                        </div>
-                        <div class="record-body">
-                            <div class="treatment-info">
-                                <span class="treatment-tag spa">ヘッドスパ</span>
-                                <span class="treatment-tag treatment">トリートメント</span>
-                            </div>
-                            <div class="record-summary">
-                                リラクゼーションヘッドスパ60分。保湿トリートメントで毛先ケア...
-                            </div>
-                            <div class="photo-preview">
-                                <div class="photo-count">📷 写真 2枚</div>
-                            </div>
-                        </div>
-                        <div class="record-actions">
-                            <button class="btn-view" onclick="viewRecord(3)">詳細</button>
-                            <button class="btn-edit" onclick="editRecord(3)">編集</button>
-                            <button class="btn-copy" onclick="copyRecord(3)">複製</button>
-                        </div>
+                    
+                    <div class="quick-action-card" onclick="selectQuickAction('followup')" style="
+                        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                        color: white;
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        box-shadow: var(--shadow-md);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">💫</div>
+                        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">アフターフォロー</h3>
+                        <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">施術後のお客様にフォローアップ</p>
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div class="pagination">
-                    <button class="pagination-btn" id="prevPage" disabled>← 前へ</button>
-                    <span class="page-info">1 / 1 ページ</span>
-                    <button class="pagination-btn" id="nextPage" disabled>次へ →</button>
+                <!-- Main Message Compose Area -->
+                <div class="message-compose-area" style="
+                    background: var(--white);
+                    border-radius: 16px;
+                    box-shadow: var(--shadow-md);
+                    overflow: hidden;
+                    border: 1px solid var(--border-color);
+                ">
+
+                <!-- Step-by-Step Message Creation -->
+                <div class="message-creation-steps">
+                    <!-- Step 1: Customer Selection -->
+                    <div class="step-section active" id="step-customer-dashboard" style="padding: 2rem;">
+                        <div class="step-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                            <div>
+                                <h2 style="margin: 0; color: var(--text-dark); font-size: 1.3rem;">送信先のお客様を選択</h2>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">メッセージを送信するお客様を選んでください</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Search -->
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="position: relative;">
+                                <input type="text" id="customerSearchDashboard" placeholder="お客様名または電話番号で検索..." style="
+                                    width: 100%;
+                                    padding: 1rem 1rem 1rem 3rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 12px;
+                                    font-size: 1rem;
+                                    transition: border-color 0.2s;
+                                ">
+                                <div style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); font-size: 1.2rem;">🔍</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Cards -->
+                        <div class="customer-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                            <div class="customer-card" onclick="selectCustomerDashboard('1')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 60px; height: 60px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">山</div>
+                                    <div style="flex: 1;">
+                                        <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">山田 花子 様</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 090-1234-5678</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-light);">
+                                    <span>💅 最終来店: 2024/03/10</span>
+                                    <span>🎨 カット+カラー</span>
+                                </div>
+                            </div>
+                            
+                            <div class="customer-card" onclick="selectCustomerDashboard('2')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 60px; height: 60px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">佐</div>
+                                    <div style="flex: 1;">
+                                        <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">佐藤 美咲 様</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 080-9876-5432</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-light);">
+                                    <span>💅 最終来店: 2024/03/08</span>
+                                    <span>🌊 パーマ+トリートメント</span>
+                                </div>
+                            </div>
+                            
+                            <div class="customer-card" onclick="selectCustomerDashboard('3')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 60px; height: 60px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">鈴</div>
+                                    <div style="flex: 1;">
+                                        <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">鈴木 真由美 様</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 070-1111-2222</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-light);">
+                                    <span>💅 最終来店: 2024/03/05</span>
+                                    <span>💆 ヘッドスパ+トリートメント</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" id="nextToTemplateDashboard" style="
+                                padding: 1rem 2rem;
+                                font-size: 1rem;
+                                border-radius: 12px;
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                            " disabled>
+                                次へ：メッセージ作成 <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Template Selection -->
+                    <div class="step-section" id="step-template-dashboard" style="padding: 2rem; display: none;">
+                        <div class="step-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                            <div>
+                                <h2 style="margin: 0; color: var(--text-dark); font-size: 1.3rem;">メッセージテンプレートを選択</h2>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">用途に合わせてテンプレートを選んでください</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Cards -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                            <div class="template-card" onclick="selectTemplateDashboard('reminder')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">📅</div>
+                                    <div>
+                                        <h3 style="margin: 0; color: var(--text-dark); font-size: 1.1rem;">予約リマインダー</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.85rem;">明日の予約確認</p>
+                                    </div>
+                                </div>
+                                <div style="background: var(--gray-50); border-radius: 8px; padding: 1rem; font-size: 0.9rem; color: var(--text-medium); line-height: 1.4;">
+                                    "{customer_name}様、明日{date} {time}からのご予約を確認いたします。カット+カラーでお待ちしております。変更がございましたらお気軽にご連絡ください。"
+                                </div>
+                            </div>
+                            
+                            <div class="template-card" onclick="selectTemplateDashboard('thanks')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">🙏</div>
+                                    <div>
+                                        <h3 style="margin: 0; color: var(--text-dark); font-size: 1.1rem;">来店お礼</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.85rem;">本日のご来店に感謝</p>
+                                    </div>
+                                </div>
+                                <div style="background: var(--gray-50); border-radius: 8px; padding: 1rem; font-size: 0.9rem; color: var(--text-medium); line-height: 1.4;">
+                                    "{customer_name}様、本日はご来店ありがとうございました。{service}の仕上がりはいかがでしょうか？またのお越しをお待ちしております。"
+                                </div>
+                            </div>
+                            
+                            <div class="template-card" onclick="selectTemplateDashboard('followup')" style="
+                                background: var(--white);
+                                border: 2px solid var(--border-color);
+                                border-radius: 12px;
+                                padding: 1.5rem;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                box-shadow: var(--shadow-sm);
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">💫</div>
+                                    <div>
+                                        <h3 style="margin: 0; color: var(--text-dark); font-size: 1.1rem;">アフターフォロー</h3>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.85rem;">施術後のフォローアップ</p>
+                                    </div>
+                                </div>
+                                <div style="background: var(--gray-50); border-radius: 8px; padding: 1rem; font-size: 0.9rem; color: var(--text-medium); line-height: 1.4;">
+                                    "{customer_name}様、先日は{service}をご利用いただきありがとうございました。髪の調子はいかがですか？何かご質問がございましたらお気軽にご連絡ください。"
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <button class="btn btn-secondary" onclick="goBackToCustomerDashboard()" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <span>←</span> 戻る
+                            </button>
+                            <button class="btn btn-primary" id="nextToComposeDashboard" style="
+                                padding: 1rem 2rem;
+                                font-size: 1rem;
+                                border-radius: 12px;
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                            " disabled>
+                                次へ：メッセージ編集 <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Compose & Send -->
+                    <div class="step-section" id="step-compose-dashboard" style="padding: 2rem; display: none;">
+                        <div class="step-header" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                            <div style="background: var(--primary); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                            <div>
+                                <h2 style="margin: 0; color: var(--text-dark); font-size: 1.3rem;">メッセージを確認・送信</h2>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">内容を確認して送信してください</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem;">
+                            <!-- Message Edit Area -->
+                            <div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">メッセージ内容</label>
+                                    <textarea id="messageContentDashboard" placeholder="メッセージを入力してください..." style="
+                                        width: 100%;
+                                        min-height: 120px;
+                                        padding: 1rem;
+                                        border: 2px solid var(--border-color);
+                                        border-radius: 12px;
+                                        font-size: 1rem;
+                                        font-family: var(--font-family-primary);
+                                        resize: vertical;
+                                        transition: border-color 0.2s;
+                                    " maxlength="160"></textarea>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">
+                                        <span>💡 {customer_name}, {date}, {time}, {service} が使用できます</span>
+                                        <span id="charCountDashboard">0/160文字</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">送信タイミング</label>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; background: var(--white);">
+                                            <input type="radio" name="sendTimingDashboard" value="now" checked>
+                                            <span>⚡ 今すぐ送信</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; background: var(--white);">
+                                            <input type="radio" name="sendTimingDashboard" value="schedule">
+                                            <span>⏰ 予約送信</span>
+                                        </label>
+                                    </div>
+                                    <div id="scheduleInputDashboard" style="display: none; margin-top: 1rem;">
+                                        <input type="datetime-local" id="scheduleTimeDashboard" style="
+                                            padding: 0.75rem;
+                                            border: 2px solid var(--border-color);
+                                            border-radius: 8px;
+                                            font-size: 1rem;
+                                        ">
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 1rem;">
+                                    <button class="btn btn-secondary" onclick="goBackToTemplateDashboard()" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                        <span>←</span> 戻る
+                                    </button>
+                                    <button class="btn btn-secondary" id="saveDraftBtnDashboard" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                        <span>💾</span> 下書き保存
+                                    </button>
+                                    <button class="btn btn-primary" id="sendMessageBtnDashboard" style="
+                                        flex: 1;
+                                        padding: 1rem 2rem;
+                                        font-size: 1rem;
+                                        border-radius: 12px;
+                                        display: inline-flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        gap: 0.5rem;
+                                    ">
+                                        <span>📱</span> 送信する
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Preview Area -->
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">プレビュー</label>
+                                <div style="
+                                    background: var(--gray-900);
+                                    border-radius: 24px;
+                                    padding: 1.5rem;
+                                    color: white;
+                                    position: relative;
+                                    margin-bottom: 1rem;
+                                ">
+                                    <div style="background: var(--primary); border-radius: 18px; padding: 1rem; margin-bottom: 1rem;">
+                                        <div style="font-weight: 500; margin-bottom: 0.5rem;">Salon Lumière</div>
+                                        <div id="previewContentDashboard" style="line-height: 1.4; font-size: 0.95rem;">
+                                            メッセージを入力するとプレビューが表示されます
+                                        </div>
+                                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.5rem;" id="previewTimeDashboard">今</div>
+                                    </div>
+                                    
+                                    <!-- Selected Customer Info -->
+                                    <div id="selectedCustomerInfoDashboard" style="
+                                        background: rgba(255,255,255,0.1);
+                                        border-radius: 12px;
+                                        padding: 1rem;
+                                        font-size: 0.9rem;
+                                    ">
+                                        <div style="font-weight: 500; margin-bottom: 0.5rem;">送信先</div>
+                                        <div id="selectedCustomerDisplayDashboard">顧客を選択してください</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Record Detail Modal -->
-        <div class="modal" id="recordModal">
-            <div class="modal-content record-modal-content">
-                <div class="modal-header">
-                    <h2 id="recordModalTitle">カルテ詳細</h2>
-                    <button class="close-btn" id="closeRecordModal">×</button>
-                </div>
-                <div class="modal-body">
-                    <div class="record-detail-container">
-                        <!-- Customer Information Section -->
-                        <div class="detail-section">
-                            <h3>顧客情報</h3>
-                            <div class="customer-detail-grid">
-                                <div class="detail-item">
-                                    <label>顧客名:</label>
-                                    <span id="detailCustomerName">山田 花子 様</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>電話番号:</label>
-                                    <span id="detailPhoneNumber">090-1234-5678</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>来店日:</label>
-                                    <span id="detailVisitDate">2024-03-15</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>担当スタッフ:</label>
-                                    <span id="detailStaff">田中 美容師</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Treatment Information Section -->
-                        <div class="detail-section">
-                            <h3>施術情報</h3>
-                            <div class="treatment-detail-grid">
-                                <div class="detail-item">
-                                    <label>施術内容:</label>
-                                    <div id="detailTreatments" class="treatment-tags">
-                                        <span class="treatment-tag cut">カット</span>
-                                        <span class="treatment-tag color">カラー</span>
-                                    </div>
-                                </div>
-                                <div class="detail-item">
-                                    <label>施術時間:</label>
-                                    <span id="detailDuration">120分</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>使用商品:</label>
-                                    <span id="detailProducts">イルミナカラー、オラプレックス</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>料金:</label>
-                                    <span id="detailPrice">¥12,000</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Progress Photos Section -->
-                        <div class="detail-section">
-                            <h3>施術写真</h3>
-                            <div class="photo-gallery" id="photoGallery">
-                                <div class="photo-item">
-                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y4ZTVlMSIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkJFRk9SRTwvdGV4dD48L3N2Zz4=" alt="Before photo" class="photo-img">
-                                    <div class="photo-label">施術前</div>
-                                </div>
-                                <div class="photo-item">
-                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Q0YTU3NCIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkFGVEVSPC90ZXh0Pjwvc3ZnPg==" alt="After photo" class="photo-img">
-                                    <div class="photo-label">施術後</div>
-                                </div>
-                                <div class="photo-item">
-                                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2U4YjRiOCIvPjx0ZXh0IHg9Ijc1IiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zZW0iPkRFVEFJTDwvdGV4dD48L3N2Zz4=" alt="Detail photo" class="photo-img">
-                                    <div class="photo-label">詳細</div>
-                                </div>
-                                <div class="photo-upload-area" onclick="uploadPhoto()">
-                                    <span class="upload-icon">📷</span>
-                                    <span>写真を追加</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Notes Section -->
-                        <div class="detail-section">
-                            <h3>施術記録・メモ</h3>
-                            <div class="notes-section">
-                                <div class="note-item">
-                                    <div class="note-header">
-                                        <span class="note-type">カウンセリング</span>
-                                        <span class="note-time">10:00</span>
-                                    </div>
-                                    <div class="note-content">
-                                        前回のカラーの褪色具合を確認。今回は少し明るめにしたいとのご希望。
-                                        髪質は細くて柔らかい。カラーの入りは良好。
-                                    </div>
-                                </div>
-                                <div class="note-item">
-                                    <div class="note-header">
-                                        <span class="note-type">施術</span>
-                                        <span class="note-time">10:15</span>
-                                    </div>
-                                    <div class="note-content">
-                                        カット：前髪5mm、サイド10mm、バック15mmカット
-                                        カラー：イルミナカラー使用、7レベルのアッシュベージュ
-                                    </div>
-                                </div>
-                                <div class="note-item">
-                                    <div class="note-header">
-                                        <span class="note-type">仕上げ</span>
-                                        <span class="note-time">11:45</span>
-                                    </div>
-                                    <div class="note-content">
-                                        オラプレックストリートメント施術。
-                                        ブロー仕上げ。お客様大変満足していただけました。
-                                        次回は6週間後を目安にご提案。
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="add-note-form">
-                                <textarea placeholder="新しいメモを追加..." class="note-textarea" id="newNoteText"></textarea>
-                                <div class="note-form-actions">
-                                    <select class="note-type-select" id="newNoteType">
-                                        <option value="general">一般</option>
-                                        <option value="counseling">カウンセリング</option>
-                                        <option value="treatment">施術</option>
-                                        <option value="finish">仕上げ</option>
-                                        <option value="aftercare">アフターケア</option>
-                                    </select>
-                                    <button class="btn btn-primary" onclick="addNote()">メモ追加</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Treatment History Section -->
-                        <div class="detail-section">
-                            <h3>施術履歴</h3>
-                            <div class="treatment-history">
-                                <div class="history-item">
-                                    <div class="history-date">2024-01-20</div>
-                                    <div class="history-treatment">カット + カラー</div>
-                                    <div class="history-note">前回施術から8週間</div>
-                                </div>
-                                <div class="history-item">
-                                    <div class="history-date">2023-11-25</div>
-                                    <div class="history-treatment">カット + パーマ + トリートメント</div>
-                                    <div class="history-note">初回来店</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" onclick="editRecord()">編集</button>
-                    <button class="btn btn-primary" onclick="printRecord()">印刷</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add/Edit Record Modal -->
-        <div class="modal" id="editRecordModal">
-            <div class="modal-content record-edit-modal-content">
-                <div class="modal-header">
-                    <h2 id="editRecordModalTitle">カルテ編集</h2>
-                    <button class="close-btn" id="closeEditRecordModal">×</button>
-                </div>
-                <div class="modal-body">
-                    <form class="record-form" id="recordForm">
-                        <!-- Customer Selection -->
-                        <div class="form-section">
-                            <h3>顧客選択</h3>
-                            <div class="form-group">
-                                <label for="customerSelect">顧客を選択:</label>
-                                <select id="customerSelect" class="form-control" required>
-                                    <option value="">顧客を選択してください</option>
-                                    <option value="1">山田 花子 (090-1234-5678)</option>
-                                    <option value="2">佐藤 美咲 (080-9876-5432)</option>
-                                    <option value="3">鈴木 真由美 (070-1111-2222)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Visit Information -->
-                        <div class="form-section">
-                            <h3>来店情報</h3>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="visitDate">来店日:</label>
-                                    <input type="date" id="visitDate" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="staffSelect">担当スタッフ:</label>
-                                    <select id="staffSelect" class="form-control" required>
-                                        <option value="">担当者を選択</option>
-                                        <option value="1">田中 美容師</option>
-                                        <option value="2">山本 美容師</option>
-                                        <option value="3">佐々木 美容師</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Treatment Information -->
-                        <div class="form-section">
-                            <h3>施術情報</h3>
-                            <div class="form-group">
-                                <label>施術内容:</label>
-                                <div class="treatment-checkboxes">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="cut"> カット
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="color"> カラー
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="perm"> パーマ
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="treatment"> トリートメント
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="spa"> ヘッドスパ
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="treatments" value="other"> その他
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="treatmentDuration">施術時間:</label>
-                                    <input type="number" id="treatmentDuration" class="form-control" placeholder="分" min="30" max="480">
-                                </div>
-                                <div class="form-group">
-                                    <label for="treatmentPrice">料金:</label>
-                                    <input type="number" id="treatmentPrice" class="form-control" placeholder="円" min="0">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="productsUsed">使用商品:</label>
-                                <input type="text" id="productsUsed" class="form-control" placeholder="使用した商品・薬剤を入力">
-                            </div>
-                        </div>
-
-                        <!-- Photos Section -->
-                        <div class="form-section">
-                            <h3>写真</h3>
-                            <div class="photo-upload-section">
-                                <input type="file" id="photoUpload" accept="image/*" multiple style="display: none;">
-                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoUpload').click()">
-                                    📷 写真をアップロード
-                                </button>
-                                <div class="photo-preview-container" id="photoPreviewContainer">
-                                    <!-- Uploaded photos will be displayed here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Notes Section -->
-                        <div class="form-section">
-                            <h3>施術記録</h3>
-                            <div class="form-group">
-                                <label for="counselingNotes">カウンセリング記録:</label>
-                                <textarea id="counselingNotes" class="form-control" rows="3" placeholder="カウンセリング内容、お客様のご要望などを記録"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="treatmentNotes">施術記録:</label>
-                                <textarea id="treatmentNotes" class="form-control" rows="3" placeholder="具体的な施術内容、技術的な記録を記入"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="finishNotes">仕上げ・その他:</label>
-                                <textarea id="finishNotes" class="form-control" rows="3" placeholder="仕上げの詳細、お客様の反応、次回の提案など"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">キャンセル</button>
-                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存</button>
-                </div>
-            </div>
-        </div>
-
-
-
-
-        <!-- Messages Page -->
-        <div class="page" id="messages">
+        <!-- Staff Page -->
+        <div class="page" id="staff">
             <header class="header">
-                <h1 class="page-title">メッセージ</h1>
+                <h1 class="page-title">👨‍💼 スタッフ管理</h1>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="createMessageBtn">
-                        <span>✉️ 新規メッセージ</span>
+                    <button class="btn btn-primary" id="addStaffBtn">
+                        <span>➕ 新規スタッフ追加</span>
                     </button>
-                    <button class="btn btn-secondary" id="templateManagerBtn">
-                        <span>📝 テンプレート管理</span>
+                    <button class="btn btn-secondary" onclick="exportStaffData()">
+                        <span>📊 データ出力</span>
                     </button>
                 </div>
             </header>
+            
             <div class="content-area">
-                <!-- Message Tabs -->
-                <div class="message-tabs">
-                    <button class="message-tab active" data-tab="compose">作成</button>
-                    <button class="message-tab" data-tab="history">送信履歴</button>
-                    <button class="message-tab" data-tab="templates">テンプレート</button>
-                    <button class="message-tab" data-tab="bulk">一括送信</button>
-                </div>
-
-                <!-- Compose Message Tab -->
-                <div class="message-content active" id="compose-tab">
-                    <div class="compose-section">
-                        <div class="message-form">
-                            <div class="recipient-section">
-                                <h3>送信先選択</h3>
-                                <div class="recipient-options">
-                                    <label class="radio-label">
-                                        <input type="radio" name="recipientType" value="individual" checked>
-                                        個別送信
-                                    </label>
-                                    <label class="radio-label">
-                                        <input type="radio" name="recipientType" value="group">
-                                        グループ送信
-                                    </label>
-                                </div>
-                                <div class="recipient-input">
-                                    <select id="customerSelect" class="form-control">
-                                        <option value="">顧客を選択...</option>
-                                        <option value="1">山田 花子 様 (090-1234-5678)</option>
-                                        <option value="2">佐藤 美咲 様 (080-9876-5432)</option>
-                                        <option value="3">鈴木 真由美 様 (070-1111-2222)</option>
-                                    </select>
-                                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- Staff Card 1 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">田</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">田中 美穂</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">シニアスタッフ</p>
                             </div>
-
-                            <div class="message-template-section">
-                                <h3>テンプレート選択</h3>
-                                <select id="messageTemplate" class="form-control">
-                                    <option value="">テンプレートを選択...</option>
-                                    <option value="reminder">予約リマインダー</option>
-                                    <option value="thanks">来店お礼</option>
-                                    <option value="followup">アフターフォロー</option>
-                                    <option value="promotion">キャンペーン案内</option>
-                                </select>
+                            <div style="color: #10b981; background: #ecfdf5; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">在席中</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                            <div><strong>📱 電話:</strong> 080-1234-5678</div>
+                            <div><strong>💼 勤務歴:</strong> 5年</div>
+                            <div><strong>⭐ 評価:</strong> 4.8/5.0</div>
+                            <div><strong>📅 今月:</strong> 85件</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">スケジュール</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">詳細・編集</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Staff Card 2 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">佐</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">佐藤 健太</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">スタッフ</p>
                             </div>
-
-                            <div class="message-compose-section">
-                                <h3>メッセージ内容</h3>
-                                <textarea id="messageContent" class="message-textarea" 
-                                         placeholder="メッセージを入力してください..."
-                                         maxlength="160"></textarea>
-                                <div class="character-count">
-                                    <span id="charCount">0</span>/160文字
-                                </div>
+                            <div style="color: #f59e0b; background: #fef3c7; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">休憩中</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                            <div><strong>📱 電話:</strong> 090-9876-5432</div>
+                            <div><strong>💼 勤務歴:</strong> 3年</div>
+                            <div><strong>⭐ 評価:</strong> 4.6/5.0</div>
+                            <div><strong>📅 今月:</strong> 68件</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">スケジュール</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">詳細・編集</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Staff Card 3 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">山</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">山田 さやか</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">スタッフ</p>
                             </div>
-
-                            <div class="send-timing-section">
-                                <h3>送信タイミング</h3>
-                                <div class="timing-options">
-                                    <label class="radio-label">
-                                        <input type="radio" name="sendTiming" value="now" checked>
-                                        今すぐ送信
-                                    </label>
-                                    <label class="radio-label">
-                                        <input type="radio" name="sendTiming" value="schedule">
-                                        予約送信
-                                    </label>
-                                </div>
-                                <div class="schedule-input" style="display: none;">
-                                    <input type="datetime-local" id="scheduleTime" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="preview-section">
-                                <h3>プレビュー</h3>
-                                <div class="message-preview">
-                                    <div class="preview-phone">
-                                        <div class="preview-header">Salon Lumière</div>
-                                        <div class="preview-content" id="previewContent">
-                                            メッセージを入力するとプレビューが表示されます
-                                        </div>
-                                        <div class="preview-time">今</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="send-actions">
-                                <button class="btn btn-secondary" id="saveDraftBtn">下書き保存</button>
-                                <button class="btn btn-primary" id="sendMessageBtn">送信</button>
-                            </div>
+                            <div style="color: #ef4444; background: #fee2e2; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">休日</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                            <div><strong>📱 電話:</strong> 070-5555-1111</div>
+                            <div><strong>💼 勤務歴:</strong> 2年</div>
+                            <div><strong>⭐ 評価:</strong> 4.5/5.0</div>
+                            <div><strong>📅 今月:</strong> 55件</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">スケジュール</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">詳細・編集</button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Message History Tab -->
-                <div class="message-content" id="history-tab">
-                    <div class="history-filters">
-                        <div class="filter-row">
-                            <select id="historyFilter" class="form-control">
-                                <option value="all">すべて</option>
-                                <option value="sent">送信済み</option>
-                                <option value="failed">送信失敗</option>
-                                <option value="scheduled">送信予定</option>
-                            </select>
-                            <input type="date" id="dateFilter" class="form-control">
-                            <input type="text" id="searchFilter" class="form-control" placeholder="顧客名、電話番号で検索">
-                        </div>
-                    </div>
-
-                    <div class="message-history-list">
-                        <div class="history-item sent">
-                            <div class="history-header">
-                                <div class="recipient-info">
-                                    <strong>山田 花子 様</strong>
-                                    <span class="phone">090-1234-5678</span>
-                                </div>
-                                <div class="send-info">
-                                    <span class="status success">送信済み</span>
-                                    <span class="send-time">2024-03-15 14:30</span>
-                                </div>
-                            </div>
-                            <div class="message-content-preview">
-                                山田様、明日の予約のご確認です。3月16日 10:00〜カット+カラーでお待ちしております。変更がございましたらお気軽にご連絡ください。
-                            </div>
-                            <div class="history-actions">
-                                <button class="btn-resend">再送信</button>
-                                <button class="btn-detail">詳細</button>
-                            </div>
-                        </div>
-
-                        <div class="history-item sent">
-                            <div class="history-header">
-                                <div class="recipient-info">
-                                    <strong>佐藤 美咲 様</strong>
-                                    <span class="phone">080-9876-5432</span>
-                                </div>
-                                <div class="send-info">
-                                    <span class="status success">送信済み</span>
-                                    <span class="send-time">2024-03-14 16:45</span>
-                                </div>
-                            </div>
-                            <div class="message-content-preview">
-                                佐藤様、本日はご来店ありがとうございました。パーマの仕上がりはいかがでしょうか？何かご質問がございましたらお気軽にご連絡ください。
-                            </div>
-                            <div class="history-actions">
-                                <button class="btn-resend">再送信</button>
-                                <button class="btn-detail">詳細</button>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Services Page -->
+        <div class="page" id="services">
+            <header class="header">
+                <h1 class="page-title">✂️ サービス管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="addServiceBtn">
+                        <span>➕ 新規サービス追加</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportServiceData()">
+                        <span>📊 メニュー出力</span>
+                    </button>
                 </div>
-
-                <!-- Templates Tab -->
-                <div class="message-content" id="templates-tab">
-                    <div class="template-actions">
-                        <button class="btn btn-primary" id="createTemplateBtn">➕ 新規テンプレート</button>
-                    </div>
-
-                    <div class="templates-grid">
-                        <div class="template-card">
-                            <div class="template-header">
-                                <h4>予約リマインダー</h4>
-                                <div class="template-category">リマインダー</div>
+            </header>
+            
+            <div class="content-area">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <!-- Service Card 1 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">✂️</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">カット</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">基本コース</p>
                             </div>
-                            <div class="template-preview">
-                                {customer_name}様、明日の予約のご確認です。{date} {time}〜{service}でお待ちしております。
-                            </div>
-                            <div class="template-actions">
-                                <button class="btn-use">使用</button>
-                                <button class="btn-edit">編集</button>
-                                <button class="btn-delete">削除</button>
-                            </div>
+                            <div style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">¥4,500</div>
                         </div>
-
-                        <div class="template-card">
-                            <div class="template-header">
-                                <h4>来店お礼</h4>
-                                <div class="template-category">お礼</div>
-                            </div>
-                            <div class="template-preview">
-                                {customer_name}様、本日はご来店ありがとうございました。{service}の仕上がりはいかがでしょうか？
-                            </div>
-                            <div class="template-actions">
-                                <button class="btn-use">使用</button>
-                                <button class="btn-edit">編集</button>
-                                <button class="btn-delete">削除</button>
-                            </div>
+                        <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium);">
+                            <p style="margin: 0;">⏰ 所要時間: 60分</p>
+                            <p style="margin: 0.25rem 0 0 0;">📊 今月実績: 134件</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">統計</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">編集</button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Bulk Send Tab -->
-                <div class="message-content" id="bulk-tab">
-                    <div class="bulk-send-section">
-                        <div class="recipient-selection">
-                            <h3>送信対象選択</h3>
-                            <div class="selection-options">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="selectAll"> すべての顧客
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="selectActive"> アクティブ顧客のみ
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="selectInactive"> しばらく来店のない顧客
-                                </label>
+                    
+                    <!-- Service Card 2 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">🎨</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">カラー</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">染髪・ブリーチ</p>
                             </div>
-                            
-                            <div class="selected-count">
-                                選択中: <span id="selectedCount">0</span>名
+                            <div style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">¥8,000</div>
+                        </div>
+                        <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium);">
+                            <p style="margin: 0;">⏰ 所要時間: 90分</p>
+                            <p style="margin: 0.25rem 0 0 0;">📊 今月実績: 89件</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">統計</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">編集</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Card 3 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">🌊</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">パーマ</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">デジタル・コールド</p>
                             </div>
+                            <div style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">¥12,000</div>
                         </div>
-
-                        <div class="bulk-message-section">
-                            <h3>メッセージ内容</h3>
-                            <select id="bulkTemplate" class="form-control">
-                                <option value="">テンプレートを選択...</option>
-                                <option value="campaign">キャンペーン案内</option>
-                                <option value="season">季節のお知らせ</option>
-                                <option value="comeback">復帰促進</option>
-                            </select>
-                            <textarea id="bulkMessageContent" class="message-textarea" 
-                                     placeholder="一括送信メッセージを入力してください..."
-                                     maxlength="160"></textarea>
+                        <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium);">
+                            <p style="margin: 0;">⏰ 所要時間: 120分</p>
+                            <p style="margin: 0.25rem 0 0 0;">📊 今月実績: 45件</p>
                         </div>
-
-                        <div class="bulk-send-actions">
-                            <button class="btn btn-secondary" id="previewBulkBtn">プレビュー</button>
-                            <button class="btn btn-primary" id="sendBulkBtn">一括送信</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">統計</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">編集</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Card 4 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">💆</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">ヘッドスパ</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">リラクゼーション</p>
+                            </div>
+                            <div style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">¥6,000</div>
+                        </div>
+                        <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium);">
+                            <p style="margin: 0;">⏰ 所要時間: 45分</p>
+                            <p style="margin: 0.25rem 0 0 0;">📊 今月実績: 67件</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">統計</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">編集</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Card 5 -->
+                    <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 12px; padding: 12px; font-size: 1.5rem;">✨</div>
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">トリートメント</h3>
+                                <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">毛髪補修・保湿</p>
+                            </div>
+                            <div style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">¥5,000</div>
+                        </div>
+                        <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium);">
+                            <p style="margin: 0;">⏰ 所要時間: 30分</p>
+                            <p style="margin: 0.25rem 0 0 0;">📊 今月実績: 78件</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">統計</button>
+                            <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">編集</button>
                         </div>
                     </div>
                 </div>
@@ -1035,7 +966,7 @@
                 <h1 class="page-title">分析・レポート</h1>
                 <div class="header-actions">
                     <button class="btn btn-secondary" onclick="exportReport()">
-                        <span class="icon">📊</span>
+                        <span class="nav-icon">📊</span>
                         レポート出力
                     </button>
                     <select id="analyticsDateRange" onchange="updateAnalytics()" style="padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 8px;">
@@ -1425,12 +1356,574 @@
                 </div>
             </div>
         </div>
+
+        <!-- Customers Page -->
+        <div class="page" id="customers">
+            <header class="header">
+                <h1 class="page-title">👥 顧客管理</h1>
+                <div class="header-actions">
+                    <!-- 表示切り替えボタン -->
+                    <div class="view-toggle-buttons" style="display: flex; gap: 0.5rem; margin-right: 1rem;">
+                        <button class="btn btn-secondary active" id="cardViewBtn" onclick="switchCustomerView('card')" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            padding: 0.5rem 1rem;
+                            border-radius: 8px;
+                            border: 2px solid #d4a574;
+                            background: #d4a574;
+                            color: white;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        ">
+                            <span>🔲</span>
+                            カード表示
+                        </button>
+                        <button class="btn btn-secondary" id="listViewBtn" onclick="switchCustomerView('list')" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            padding: 0.5rem 1rem;
+                            border-radius: 8px;
+                            border: 2px solid #d4a574;
+                            background: transparent;
+                            color: #d4a574;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        ">
+                            <span>📋</span>
+                            リスト表示
+                        </button>
+                    </div>
+                    <button class="btn btn-primary" id="newCustomerBtn" onclick="showCreateCustomerModal()">
+                        <i class="fas fa-plus"></i>
+                        新規顧客登録
+                    </button>
+                </div>
+            </header>
+            
+            <div class="search-controls">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="顧客名、電話番号、メールアドレスで検索..." id="customerSearch">
+                    <button class="btn btn-secondary" id="searchCustomers">
+                        <i class="fas fa-search"></i>
+                        検索
+                    </button>
+                </div>
+            </div>
+
+            <div class="customers-container" id="customersContainer">
+                <div class="content-area">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                        <!-- Customer Card 1 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">山</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">山田 花子 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 090-1234-5678</p>
+                                </div>
+                                <div style="color: #10b981; background: #ecfdf5; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">VIP</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> yamada@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2024/03/10</div>
+                                <div><strong>🎨 前回施術:</strong> カット+カラー</div>
+                                <div><strong>💰 累計金額:</strong> ¥128,000</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 85%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">23回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Card 2 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">佐</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">佐藤 美咲 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 080-9876-5432</p>
+                                </div>
+                                <div style="color: #3b82f6; background: #dbeafe; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">常連</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> sato@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2024/03/08</div>
+                                <div><strong>🌊 前回施術:</strong> パーマ+トリートメント</div>
+                                <div><strong>💰 累計金額:</strong> ¥89,500</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 65%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">16回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Card 3 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">鈴</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">鈴木 真由美 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 070-1111-2222</p>
+                                </div>
+                                <div style="color: #f59e0b; background: #fef3c7; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">新規</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> suzuki@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2024/03/05</div>
+                                <div><strong>💆 前回施術:</strong> ヘッドスパ+トリートメント</div>
+                                <div><strong>💰 累計金額:</strong> ¥23,000</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 25%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">3回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Card 4 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">田</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">田中 麻衣 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 080-7777-8888</p>
+                                </div>
+                                <div style="color: #10b981; background: #ecfdf5; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">常連</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> mai@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2024/03/12</div>
+                                <div><strong>✂️ 前回施術:</strong> カット</div>
+                                <div><strong>💰 累計金額:</strong> ¥67,500</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 45%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">12回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Card 5 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">高</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">高橋 由紀 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 090-3333-4444</p>
+                                </div>
+                                <div style="color: #3b82f6; background: #dbeafe; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">VIP</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> yuki@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2024/03/14</div>
+                                <div><strong>🎨 前回施術:</strong> カット+カラー+パーマ</div>
+                                <div><strong>💰 累計金額:</strong> ¥195,000</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 95%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">31回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Card 6 -->
+                        <div style="background: var(--white); border-radius: 16px; box-shadow: var(--shadow-md); padding: 1.5rem; border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold;">中</div>
+                                <div style="flex: 1;">
+                                    <h3 style="margin: 0 0 0.25rem 0; color: var(--text-dark); font-size: 1.1rem;">中村 恵美 様</h3>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">📱 070-9999-0000</p>
+                                </div>
+                                <div style="color: #f59e0b; background: #fef3c7; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem;">休眠</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                                <div><strong>📧 メール:</strong> emi@email.com</div>
+                                <div><strong>💅 最終来店:</strong> 2023/12/20</div>
+                                <div><strong>✨ 前回施術:</strong> トリートメント</div>
+                                <div><strong>💰 累計金額:</strong> ¥45,000</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 4px;">来店回数</div>
+                                <div style="background: var(--gray-200); height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: var(--primary); height: 100%; width: 35%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 2px;">8回</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="flex: 1; font-size: 0.9rem;">📞 連絡</button>
+                                <button class="btn btn-primary" style="flex: 1; font-size: 0.9rem;">📝 詳細</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Include app-new.js for authentication and API handling -->
     <script src="/js/calendar.js"></script>
+    <script src="/js/api.js"></script>
     <script src="/js/app-new.js"></script>
     <script src="/js/settings.js"></script>
+    
+    <script>
+        // デバッグ用：関数が利用可能かテスト
+        window.testCustomerFunctions = function() {
+            console.log('switchCustomerView function:', typeof window.switchCustomerView);
+            console.log('renderCustomers function:', typeof window.renderCustomers);
+            console.log('loadCustomers function:', typeof window.loadCustomers);
+            console.log('customersData:', window.customersData);
+        };
+
+        // Dashboard Message Page Functionality
+        let selectedCustomerDashboard = null;
+        let selectedTemplateDashboard = null;
+        
+        // Quick Action Functions for Dashboard
+        window.selectQuickAction = function(type) {
+            // Auto-select template based on quick action
+            selectedTemplateDashboard = type;
+            showStepDashboard('template');
+            // Highlight the corresponding template
+            setTimeout(() => {
+                const templateCard = document.querySelector(`[onclick="selectTemplateDashboard('${type}')"]`);
+                if (templateCard) {
+                    templateCard.click();
+                }
+            }, 100);
+        };
+        
+        // Customer Selection for Dashboard
+        window.selectCustomerDashboard = function(customerId) {
+            selectedCustomerDashboard = customerId;
+            
+            // Remove previous selection
+            document.querySelectorAll('[onclick*="selectCustomerDashboard"]').forEach(card => {
+                card.style.border = '2px solid var(--border-color)';
+                card.style.background = 'var(--white)';
+            });
+            
+            // Highlight selected customer
+            const selectedCard = document.querySelector(`[onclick="selectCustomerDashboard('${customerId}')"]`);
+            if (selectedCard) {
+                selectedCard.style.border = '2px solid var(--primary)';
+                selectedCard.style.background = 'var(--primary-50)';
+            }
+            
+            // Enable next button
+            const nextBtn = document.getElementById('nextToTemplateDashboard');
+            if (nextBtn) nextBtn.disabled = false;
+            
+            // Update preview
+            updateSelectedCustomerDisplayDashboard();
+        };
+        
+        // Template Selection for Dashboard
+        window.selectTemplateDashboard = function(templateType) {
+            selectedTemplateDashboard = templateType;
+            
+            // Remove previous selection
+            document.querySelectorAll('[onclick*="selectTemplateDashboard"]').forEach(card => {
+                card.style.border = '2px solid var(--border-color)';
+                card.style.background = 'var(--white)';
+            });
+            
+            // Highlight selected template
+            const selectedCard = document.querySelector(`[onclick="selectTemplateDashboard('${templateType}')"]`);
+            if (selectedCard) {
+                selectedCard.style.border = '2px solid var(--primary)';
+                selectedCard.style.background = 'var(--primary-50)';
+            }
+            
+            // Enable next button
+            const nextBtn = document.getElementById('nextToComposeDashboard');
+            if (nextBtn) nextBtn.disabled = false;
+            
+            // Load template content
+            loadTemplateContentDashboard(templateType);
+        };
+        
+        // Step Navigation for Dashboard
+        function showStepDashboard(stepName) {
+            // Hide all steps in dashboard
+            const steps = ['step-customer-dashboard', 'step-template-dashboard', 'step-compose-dashboard'];
+            steps.forEach(stepId => {
+                const element = document.getElementById(stepId);
+                if (element) element.style.display = 'none';
+            });
+            
+            // Show selected step
+            const targetStep = document.getElementById(`step-${stepName}-dashboard`);
+            if (targetStep) targetStep.style.display = 'block';
+        }
+        
+        window.goBackToCustomerDashboard = function() {
+            showStepDashboard('customer');
+        };
+        
+        window.goBackToTemplateDashboard = function() {
+            showStepDashboard('template');
+        };
+        
+        // Template Content Loading for Dashboard
+        function loadTemplateContentDashboard(templateType) {
+            const templates = {
+                'reminder': '{customer_name}様、明日{date} {time}からのご予約を確認いたします。カット+カラーでお待ちしております。変更がございましたらお気軽にご連絡ください。',
+                'thanks': '{customer_name}様、本日はご来店ありがとうございました。{service}の仕上がりはいかがでしょうか？またのお越しをお待ちしております。',
+                'followup': '{customer_name}様、先日は{service}をご利用いただきありがとうございました。髪の調子はいかがですか？何かご質問がございましたらお気軽にご連絡ください。'
+            };
+            
+            const content = templates[templateType] || '';
+            const messageContent = document.getElementById('messageContentDashboard');
+            if (messageContent) {
+                messageContent.value = content;
+                updatePreviewDashboard();
+            }
+        }
+        
+        // Customer Display Update for Dashboard
+        function updateSelectedCustomerDisplayDashboard() {
+            const customers = {
+                '1': { name: '山田 花子 様', phone: '090-1234-5678', service: 'カット+カラー' },
+                '2': { name: '佐藤 美咲 様', phone: '080-9876-5432', service: 'パーマ+トリートメント' },
+                '3': { name: '鈴木 真由美 様', phone: '070-1111-2222', service: 'ヘッドスパ+トリートメント' }
+            };
+            
+            const customer = customers[selectedCustomerDashboard];
+            const displayElement = document.getElementById('selectedCustomerDisplayDashboard');
+            if (customer && displayElement) {
+                displayElement.innerHTML = `
+                    <div>${customer.name}</div>
+                    <div style="opacity: 0.8;">${customer.phone}</div>
+                `;
+            }
+        }
+        
+        // Preview Update for Dashboard
+        function updatePreviewDashboard() {
+            const messageContent = document.getElementById('messageContentDashboard');
+            const charCount = document.getElementById('charCountDashboard');
+            const previewContent = document.getElementById('previewContentDashboard');
+            
+            if (!messageContent) return;
+            
+            const content = messageContent.value;
+            const charLength = content.length;
+            
+            // Update character count
+            if (charCount) {
+                charCount.textContent = `${charLength}/160文字`;
+            }
+            
+            // Update preview content
+            let preview = content || 'メッセージを入力するとプレビューが表示されます';
+            
+            // Replace placeholders with sample data
+            if (selectedCustomerDashboard) {
+                const customers = {
+                    '1': { name: '山田 花子', service: 'カット+カラー' },
+                    '2': { name: '佐藤 美咲', service: 'パーマ+トリートメント' },
+                    '3': { name: '鈴木 真由美', service: 'ヘッドスパ+トリートメント' }
+                };
+                const customer = customers[selectedCustomerDashboard];
+                preview = preview
+                    .replace(/{customer_name}/g, customer.name)
+                    .replace(/{service}/g, customer.service)
+                    .replace(/{date}/g, '3月16日')
+                    .replace(/{time}/g, '10:00');
+            }
+            
+            if (previewContent) {
+                previewContent.textContent = preview;
+            }
+        }
+        
+        // Initialize Dashboard Message functionality when messages page is shown
+        function initializeDashboardMessages() {
+            // Next buttons
+            const nextToTemplate = document.getElementById('nextToTemplateDashboard');
+            if (nextToTemplate) {
+                nextToTemplate.addEventListener('click', function() {
+                    showStepDashboard('template');
+                });
+            }
+            
+            const nextToCompose = document.getElementById('nextToComposeDashboard');
+            if (nextToCompose) {
+                nextToCompose.addEventListener('click', function() {
+                    showStepDashboard('compose');
+                    updateSelectedCustomerDisplayDashboard();
+                });
+            }
+            
+            // Message content change
+            const messageContent = document.getElementById('messageContentDashboard');
+            if (messageContent) {
+                messageContent.addEventListener('input', updatePreviewDashboard);
+            }
+            
+            // Schedule timing
+            const timingRadios = document.querySelectorAll('input[name="sendTimingDashboard"]');
+            timingRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const scheduleInput = document.getElementById('scheduleInputDashboard');
+                    if (scheduleInput) {
+                        if (this.value === 'schedule') {
+                            scheduleInput.style.display = 'block';
+                        } else {
+                            scheduleInput.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            // Customer search
+            const customerSearch = document.getElementById('customerSearchDashboard');
+            if (customerSearch) {
+                customerSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    document.querySelectorAll('[onclick*="selectCustomerDashboard"] .customer-card').forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = searchTerm ? 'none' : 'block';
+                        }
+                    });
+                });
+            }
+            
+            // Hover effects for cards
+            document.querySelectorAll('[onclick*="selectQuickAction"], [onclick*="selectCustomerDashboard"], [onclick*="selectTemplateDashboard"]').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = 'var(--shadow-lg)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'var(--shadow-sm)';
+                });
+            });
+        }
+        
+        // Initialize when messages page becomes active
+        document.addEventListener('DOMContentLoaded', function() {
+            // Observer for when messages page is shown
+            const messagesPage = document.getElementById('messages');
+            if (messagesPage) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (messagesPage.classList.contains('active')) {
+                                setTimeout(initializeDashboardMessages, 100);
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(messagesPage, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+                
+                // Initialize immediately if already active
+                if (messagesPage.classList.contains('active')) {
+                    initializeDashboardMessages();
+                }
+            }
+        });
+        
+        // 顧客管理の新規顧客ボタン用
+        window.showCreateCustomerModal = function() {
+            console.log('新規顧客ボタンがクリックされました');
+            alert('新規顧客登録機能 - 実装中です');
+        };
+
+        // Customer cards hover effects
+        function initializeCustomerHoverEffects() {
+            const customerCards = document.querySelectorAll('#customers .content-area > div > div');
+            customerCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                    this.style.boxShadow = 'var(--shadow-lg)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'var(--shadow-md)';
+                });
+            });
+        }
+
+        // Initialize customer hover effects when customers page is shown
+        function initializeCustomersPage() {
+            setTimeout(initializeCustomerHoverEffects, 100);
+        }
+
+        // Add observer for customers page
+        document.addEventListener('DOMContentLoaded', function() {
+            const customersPage = document.getElementById('customers');
+            if (customersPage) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (customersPage.classList.contains('active')) {
+                                initializeCustomersPage();
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(customersPage, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+                
+                // Initialize immediately if already active
+                if (customersPage.classList.contains('active')) {
+                    initializeCustomersPage();
+                }
+            }
+        });
+    </script>
+    
     <script>
         // Mobile menu toggle with improved accessibility
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');

@@ -143,7 +143,65 @@
     </style>
 </head>
 <body>
-    <div class="reports-container">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>ダッシュボード</span>
+            </a>
+            <a href="/appointments.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>予約管理</span>
+            </a>
+            <a href="/customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>顧客管理</span>
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>メッセージ</span>
+            </a>
+            <a href="/staff.html" class="nav-item">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
+            </a>
+            <a href="/services.html" class="nav-item">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="/reports.html" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>レポート</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="reports-container">
         <div class="reports-header">
             <h1 style="color: #8b4513; margin: 0; font-size: 2.5rem; font-family: 'Playfair Display', serif;">
                 📊 レポート・分析
@@ -191,7 +249,8 @@
         <div class="reports-grid" id="reportsGrid">
             <!-- Report cards will be loaded here -->
         </div>
-    </div>
+        </div>
+    </main>
 
     <script>
         // Mock data for reports
@@ -232,6 +291,27 @@
         document.addEventListener('DOMContentLoaded', function() {
             generateReport();
             initializeFilters();
+            
+            // Initialize sidebar functionality
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    sidebarOverlay.classList.toggle('active');
+                    document.body.classList.toggle('sidebar-open');
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                });
+            }
         });
 
         function initializeFilters() {

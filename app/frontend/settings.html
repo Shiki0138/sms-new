@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定 - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+</head>
+<body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>ダッシュボード</span>
+            </a>
+            <a href="/appointments.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>予約管理</span>
+            </a>
+            <a href="/customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>顧客管理</span>
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>メッセージ</span>
+            </a>
+            <a href="/staff.html" class="nav-item">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
+            </a>
+            <a href="/services.html" class="nav-item">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>レポート</span>
+            </a>
+            <a href="/settings.html" class="nav-item active">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1 class="page-title">⚙️ システム設定</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportSettings()">
+                    📥 設定エクスポート
+                </button>
+                <button class="btn btn-primary" onclick="saveAllSettings()">
+                    💾 すべて保存
+                </button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <!-- Settings Navigation -->
+            <div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem;">
+                <!-- Settings Menu -->
+                <div class="settings-nav" style="background: var(--white); border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-md); height: fit-content;">
+                    <div class="settings-nav-item active" onclick="showSettingsTab('general')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem 1rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        background: var(--primary);
+                        color: white;
+                    ">
+                        <span style="font-size: 1.25rem;">🏪</span>
+                        <span>基本設定</span>
+                    </div>
+                    
+                    <div class="settings-nav-item" onclick="showSettingsTab('services')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem 1rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        color: var(--text-dark);
+                    ">
+                        <span style="font-size: 1.25rem;">✂️</span>
+                        <span>サービス管理</span>
+                    </div>
+                    
+                    <div class="settings-nav-item" onclick="showSettingsTab('staff')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem 1rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        color: var(--text-dark);
+                    ">
+                        <span style="font-size: 1.25rem;">👨‍💼</span>
+                        <span>スタッフ管理</span>
+                    </div>
+                    
+                    <div class="settings-nav-item" onclick="showSettingsTab('notifications')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem 1rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        color: var(--text-dark);
+                    ">
+                        <span style="font-size: 1.25rem;">🔔</span>
+                        <span>通知設定</span>
+                    </div>
+                    
+                    <div class="settings-nav-item" onclick="showSettingsTab('security')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0.75rem 1rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        color: var(--text-dark);
+                    ">
+                        <span style="font-size: 1.25rem;">🔒</span>
+                        <span>セキュリティ</span>
+                    </div>
+                </div>
+                
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- General Settings -->
+                    <div class="settings-tab active" id="general-tab" style="background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md);">
+                        <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">🏪 基本設定</h2>
+                        
+                        <div style="display: grid; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">サロン名</label>
+                                <input type="text" class="form-control" value="Salon Lumière" placeholder="サロン名を入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">電話番号</label>
+                                <input type="tel" class="form-control" value="03-1234-5678" placeholder="電話番号を入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">住所</label>
+                                <input type="text" class="form-control" value="東京都渋谷区表参道1-2-3" placeholder="住所を入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.75rem; font-weight: 500; color: var(--text-dark);">営業時間</label>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--gray-50); border-radius: 8px;">
+                                        <input type="time" value="09:00" style="border: none; background: transparent; font-size: 0.9rem;">
+                                        <span>-</span>
+                                        <input type="time" value="19:00" style="border: none; background: transparent; font-size: 0.9rem;">
+                                        <span style="font-size: 0.9rem; color: var(--text-medium);">平日</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: var(--gray-50); border-radius: 8px;">
+                                        <input type="time" value="10:00" style="border: none; background: transparent; font-size: 0.9rem;">
+                                        <span>-</span>
+                                        <input type="time" value="18:00" style="border: none; background: transparent; font-size: 0.9rem;">
+                                        <span style="font-size: 0.9rem; color: var(--text-medium);">土日</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" onclick="saveGeneralSettings()">
+                                💾 基本設定を保存
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Services Settings -->
+                    <div class="settings-tab" id="services-tab" style="background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); display: none;">
+                        <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">✂️ サービス管理</h2>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <button class="btn btn-primary" onclick="addNewService()">
+                                ➕ 新規サービス追加
+                            </button>
+                        </div>
+                        
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">カット</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">基本メニュー</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: bold; color: var(--primary);">¥4,500</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-light);">60分</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="editService('cut')">編集</button>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">カラー</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">ヘアカラー</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: bold; color: var(--primary);">¥8,000</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-light);">90分</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="editService('color')">編集</button>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">パーマ</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">デジタルパーマ</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: bold; color: var(--primary);">¥12,000</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-light);">120分</div>
+                                </div>
+                                <button class="btn btn-secondary" onclick="editService('perm')">編集</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Staff Settings -->
+                    <div class="settings-tab" id="staff-tab" style="background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); display: none;">
+                        <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">👨‍💼 スタッフ管理</h2>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <button class="btn btn-primary" onclick="addNewStaff()">
+                                ➕ 新規スタッフ追加
+                            </button>
+                        </div>
+                        
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">田</div>
+                                    <div>
+                                        <h4 style="margin: 0; color: var(--text-dark);">田中 美穂</h4>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">シニアスタッフ</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" onclick="editStaff('tanaka')">編集</button>
+                                    <button class="btn btn-primary" onclick="viewStaffSchedule('tanaka')">スケジュール</button>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 50px; height: 50px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">佐</div>
+                                    <div>
+                                        <h4 style="margin: 0; color: var(--text-dark);">佐藤 健太</h4>
+                                        <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">スタッフ</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary" onclick="editStaff('sato')">編集</button>
+                                    <button class="btn btn-primary" onclick="viewStaffSchedule('sato')">スケジュール</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications Settings -->
+                    <div class="settings-tab" id="notifications-tab" style="background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); display: none;">
+                        <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">🔔 通知設定</h2>
+                        
+                        <div style="display: grid; gap: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">予約リマインダー</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">予約前日にお客様に自動送信</p>
+                                </div>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked>
+                                    <span>有効</span>
+                                </label>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">新規予約通知</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">新規予約時にスタッフに通知</p>
+                                </div>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked>
+                                    <span>有効</span>
+                                </label>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--gray-50); border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-dark);">お誕生日メッセージ</h4>
+                                    <p style="margin: 0; color: var(--text-light); font-size: 0.9rem;">顧客の誕生日に自動送信</p>
+                                </div>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox">
+                                    <span>有効</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" onclick="saveNotificationSettings()">
+                                💾 通知設定を保存
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Settings -->
+                    <div class="settings-tab" id="security-tab" style="background: var(--white); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow-md); display: none;">
+                        <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">🔒 セキュリティ設定</h2>
+                        
+                        <div style="display: grid; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">現在のパスワード</label>
+                                <input type="password" class="form-control" placeholder="現在のパスワードを入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">新しいパスワード</label>
+                                <input type="password" class="form-control" placeholder="新しいパスワードを入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-dark);">パスワード確認</label>
+                                <input type="password" class="form-control" placeholder="新しいパスワードを再入力" style="
+                                    width: 100%;
+                                    padding: 0.75rem;
+                                    border: 2px solid var(--border-color);
+                                    border-radius: 8px;
+                                    font-size: 1rem;
+                                ">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                            <button class="btn btn-primary" onclick="changePassword()">
+                                🔐 パスワード変更
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Settings tab switching
+        function showSettingsTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Show target tab
+            document.getElementById(`${tabName}-tab`).style.display = 'block';
+            
+            // Update nav items
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+                item.style.background = 'transparent';
+                item.style.color = 'var(--text-dark)';
+            });
+            
+            event.target.style.background = 'var(--primary)';
+            event.target.style.color = 'white';
+        }
+        
+        // Settings functions
+        function saveGeneralSettings() {
+            alert('基本設定を保存しました');
+        }
+        
+        function saveNotificationSettings() {
+            alert('通知設定を保存しました');
+        }
+        
+        function changePassword() {
+            alert('パスワード変更機能 - 実装予定');
+        }
+        
+        function addNewService() {
+            alert('新規サービス追加機能 - 実装予定');
+        }
+        
+        function editService(serviceId) {
+            alert(`サービス編集機能 (${serviceId}) - 実装予定`);
+        }
+        
+        function addNewStaff() {
+            alert('新規スタッフ追加機能 - 実装予定');
+        }
+        
+        function editStaff(staffId) {
+            alert(`スタッフ編集機能 (${staffId}) - 実装予定`);
+        }
+        
+        function viewStaffSchedule(staffId) {
+            alert(`スタッフスケジュール (${staffId}) - 実装予定`);
+        }
+        
+        function exportSettings() {
+            alert('設定エクスポート機能 - 実装予定');
+        }
+        
+        function saveAllSettings() {
+            alert('すべての設定を保存しました');
+        }
+
+        // Initialize settings page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Settings page loaded');
+            
+            // Mobile sidebar functionality
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (mobileMenuToggle && sidebar && sidebarOverlay) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebarOverlay.classList.toggle('active');
+                });
+
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                });
+            }
+
+            // Logout functionality
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/login.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

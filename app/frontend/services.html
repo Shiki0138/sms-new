@@ -43,10 +43,88 @@
             background: #d4a574;
             color: white;
         }
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
+        .services-list {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+        
+        .service-item:last-child {
+            border-bottom: none;
+        }
+        
+        .service-item:hover {
+            background: var(--gray-50);
+        }
+        
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .service-details h3 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .service-details p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .service-meta {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .service-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .service-duration {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+        }
+        
+        .service-stats {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+        
+        .service-actions {
+            display: flex;
+            gap: 0.75rem;
         }
         .service-card {
             background: white;
@@ -141,7 +219,65 @@
     </style>
 </head>
 <body>
-    <div class="services-container">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>ダッシュボード</span>
+            </a>
+            <a href="/appointments.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>予約管理</span>
+            </a>
+            <a href="/customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>顧客管理</span>
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>メッセージ</span>
+            </a>
+            <a href="/staff.html" class="nav-item">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
+            </a>
+            <a href="/services.html" class="nav-item active">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>レポート</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="services-container">
         <div class="services-header">
             <h1 style="color: #8b4513; margin: 0; font-size: 2.5rem; font-family: 'Playfair Display', serif;">
                 💄 サービス管理
@@ -160,14 +296,121 @@
             <button class="category-tab" data-category="special">特別メニュー</button>
         </div>
 
-        <div class="services-grid" id="servicesGrid">
-            <!-- Service cards will be loaded here -->
+        <div class="services-list" id="servicesList">
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>カット</h3>
+                        <p>基本的なヘアカット、スタイリング</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥4,500</div>
+                    <div class="service-duration">60分</div>
+                    <div class="service-stats">月134件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('cut')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('cut')">統計</button>
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>カラー</h3>
+                        <p>ヘアカラー、ブリーチ、グラデーション</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥8,000</div>
+                    <div class="service-duration">90分</div>
+                    <div class="service-stats">月89件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('color')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('color')">統計</button>
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>パーマ</h3>
+                        <p>デジタルパーマ、コールドパーマ</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥12,000</div>
+                    <div class="service-duration">120分</div>
+                    <div class="service-stats">月45件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('perm')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('perm')">統計</button>
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>ヘッドスパ</h3>
+                        <p>リラクゼーション、頭皮ケア</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥6,000</div>
+                    <div class="service-duration">45分</div>
+                    <div class="service-stats">月67件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('spa')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('spa')">統計</button>
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>トリートメント</h3>
+                        <p>毛髪補修、保湿ケア、ダメージケア</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥5,000</div>
+                    <div class="service-duration">30分</div>
+                    <div class="service-stats">月78件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('treatment')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('treatment')">統計</button>
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <div class="service-info">
+                    <div class="service-details">
+                        <h3>セット・ブロー</h3>
+                        <p>スタイリング、仕上げ</p>
+                    </div>
+                </div>
+                <div class="service-meta">
+                    <div class="service-price">¥3,000</div>
+                    <div class="service-duration">30分</div>
+                    <div class="service-stats">月34件</div>
+                </div>
+                <div class="service-actions">
+                    <button class="btn btn-secondary" onclick="editService('styling')">編集</button>
+                    <button class="btn btn-primary" onclick="viewServiceStats('styling')">統計</button>
+                </div>
+            </div>
         </div>
 
         <button class="add-service-btn" onclick="openNewServiceModal()">
             +
         </button>
-    </div>
+        </div>
+    </main>
 
     <!-- New Service Modal -->
     <div id="newServiceModal" class="modal" style="display: none;">
@@ -339,6 +582,27 @@
         document.addEventListener('DOMContentLoaded', function() {
             displayServices(mockServices);
             initializeCategories();
+            
+            // Initialize sidebar functionality
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    sidebarOverlay.classList.toggle('active');
+                    document.body.classList.toggle('sidebar-open');
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                });
+            }
         });
 
         function displayServices(services, filterCategory = 'all') {

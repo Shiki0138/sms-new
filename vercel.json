@@ -1,54 +1,60 @@
 {
   "regions": ["hnd1"],
+  "buildCommand": "echo 'No build required'",
+  "devCommand": "PORT=3000 node app/backend/server-clean.js",
+  "installCommand": "npm install",
+  "framework": null,
+  "outputDirectory": "app/frontend",
+  "public": false,
   "headers": [],
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     },
     {
       "source": "/",
-      "destination": "/public/login.html"
+      "destination": "/login.html"
     },
     {
       "source": "/login",
-      "destination": "/public/login.html"
+      "destination": "/login.html"
     },
     {
       "source": "/dashboard",
-      "destination": "/public/dashboard.html"
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/customers",
+      "destination": "/customers.html"
+    },
+    {
+      "source": "/appointments",
+      "destination": "/appointments.html"
+    },
+    {
+      "source": "/staff",
+      "destination": "/staff.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services.html"
+    },
+    {
+      "source": "/reports",
+      "destination": "/reports.html"
+    },
+    {
+      "source": "/messages",
+      "destination": "/messages.html"
     },
     {
       "source": "/customer-edit",
-      "destination": "/public/customer-detail.html"
+      "destination": "/customer-edit.html"
     },
     {
       "source": "/customer-detail",
-      "destination": "/public/customer-detail.html"
-    },
-    {
-      "source": "/:path*.html",
-      "destination": "/public/:path*.html"
-    },
-    {
-      "source": "/:path*.css",
-      "destination": "/public/:path*.css"
-    },
-    {
-      "source": "/:path*.js",
-      "destination": "/public/:path*.js"
-    },
-    {
-      "source": "/manifest.json",
-      "destination": "/public/manifest.json"
-    },
-    {
-      "source": "/favicon.ico",
-      "destination": "/public/favicon.ico"
-    },
-    {
-      "source": "/icons/:path*",
-      "destination": "/public/icons/:path*"
+      "destination": "/customer-detail.html"
     }
   ]
 }

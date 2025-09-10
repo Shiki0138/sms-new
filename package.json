@@ -4,7 +4,8 @@
   "description": "SMS Salon Management System with Integrated Messaging",
   "main": "index.js",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "PORT=3000 node app/backend/server-clean.js",
+    "dev:vercel": "vercel dev",
     "start": "PORT=3001 node app/backend/server-clean.js",
     "dev:local": "PORT=3001 node app/backend/server-clean.js",
     "build": "echo 'No build required for Vercel deployment'",

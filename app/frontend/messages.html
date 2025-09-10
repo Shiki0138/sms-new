@@ -234,7 +234,59 @@
                         </div>
                     </div>
                     
-                    <div style="text-align: center;">
+                    <!-- 送信条件設定 -->
+                    <div style="background: var(--gray-50); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;">
+                        <h3 style="margin: 0 0 1rem 0; color: var(--text-dark);">📋 送信条件設定</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">来店日条件</label>
+                                <select id="visitDateCondition" style="width: 100%; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                                    <option value="any">すべて</option>
+                                    <option value="today">今日来店</option>
+                                    <option value="yesterday">昨日来店</option>
+                                    <option value="this-week">今週来店</option>
+                                    <option value="last-week">先週来店</option>
+                                    <option value="this-month">今月来店</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">顧客タイプ</label>
+                                <select id="customerType" style="width: 100%; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                                    <option value="any">すべて</option>
+                                    <option value="vip">VIP顧客のみ</option>
+                                    <option value="regular">常連客のみ</option>
+                                    <option value="new">新規顧客のみ</option>
+                                    <option value="inactive">しばらく来店なし</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">施術タイプ</label>
+                                <select id="serviceType" style="width: 100%; padding: 0.5rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                                    <option value="any">すべて</option>
+                                    <option value="cut">カット</option>
+                                    <option value="color">カラー</option>
+                                    <option value="perm">パーマ</option>
+                                    <option value="spa">ヘッドスパ</option>
+                                    <option value="treatment">トリートメント</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; border-radius: 8px; padding: 1rem; border: 2px solid var(--border-color);">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 500;">送信対象者:</span>
+                                <span id="targetCount" style="color: var(--primary); font-weight: bold;">0名が該当</span>
+                            </div>
+                            <button class="btn btn-secondary" onclick="previewTargets()" style="width: 100%;">
+                                対象顧客をプレビュー
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem;">
                         <button class="btn btn-primary" id="nextToTemplate" style="
                             padding: 1rem 2rem;
                             font-size: 1rem;
@@ -468,6 +520,43 @@
             </div>
         </div>
     </div>
+    
+    <!-- 対象顧客プレビューモーダル -->
+    <div id="targetPreviewModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px; width: 90%;">
+            <div class="modal-header">
+                <h3 style="margin: 0; color: var(--text-dark);">送信対象顧客の確認・除外設定</h3>
+                <button class="modal-close" onclick="closeTargetPreview()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span style="font-weight: 500; color: var(--text-dark);">適用条件:</span>
+                        <span id="appliedConditions" style="color: var(--text-medium); font-size: 0.9rem;"></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>総対象者: <strong id="totalTargets">0名</strong></span>
+                        <span>送信予定: <strong id="finalTargets" style="color: var(--primary);">0名</strong></span>
+                    </div>
+                </div>
+                
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <div id="targetCustomersList">
+                        <!-- 対象顧客リストがここに表示されます -->
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="closeTargetPreview()">閉じる</button>
+                        <button class="btn btn-primary" onclick="proceedWithTargets()" style="flex: 1;">
+                            この条件でメッセージ作成に進む
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </main>
     
     <script>
@@ -488,6 +577,18 @@
         // Message Page Interactive Functionality
         let selectedCustomer = null;
         let selectedTemplate = null;
+        let targetCustomers = [];
+        let excludedCustomers = new Set();
+        
+        // サンプル顧客データ
+        const customersDatabase = [
+            { id: '1', name: '山田 花子', phone: '090-1234-5678', email: 'yamada@email.com', type: 'vip', lastVisit: '2024-03-14', service: 'カット+カラー' },
+            { id: '2', name: '佐藤 美咲', phone: '080-9876-5432', email: 'sato@email.com', type: 'regular', lastVisit: '2024-03-13', service: 'パーマ+トリートメント' },
+            { id: '3', name: '鈴木 真由美', phone: '070-1111-2222', email: 'suzuki@email.com', type: 'new', lastVisit: '2024-03-12', service: 'ヘッドスパ+トリートメント' },
+            { id: '4', name: '田中 麻衣', phone: '080-7777-8888', email: 'mai@email.com', type: 'regular', lastVisit: '2024-03-15', service: 'カット' },
+            { id: '5', name: '高橋 由紀', phone: '090-3333-4444', email: 'yuki@email.com', type: 'vip', lastVisit: '2024-03-14', service: 'カット+カラー+パーマ' },
+            { id: '6', name: '中村 恵美', phone: '070-9999-0000', email: 'emi@email.com', type: 'inactive', lastVisit: '2023-12-20', service: 'トリートメント' }
+        ];
         
         // Quick Action Functions
         window.selectQuickAction = function(type) {
@@ -683,8 +784,196 @@
                     this.style.boxShadow = 'var(--shadow-sm)';
                 });
             });
+            
+            // 条件変更時に対象者数を更新
+            ['visitDateCondition', 'customerType', 'serviceType'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('change', updateTargetCount);
+                }
+            });
+            
+            // 初期対象者数を計算
+            updateTargetCount();
         });
-    </script>
+        
+        // 条件分析機能
+        function updateTargetCount() {
+            const visitDate = document.getElementById('visitDateCondition').value;
+            const customerType = document.getElementById('customerType').value;
+            const serviceType = document.getElementById('serviceType').value;
+            
+            targetCustomers = filterCustomers(visitDate, customerType, serviceType);
+            
+            const count = targetCustomers.filter(c => !excludedCustomers.has(c.id)).length;
+            document.getElementById('targetCount').textContent = `${count}名が該当`;
+            
+            // 条件が設定されている場合は次へボタンを有効化
+            document.getElementById('nextToTemplate').disabled = count === 0;
+        }
+        
+        function filterCustomers(visitDate, customerType, serviceType) {
+            return customersDatabase.filter(customer => {
+                // 来店日条件
+                if (visitDate !== 'any') {
+                    const lastVisit = new Date(customer.lastVisit);
+                    const today = new Date();
+                    const diffTime = Math.abs(today - lastVisit);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    switch(visitDate) {
+                        case 'today':
+                            if (diffDays > 1) return false;
+                            break;
+                        case 'yesterday':
+                            if (diffDays !== 2) return false;
+                            break;
+                        case 'this-week':
+                            if (diffDays > 7) return false;
+                            break;
+                        case 'last-week':
+                            if (diffDays < 7 || diffDays > 14) return false;
+                            break;
+                        case 'this-month':
+                            if (diffDays > 30) return false;
+                            break;
+                    }
+                }
+                
+                // 顧客タイプ条件
+                if (customerType !== 'any' && customer.type !== customerType) {
+                    return false;
+                }
+                
+                // 施術タイプ条件
+                if (serviceType !== 'any') {
+                    const serviceMap = {
+                        'cut': 'カット',
+                        'color': 'カラー', 
+                        'perm': 'パーマ',
+                        'spa': 'ヘッドスパ',
+                        'treatment': 'トリートメント'
+                    };
+                    if (!customer.service.includes(serviceMap[serviceType])) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+        
+        // プレビューモーダル表示
+        window.previewTargets = function() {
+            updateTargetCount();
+            
+            const modal = document.getElementById('targetPreviewModal');
+            const customersList = document.getElementById('targetCustomersList');
+            
+            // 適用条件を表示
+            const conditions = [];
+            const visitDate = document.getElementById('visitDateCondition').value;
+            const customerType = document.getElementById('customerType').value;
+            const serviceType = document.getElementById('serviceType').value;
+            
+            if (visitDate !== 'any') conditions.push(`来店日: ${document.getElementById('visitDateCondition').selectedOptions[0].text}`);
+            if (customerType !== 'any') conditions.push(`顧客タイプ: ${document.getElementById('customerType').selectedOptions[0].text}`);
+            if (serviceType !== 'any') conditions.push(`施術: ${document.getElementById('serviceType').selectedOptions[0].text}`);
+            
+            document.getElementById('appliedConditions').textContent = conditions.join(' | ') || '条件なし（全顧客対象）';
+            document.getElementById('totalTargets').textContent = `${targetCustomers.length}名`;
+            
+            // 顧客リストを表示
+            customersList.innerHTML = targetCustomers.map(customer => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            ${customer.name[0]}
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; color: var(--text-dark); font-size: 1rem;">${customer.name}</h4>
+                            <p style="margin: 0; color: var(--text-light); font-size: 0.85rem;">${customer.phone} | ${customer.lastVisit} | ${customer.service}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="
+                            padding: 4px 8px; 
+                            border-radius: 12px; 
+                            font-size: 0.8rem; 
+                            background: ${getCustomerTypeColor(customer.type).bg}; 
+                            color: ${getCustomerTypeColor(customer.type).text};
+                        ">${getCustomerTypeLabel(customer.type)}</span>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" ${excludedCustomers.has(customer.id) ? 'checked' : ''} 
+                                   onchange="toggleCustomerExclusion('${customer.id}')" />
+                            <span style="font-size: 0.9rem; color: var(--text-medium);">除外</span>
+                        </label>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateFinalCount();
+            modal.style.display = 'flex';
+        };
+        
+        // 顧客タイプの色分け
+        function getCustomerTypeColor(type) {
+            const colors = {
+                'vip': { bg: '#ecfdf5', text: '#065f46' },
+                'regular': { bg: '#dbeafe', text: '#1e40af' },
+                'new': { bg: '#fef3c7', text: '#92400e' },
+                'inactive': { bg: '#fee2e2', text: '#991b1b' }
+            };
+            return colors[type] || { bg: '#f3f4f6', text: '#374151' };
+        }
+        
+        function getCustomerTypeLabel(type) {
+            const labels = {
+                'vip': 'VIP',
+                'regular': '常連',
+                'new': '新規',
+                'inactive': '休眠'
+            };
+            return labels[type] || type;
+        }
+        
+        // 個別除外設定
+        window.toggleCustomerExclusion = function(customerId) {
+            if (excludedCustomers.has(customerId)) {
+                excludedCustomers.delete(customerId);
+            } else {
+                excludedCustomers.add(customerId);
+            }
+            updateFinalCount();
+            updateTargetCount(); // メイン画面の対象者数も更新
+        };
+        
+        function updateFinalCount() {
+            const finalCount = targetCustomers.filter(c => !excludedCustomers.has(c.id)).length;
+            const finalTargetsElement = document.getElementById('finalTargets');
+            if (finalTargetsElement) {
+                finalTargetsElement.textContent = `${finalCount}名`;
+            }
+        }
+        
+        // プレビューモーダル制御
+        window.closeTargetPreview = function() {
+            document.getElementById('targetPreviewModal').style.display = 'none';
+        };
+        
+        window.proceedWithTargets = function() {
+            const finalCount = targetCustomers.filter(c => !excludedCustomers.has(c.id)).length;
+            if (finalCount === 0) {
+                alert('送信対象者がいません。条件を見直してください。');
+                return;
+            }
+            
+            closeTargetPreview();
+            showStep('template');
+            
+            // 選択された顧客に基づいてテンプレート内容を更新
+            updateSelectedCustomersDisplay();
+        };
     
     <script>
         // Initialize sidebar functionality

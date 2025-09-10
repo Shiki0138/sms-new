@@ -1,6 +1,0 @@
-{
-  "name": "Test Template",
-  "description": "A test SMS template",
-  "category": "promotional",
-  "content": "Hello {{firstName}}. Special offer from {{salonName}}."
-}

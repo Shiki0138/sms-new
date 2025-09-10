@@ -1,4 +1,5 @@
 {
+  "name": "salon-lumiere-sms",
   "regions": ["hnd1"],
   "buildCommand": "echo 'No build required'",
   "devCommand": "PORT=3000 node app/backend/server-clean.js",
@@ -47,6 +48,10 @@
     {
       "source": "/messages",
       "destination": "/messages.html"
+    },
+    {
+      "source": "/settings", 
+      "destination": "/settings.html"
     },
     {
       "source": "/customer-edit",

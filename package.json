@@ -17,7 +17,7 @@
     "firebase:serve": "firebase serve"
   },
   "dependencies": {
-    "@line/bot-sdk": "^9.0.0",
+    "@line/bot-sdk": "^10.2.0",
     "@sendgrid/mail": "^8.1.0",
     "bcryptjs": "^2.4.3",
     "chart.js": "^4.4.0",

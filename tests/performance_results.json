@@ -1,0 +1,472 @@
+{
+  "timestamp": "2025-09-11T00:33:46.274Z",
+  "pages": {
+    "メインページ": {
+      "url": "/",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 20.286416999999997,
+        "contentLength": "16286"
+      },
+      "memory": {
+        "before": {
+          "rss": 59.56,
+          "heapTotal": 11.28,
+          "heapUsed": 7.35,
+          "external": 3.31
+        },
+        "after": {
+          "rss": 88.73,
+          "heapTotal": 11.28,
+          "heapUsed": 7.38,
+          "external": 3.31
+        },
+        "difference": {
+          "heapUsed": 0.03000000000000025
+        }
+      },
+      "cpu": {
+        "user": 18.74,
+        "system": 2.391
+      }
+    },
+    "ダッシュボード": {
+      "url": "/dashboard.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 2.3605830000001333,
+        "contentLength": "131520"
+      },
+      "memory": {
+        "before": {
+          "rss": 88.92,
+          "heapTotal": 11.28,
+          "heapUsed": 7.49,
+          "external": 3.43
+        },
+        "after": {
+          "rss": 89.13,
+          "heapTotal": 11.28,
+          "heapUsed": 7.51,
+          "external": 3.5
+        },
+        "difference": {
+          "heapUsed": 0.019999999999999574
+        }
+      },
+      "cpu": {
+        "user": 0.5,
+        "system": 0.125
+      }
+    },
+    "顧客管理": {
+      "url": "/customers.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 3.172958000000108,
+        "contentLength": "8563"
+      },
+      "memory": {
+        "before": {
+          "rss": 89.34,
+          "heapTotal": 11.28,
+          "heapUsed": 8.02,
+          "external": 3.51
+        },
+        "after": {
+          "rss": 89.38,
+          "heapTotal": 11.28,
+          "heapUsed": 7.67,
+          "external": 3.51
+        },
+        "difference": {
+          "heapUsed": -0.34999999999999964
+        }
+      },
+      "cpu": {
+        "user": 0.504,
+        "system": 0.212
+      }
+    },
+    "メッセージ": {
+      "url": "/messages.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 1.523541000000023,
+        "contentLength": "56409"
+      },
+      "memory": {
+        "before": {
+          "rss": 89.47,
+          "heapTotal": 11.28,
+          "heapUsed": 8.17,
+          "external": 3.56
+        },
+        "after": {
+          "rss": 89.5,
+          "heapTotal": 11.28,
+          "heapUsed": 7.81,
+          "external": 3.56
+        },
+        "difference": {
+          "heapUsed": -0.3600000000000003
+        }
+      },
+      "cpu": {
+        "user": 0.502,
+        "system": 0.112
+      }
+    },
+    "予約管理": {
+      "url": "/appointments.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 3.4683749999999236,
+        "contentLength": "58121"
+      },
+      "memory": {
+        "before": {
+          "rss": 89.83,
+          "heapTotal": 11.28,
+          "heapUsed": 8.25,
+          "external": 3.62
+        },
+        "after": {
+          "rss": 89.83,
+          "heapTotal": 11.28,
+          "heapUsed": 7.9,
+          "external": 3.62
+        },
+        "difference": {
+          "heapUsed": -0.34999999999999964
+        }
+      },
+      "cpu": {
+        "user": 0.397,
+        "system": 0.049
+      }
+    },
+    "サービス管理": {
+      "url": "/services.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 2.80633300000045,
+        "contentLength": "29315"
+      },
+      "memory": {
+        "before": {
+          "rss": 89.91,
+          "heapTotal": 11.28,
+          "heapUsed": 7.99,
+          "external": 3.65
+        },
+        "after": {
+          "rss": 89.91,
+          "heapTotal": 11.28,
+          "heapUsed": 7.99,
+          "external": 3.65
+        },
+        "difference": {
+          "heapUsed": 0
+        }
+      },
+      "cpu": {
+        "user": 0.316,
+        "system": 0.093
+      }
+    },
+    "設定": {
+      "url": "/settings.html",
+      "http": {
+        "success": true,
+        "status": 200,
+        "responseTime": 2.7324579999994967,
+        "contentLength": "28600"
+      },
+      "memory": {
+        "before": {
+          "rss": 90.05,
+          "heapTotal": 11.53,
+          "heapUsed": 8.08,
+          "external": 3.68
+        },
+        "after": {
+          "rss": 90.06,
+          "heapTotal": 11.53,
+          "heapUsed": 8.09,
+          "external": 3.68
+        },
+        "difference": {
+          "heapUsed": 0.009999999999999787
+        }
+      },
+      "cpu": {
+        "user": 0.382,
+        "system": 0.081
+      }
+    }
+  },
+  "summary": {
+    "totalPages": 7,
+    "averageResponseTime": 5,
+    "successRate": 100,
+    "performanceScore": 100,
+    "totalRecommendations": 0,
+    "warningCount": 0
+  },
+  "recommendations": [],
+  "staticResources": {
+    "css": {
+      "app.css": {
+        "size": 9566,
+        "sizeKB": 9.34,
+        "sizeMB": 0.01
+      },
+      "auth.css": {
+        "size": 4195,
+        "sizeKB": 4.1,
+        "sizeMB": 0
+      },
+      "calendar.css": {
+        "size": 5825,
+        "sizeKB": 5.69,
+        "sizeMB": 0.01
+      },
+      "customer-detail.css": {
+        "size": 10553,
+        "sizeKB": 10.31,
+        "sizeMB": 0.01
+      },
+      "landing.css": {
+        "size": 5713,
+        "sizeKB": 5.58,
+        "sizeMB": 0.01
+      },
+      "main-unified.css": {
+        "size": 56909,
+        "sizeKB": 55.58,
+        "sizeMB": 0.05
+      },
+      "messages.css": {
+        "size": 6808,
+        "sizeKB": 6.65,
+        "sizeMB": 0.01
+      },
+      "premium-styles.css": {
+        "size": 12415,
+        "sizeKB": 12.12,
+        "sizeMB": 0.01
+      },
+      "salon-base.css": {
+        "size": 7969,
+        "sizeKB": 7.78,
+        "sizeMB": 0.01
+      },
+      "salon-components.css": {
+        "size": 15142,
+        "sizeKB": 14.79,
+        "sizeMB": 0.01
+      },
+      "salon-design-system.css": {
+        "size": 6257,
+        "sizeKB": 6.11,
+        "sizeMB": 0.01
+      },
+      "salon-layout.css": {
+        "size": 11463,
+        "sizeKB": 11.19,
+        "sizeMB": 0.01
+      },
+      "salon-main.css": {
+        "size": 11681,
+        "sizeKB": 11.41,
+        "sizeMB": 0.01
+      },
+      "styles.css": {
+        "size": 8206,
+        "sizeKB": 8.01,
+        "sizeMB": 0.01
+      }
+    },
+    "js": {
+      "api.js": {
+        "size": 8412,
+        "sizeKB": 8.21,
+        "sizeMB": 0.01
+      },
+      "app-new.js": {
+        "size": 115053,
+        "sizeKB": 112.36,
+        "sizeMB": 0.11
+      },
+      "app.js": {
+        "size": 14100,
+        "sizeKB": 13.77,
+        "sizeMB": 0.01
+      },
+      "app.prod.js": {
+        "size": 20317,
+        "sizeKB": 19.84,
+        "sizeMB": 0.02
+      },
+      "appointments.js": {
+        "size": 28047,
+        "sizeKB": 27.39,
+        "sizeMB": 0.03
+      },
+      "auth.js": {
+        "size": 9782,
+        "sizeKB": 9.55,
+        "sizeMB": 0.01
+      },
+      "calendar.js": {
+        "size": 24308,
+        "sizeKB": 23.74,
+        "sizeMB": 0.02
+      },
+      "customer-detail.js": {
+        "size": 34921,
+        "sizeKB": 34.1,
+        "sizeMB": 0.03
+      },
+      "customers.js": {
+        "size": 49111,
+        "sizeKB": 47.96,
+        "sizeMB": 0.05
+      },
+      "dashboard.js": {
+        "size": 20052,
+        "sizeKB": 19.58,
+        "sizeMB": 0.02
+      },
+      "messages.js": {
+        "size": 14386,
+        "sizeKB": 14.05,
+        "sizeMB": 0.01
+      },
+      "records.js": {
+        "size": 27128,
+        "sizeKB": 26.49,
+        "sizeMB": 0.03
+      },
+      "settings.js": {
+        "size": 43593,
+        "sizeKB": 42.57,
+        "sizeMB": 0.04
+      },
+      "supabase-client.js": {
+        "size": 9967,
+        "sizeKB": 9.73,
+        "sizeMB": 0.01
+      }
+    },
+    "html": {
+      "404.html": {
+        "size": 1386,
+        "sizeKB": 1.35,
+        "sizeMB": 0
+      },
+      "appointments.html": {
+        "size": 58121,
+        "sizeKB": 56.76,
+        "sizeMB": 0.06
+      },
+      "booking-widget-embed.html": {
+        "size": 11366,
+        "sizeKB": 11.1,
+        "sizeMB": 0.01
+      },
+      "customer-detail.html": {
+        "size": 11023,
+        "sizeKB": 10.76,
+        "sizeMB": 0.01
+      },
+      "customer-edit.html": {
+        "size": 11330,
+        "sizeKB": 11.06,
+        "sizeMB": 0.01
+      },
+      "customers.html": {
+        "size": 8563,
+        "sizeKB": 8.36,
+        "sizeMB": 0.01
+      },
+      "dashboard.html": {
+        "size": 131520,
+        "sizeKB": 128.44,
+        "sizeMB": 0.13
+      },
+      "force-refresh.html": {
+        "size": 5230,
+        "sizeKB": 5.11,
+        "sizeMB": 0
+      },
+      "index.html": {
+        "size": 16286,
+        "sizeKB": 15.9,
+        "sizeMB": 0.02
+      },
+      "landing.html": {
+        "size": 16048,
+        "sizeKB": 15.67,
+        "sizeMB": 0.02
+      },
+      "login-new.html": {
+        "size": 14353,
+        "sizeKB": 14.02,
+        "sizeMB": 0.01
+      },
+      "login.html": {
+        "size": 18726,
+        "sizeKB": 18.29,
+        "sizeMB": 0.02
+      },
+      "messages.html": {
+        "size": 56409,
+        "sizeKB": 55.09,
+        "sizeMB": 0.05
+      },
+      "records.html": {
+        "size": 23276,
+        "sizeKB": 22.73,
+        "sizeMB": 0.02
+      },
+      "register.html": {
+        "size": 12661,
+        "sizeKB": 12.36,
+        "sizeMB": 0.01
+      },
+      "reports.html": {
+        "size": 29780,
+        "sizeKB": 29.08,
+        "sizeMB": 0.03
+      },
+      "services.html": {
+        "size": 29315,
+        "sizeKB": 28.63,
+        "sizeMB": 0.03
+      },
+      "settings.html": {
+        "size": 28600,
+        "sizeKB": 27.93,
+        "sizeMB": 0.03
+      },
+      "staff.html": {
+        "size": 26060,
+        "sizeKB": 25.45,
+        "sizeMB": 0.02
+      }
+    },
+    "total": {
+      "css": 172702,
+      "js": 419177,
+      "html": 510053
+    }
+  }
+}

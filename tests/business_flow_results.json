@@ -1,0 +1,314 @@
+{
+  "timestamp": "2025-09-11T00:37:11.600Z",
+  "workflows": {
+    "customerManagement": {
+      "name": "顧客管理フロー",
+      "steps": [
+        {
+          "action": "顧客一覧ページアクセス",
+          "status": "pass"
+        },
+        {
+          "action": "新規顧客登録フォームアクセス",
+          "status": "pass"
+        },
+        {
+          "action": "顧客情報入力・保存",
+          "status": "pass"
+        },
+        {
+          "action": "顧客詳細表示",
+          "status": "pass"
+        },
+        {
+          "action": "顧客情報編集",
+          "status": "pass"
+        },
+        {
+          "action": "来店履歴確認",
+          "status": "warning"
+        }
+      ],
+      "issues": [],
+      "score": 83
+    },
+    "appointmentManagement": {
+      "name": "予約管理フロー",
+      "steps": [
+        {
+          "action": "予約カレンダーアクセス",
+          "status": "pass"
+        },
+        {
+          "action": "新規予約作成",
+          "status": "warning"
+        },
+        {
+          "action": "予約時間の空き状況確認",
+          "status": "pass"
+        },
+        {
+          "action": "スタッフアサイン",
+          "status": "pass"
+        },
+        {
+          "action": "予約変更・キャンセル",
+          "status": "warning"
+        },
+        {
+          "action": "予約確認メッセージ送信",
+          "status": "warning"
+        }
+      ],
+      "issues": [],
+      "score": 50
+    },
+    "messaging": {
+      "name": "メッセージングフロー",
+      "steps": [
+        {
+          "action": "メッセージ画面アクセス",
+          "status": "pass"
+        },
+        {
+          "action": "顧客選択・検索",
+          "status": "pass"
+        },
+        {
+          "action": "メッセージ作成",
+          "status": "pass"
+        },
+        {
+          "action": "SMS送信",
+          "status": "warning"
+        },
+        {
+          "action": "LINE送信",
+          "status": "warning"
+        },
+        {
+          "action": "送信履歴確認",
+          "status": "pass"
+        },
+        {
+          "action": "自動メッセージ設定",
+          "status": "warning"
+        }
+      ],
+      "issues": [
+        "メッセージ送信API接続エラー"
+      ],
+      "score": 57
+    },
+    "serviceManagement": {
+      "name": "サービス・売上管理フロー",
+      "steps": [
+        {
+          "action": "サービス管理画面アクセス",
+          "status": "pass"
+        },
+        {
+          "action": "サービスメニュー登録",
+          "status": "pass"
+        },
+        {
+          "action": "料金設定",
+          "status": "pass"
+        },
+        {
+          "action": "売上レポート表示",
+          "status": "pass"
+        },
+        {
+          "action": "日別売上確認",
+          "status": "warning"
+        },
+        {
+          "action": "月別売上分析",
+          "status": "warning"
+        }
+      ],
+      "issues": [],
+      "score": 67
+    }
+  },
+  "usability": {
+    "navigation": {
+      "score": 85,
+      "issues": [
+        "一部ページでサイドバーナビゲーションが重複"
+      ],
+      "strengths": [
+        "直感的なアイコン使用",
+        "モバイル対応済み"
+      ]
+    },
+    "accessibility": {
+      "score": 70,
+      "issues": [
+        "一部のボタンにaria-labelが不足",
+        "コントラスト比要確認"
+      ],
+      "strengths": [
+        "日本語対応",
+        "レスポンシブデザイン"
+      ]
+    },
+    "userExperience": {
+      "score": 80,
+      "issues": [
+        "読み込み時間が長い場合の対応",
+        "エラーメッセージの改善"
+      ],
+      "strengths": [
+        "美しいデザイン",
+        "機能の豊富さ"
+      ]
+    }
+  },
+  "businessValue": {
+    "customerManagement": {
+      "score": 85,
+      "features": [
+        "顧客情報管理",
+        "来店履歴",
+        "好み記録"
+      ],
+      "missingFeatures": [
+        "誕生日自動通知",
+        "顧客セグメンテーション"
+      ]
+    },
+    "appointmentEfficiency": {
+      "score": 80,
+      "features": [
+        "カレンダー表示",
+        "スタッフ管理",
+        "サービス選択"
+      ],
+      "missingFeatures": [
+        "オンライン予約",
+        "キャンセル待ち管理"
+      ]
+    },
+    "communicationTools": {
+      "score": 75,
+      "features": [
+        "SMS送信",
+        "メッセージテンプレート"
+      ],
+      "missingFeatures": [
+        "LINE自動応答",
+        "メールマーケティング"
+      ]
+    },
+    "analyticsReporting": {
+      "score": 70,
+      "features": [
+        "基本レポート",
+        "グラフ表示"
+      ],
+      "missingFeatures": [
+        "詳細分析",
+        "KPI追跡",
+        "ROI分析"
+      ]
+    }
+  },
+  "summary": {
+    "overallScore": 73,
+    "workflowScore": 64,
+    "usabilityScore": 78,
+    "businessScore": 78,
+    "totalRecommendations": 9,
+    "readinessLevel": "機能改善後運用可能"
+  },
+  "recommendations": [
+    {
+      "type": "workflow",
+      "priority": "high",
+      "title": "予約管理フローの改善",
+      "description": "スコア: 50% - 機能完成度向上が必要",
+      "actions": []
+    },
+    {
+      "type": "workflow",
+      "priority": "high",
+      "title": "メッセージングフローの改善",
+      "description": "スコア: 57% - 機能完成度向上が必要",
+      "actions": [
+        "メッセージ送信API接続エラー"
+      ]
+    },
+    {
+      "type": "workflow",
+      "priority": "high",
+      "title": "サービス・売上管理フローの改善",
+      "description": "スコア: 67% - 機能完成度向上が必要",
+      "actions": []
+    },
+    {
+      "type": "usability",
+      "priority": "medium",
+      "title": "accessibilityの改善",
+      "description": "スコア: 70% - ユーザー体験向上が必要",
+      "actions": [
+        "一部のボタンにaria-labelが不足",
+        "コントラスト比要確認"
+      ]
+    },
+    {
+      "type": "business",
+      "priority": "medium",
+      "title": "customerManagement機能追加",
+      "description": "競合優位性向上のため",
+      "actions": [
+        "誕生日自動通知の実装検討",
+        "顧客セグメンテーションの実装検討"
+      ]
+    },
+    {
+      "type": "business",
+      "priority": "medium",
+      "title": "appointmentEfficiency機能追加",
+      "description": "競合優位性向上のため",
+      "actions": [
+        "オンライン予約の実装検討",
+        "キャンセル待ち管理の実装検討"
+      ]
+    },
+    {
+      "type": "business",
+      "priority": "medium",
+      "title": "communicationTools機能追加",
+      "description": "競合優位性向上のため",
+      "actions": [
+        "LINE自動応答の実装検討",
+        "メールマーケティングの実装検討"
+      ]
+    },
+    {
+      "type": "business",
+      "priority": "medium",
+      "title": "analyticsReporting機能追加",
+      "description": "競合優位性向上のため",
+      "actions": [
+        "詳細分析の実装検討",
+        "KPI追跡の実装検討",
+        "ROI分析の実装検討"
+      ]
+    },
+    {
+      "type": "industry",
+      "priority": "low",
+      "title": "美容室業界特化機能",
+      "description": "業界ニーズに特化した機能追加",
+      "actions": [
+        "スタイル写真管理機能の追加",
+        "施術時間自動計算機能",
+        "リピート率分析ダッシュボード",
+        "季節別メニュー管理"
+      ]
+    }
+  ]
+}

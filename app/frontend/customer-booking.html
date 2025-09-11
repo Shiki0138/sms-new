@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オンライン予約 - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <meta name="description" content="Salon Lumièreのオンライン予約システム。24時間いつでも予約可能です。">
+    <style>
+        .booking-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+            background: var(--bg-light);
+        }
+        
+        .booking-header {
+            background: var(--gradient-1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .booking-steps {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            color: var(--text-light);
+            font-weight: bold;
+        }
+        
+        .step.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .step.completed {
+            background: var(--success);
+            color: white;
+        }
+        
+        .step-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+        }
+        
+        .service-card {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .service-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .service-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-50);
+        }
+        
+        .time-slot {
+            display: inline-block;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover {
+            border-color: var(--primary);
+        }
+        
+        .time-slot.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .time-slot.unavailable {
+            background: var(--gray-100);
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <!-- Header -->
+        <div class="booking-header">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="background: var(--primary); border-radius: 12px; padding: 12px; color: white; font-size: 2rem;">✨</div>
+                <div>
+                    <h1 style="margin: 0; color: var(--text-dark); font-size: 2rem;">Salon Lumière</h1>
+                    <p style="margin: 0; color: var(--text-light);">オンライン予約システム</p>
+                </div>
+            </div>
+            <p style="margin: 0; font-size: 1.1rem; color: var(--text-medium);">24時間いつでも簡単予約</p>
+        </div>
+        
+        <!-- Booking Steps -->
+        <div class="booking-steps">
+            <div class="step active" id="step1">1</div>
+            <div style="width: 40px; height: 2px; background: var(--gray-300); margin: 19px 0;"></div>
+            <div class="step" id="step2">2</div>
+            <div style="width: 40px; height: 2px; background: var(--gray-300); margin: 19px 0;"></div>
+            <div class="step" id="step3">3</div>
+            <div style="width: 40px; height: 2px; background: var(--gray-300); margin: 19px 0;"></div>
+            <div class="step" id="step4">4</div>
+        </div>
+        
+        <!-- Step 1: Service Selection -->
+        <div class="step-content" id="content-step1">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">サービスをお選びください</h2>
+            
+            <div class="service-card" onclick="selectService('cut', '4500', '60')">
+                <div style="display: flex; justify-content: between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">カット</h3>
+                        <p style="margin: 0; color: var(--text-light);">基本的なヘアカット、スタイリング</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">¥4,500</div>
+                        <div style="color: var(--text-light);">60分</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card" onclick="selectService('color', '8000', '90')">
+                <div style="display: flex; justify-content: between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">カラー</h3>
+                        <p style="margin: 0; color: var(--text-light);">ヘアカラー、ブリーチ、グラデーション</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">¥8,000</div>
+                        <div style="color: var(--text-light);">90分</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card" onclick="selectService('perm', '12000', '120')">
+                <div style="display: flex; justify-content: between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0; color: var(--text-dark);">パーマ</h3>
+                        <p style="margin: 0; color: var(--text-light);">デジタルパーマ、コールドパーマ</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">¥12,000</div>
+                        <div style="color: var(--text-light);">120分</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step 2: Date Selection -->
+        <div class="step-content" id="content-step2" style="display: none;">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">ご希望の日付をお選びください</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 1.5rem;">
+                <!-- Calendar will be generated by JavaScript -->
+                <div id="calendar-container"></div>
+            </div>
+        </div>
+        
+        <!-- Step 3: Time Selection -->
+        <div class="step-content" id="content-step3" style="display: none;">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">ご希望の時間をお選びください</h2>
+            
+            <div id="time-slots-container">
+                <!-- Time slots will be generated based on availability -->
+            </div>
+        </div>
+        
+        <!-- Step 4: Customer Information -->
+        <div class="step-content" id="content-step4" style="display: none;">
+            <h2 style="margin: 0 0 1.5rem 0; color: var(--text-dark);">お客様情報をご入力ください</h2>
+            
+            <form id="customer-form">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">お名前 *</label>
+                    <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">電話番号 *</label>
+                    <input type="tel" name="phone" required style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">メールアドレス</label>
+                    <input type="email" name="email" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">ご要望・備考</label>
+                    <textarea name="notes" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 8px;"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    予約を確定する
+                </button>
+            </form>
+        </div>
+        
+        <!-- Navigation Buttons -->
+        <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+            <button id="prev-btn" class="btn btn-secondary" onclick="previousStep()" style="display: none;">
+                戻る
+            </button>
+            <button id="next-btn" class="btn btn-primary" onclick="nextStep()" style="display: none;">
+                次へ
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedService = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        
+        // Service selection
+        function selectService(serviceId, price, duration) {
+            selectedService = { id: serviceId, price: parseInt(price), duration: parseInt(duration) };
+            
+            // Update UI
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.service-card').classList.add('selected');
+            
+            // Enable next button
+            document.getElementById('next-btn').style.display = 'block';
+        }
+        
+        // Step navigation
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                showStep(currentStep);
+                
+                if (currentStep === 2) {
+                    generateCalendar();
+                } else if (currentStep === 3) {
+                    generateTimeSlots();
+                }
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+        
+        function showStep(step) {
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`content-step${i}`).style.display = 'none';
+                document.getElementById(`step${i}`).classList.remove('active', 'completed');
+            }
+            
+            // Show current step
+            document.getElementById(`content-step${step}`).style.display = 'block';
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            // Mark previous steps as completed
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = step > 1 ? 'block' : 'none';
+            document.getElementById('next-btn').style.display = 
+                step < 4 && ((step === 1 && selectedService) || 
+                            (step === 2 && selectedDate) || 
+                            (step === 3 && selectedTime)) ? 'block' : 'none';
+        }
+        
+        // Calendar generation
+        function generateCalendar() {
+            const container = document.getElementById('calendar-container');
+            const today = new Date();
+            const calendar = [];
+            
+            // Generate next 14 days
+            for (let i = 0; i < 14; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                
+                // Skip Sundays (定休日)
+                if (date.getDay() === 0) continue;
+                
+                calendar.push(date);
+            }
+            
+            container.innerHTML = calendar.map(date => {
+                const dayName = ['月', '火', '水', '木', '金', '土'][date.getDay() - 1] || '日';
+                const dateStr = date.toISOString().split('T')[0];
+                
+                return `
+                    <div style="text-align: center; padding: 1rem; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; transition: all 0.2s;" 
+                         onclick="selectDate('${dateStr}', '${date.getDate()}', '${dayName}')">
+                        <div style="font-weight: bold; color: var(--text-dark);">${date.getDate()}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">${dayName}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function selectDate(dateStr, day, dayName) {
+            selectedDate = dateStr;
+            
+            // Update UI
+            document.querySelectorAll('#calendar-container > div').forEach(card => {
+                card.style.borderColor = 'var(--border-color)';
+                card.style.background = 'transparent';
+            });
+            event.target.style.borderColor = 'var(--primary)';
+            event.target.style.background = 'var(--primary-50)';
+            
+            // Enable next button
+            document.getElementById('next-btn').style.display = 'block';
+        }
+        
+        // Time slots generation
+        function generateTimeSlots() {
+            const container = document.getElementById('time-slots-container');
+            const timeSlots = [];
+            
+            // Generate time slots (9:00-18:00, 30分間隔)
+            for (let hour = 9; hour <= 17; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                    if (hour === 12) continue; // Skip lunch time
+                    
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const available = Math.random() > 0.3; // ランダムに空き状況を生成
+                    
+                    timeSlots.push({ time: timeStr, available });
+                }
+            }
+            
+            container.innerHTML = timeSlots.map(slot => 
+                `<span class="time-slot ${slot.available ? '' : 'unavailable'}" 
+                       onclick="${slot.available ? `selectTime('${slot.time}')` : ''}">${slot.time}</span>`
+            ).join('');
+        }
+        
+        function selectTime(time) {
+            selectedTime = time;
+            
+            // Update UI
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Enable next button
+            document.getElementById('next-btn').style.display = 'block';
+        }
+        
+        // Form submission
+        document.getElementById('customer-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const bookingData = {
+                service: selectedService,
+                date: selectedDate,
+                time: selectedTime,
+                customer: {
+                    name: formData.get('name'),
+                    phone: formData.get('phone'),
+                    email: formData.get('email'),
+                    notes: formData.get('notes')
+                }
+            };
+            
+            try {
+                const response = await fetch('/api/customer-bookings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                if (response.ok) {
+                    alert('ご予約ありがとうございます！確認のご連絡をいたします。');
+                    window.location.reload();
+                } else {
+                    throw new Error('予約の作成に失敗しました');
+                }
+            } catch (error) {
+                alert('申し訳ございません。予約処理中にエラーが発生しました。お電話でのご予約をお願いいたします。');
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showStep(1);
+        });
+    </script>
+</body>
+</html>

@@ -6,12 +6,59 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 
 // Initialize express app
 const app = express();
 
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
+
+// 認証ミドルウェア
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ 
+      success: false, 
+      message: '認証トークンが必要です' 
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ 
+        success: false, 
+        message: '無効なトークンです' 
+      });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// パスワードハッシュ化ヘルパー
+const hashPassword = async (password) => {
+  const rounds = parseInt(process.env.BCRYPT_ROUNDS) || 12;
+  return await bcrypt.hash(password, rounds);
+};
+
+// パスワード検証ヘルパー
+const verifyPassword = async (password, hash) => {
+  return await bcrypt.compare(password, hash);
+};
+
+// JWTトークン生成
+const generateToken = (userId, email, role = 'user') => {
+  return jwt.sign(
+    { userId, email, role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRY || '8h' }
+  );
+};
 
 // Security middleware
 app.set('trust proxy', true);
@@ -38,6 +85,19 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW) || 900000, // 15分
+  max: parseInt(process.env.RATE_LIMIT_MAX) || 100, // 最大100リクエスト
+  message: {
+    error: 'Too many requests from this IP, please try again later.',
+    retryAfter: Math.ceil(parseInt(process.env.RATE_LIMIT_WINDOW || 900000) / 60000)
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/', limiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '50mb' }));
@@ -1373,6 +1433,23 @@ app.use((err, req, res, next) => {
     message: err.message
   });
 });
+
+// Firebase初期化
+const admin = require('firebase-admin');
+let db;
+
+try {
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId: process.env.FIREBASE_PROJECT_ID || 'salon-system-138'
+    });
+    db = admin.firestore();
+  }
+} catch (error) {
+  console.log('⚠️  Firebase running in development mode');
+  db = null;
+}
 
 // Start server
 async function startServer() {

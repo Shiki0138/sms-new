@@ -1,0 +1,688 @@
+{
+  "timestamp": "2025-09-11T00:35:26.496Z",
+  "httpHeaders": {
+    "content-security-policy": {
+      "present": true,
+      "value": "default-src 'self';style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;script-src 'self' 'unsafe-inline' 'unsafe-eval';script-src-attr 'unsafe-inline';font-src 'self' https://fonts.gstatic.com;img-src 'self' data: https:;connect-src 'self';base-uri 'self';form-action 'self';frame-ancestors 'self';object-src 'none';upgrade-insecure-requests"
+    },
+    "strict-transport-security": {
+      "present": true,
+      "value": "max-age=15552000; includeSubDomains"
+    },
+    "x-frame-options": {
+      "present": true,
+      "value": "SAMEORIGIN"
+    },
+    "x-content-type-options": {
+      "present": true,
+      "value": "nosniff"
+    },
+    "x-xss-protection": {
+      "present": true,
+      "value": "0"
+    },
+    "referrer-policy": {
+      "present": true,
+      "value": "no-referrer"
+    },
+    "permissions-policy": {
+      "present": false,
+      "value": null
+    },
+    "cross-origin-embedder-policy": {
+      "present": false,
+      "value": null
+    },
+    "cross-origin-opener-policy": {
+      "present": true,
+      "value": "same-origin"
+    },
+    "cross-origin-resource-policy": {
+      "present": true,
+      "value": "same-origin"
+    }
+  },
+  "vulnerabilities": [
+    {
+      "type": "code",
+      "severity": "high",
+      "issue": "Hardcoded secrets detected",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/api/index.js",
+      "description": "ハードコードされた機密情報が検出されました。",
+      "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/booking-widget.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "high",
+      "issue": "Hardcoded secrets detected",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/firebase-config.js",
+      "description": "ハードコードされた機密情報が検出されました。",
+      "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app-new.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "high",
+      "issue": "Hardcoded secrets detected",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app-new.js",
+      "description": "ハードコードされた機密情報が検出されました。",
+      "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app.prod.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/appointments.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/auth.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/calendar.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/customer-detail.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/customers.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/dashboard.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/messages.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "high",
+      "issue": "Hardcoded secrets detected",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/messages.js",
+      "description": "ハードコードされた機密情報が検出されました。",
+      "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/records.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Potential XSS via innerHTML",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/settings.js",
+      "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+      "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/admin/billing 2.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/admin/billing.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/appointments.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/booking-widget-embed.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/customers.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/dashboard.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/force-refresh.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/index.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/login-new.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/login.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/messages.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/records.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/register.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "low",
+      "issue": "target=\"_blank\" without rel=\"noopener\"",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/register.html",
+      "description": "target=\"_blank\"にrel=\"noopener\"がありません。",
+      "recommendation": "rel=\"noopener noreferrer\"を追加してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/reports.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/services.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/settings.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    },
+    {
+      "type": "code",
+      "severity": "medium",
+      "issue": "Inline JavaScript without nonce",
+      "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/staff.html",
+      "description": "nonceなしのインラインJavaScriptが検出されました。",
+      "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+    }
+  ],
+  "codeAnalysis": {
+    "scannedFiles": 0,
+    "vulnerabilities": [
+      {
+        "type": "code",
+        "severity": "high",
+        "issue": "Hardcoded secrets detected",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/api/index.js",
+        "description": "ハードコードされた機密情報が検出されました。",
+        "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/booking-widget.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "high",
+        "issue": "Hardcoded secrets detected",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/firebase-config.js",
+        "description": "ハードコードされた機密情報が検出されました。",
+        "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app-new.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "high",
+        "issue": "Hardcoded secrets detected",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app-new.js",
+        "description": "ハードコードされた機密情報が検出されました。",
+        "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/app.prod.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/appointments.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/auth.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/calendar.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/customer-detail.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/customers.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/dashboard.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/messages.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "high",
+        "issue": "Hardcoded secrets detected",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/messages.js",
+        "description": "ハードコードされた機密情報が検出されました。",
+        "recommendation": "機密情報は環境変数や設定ファイルで管理してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/records.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Potential XSS via innerHTML",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/js/settings.js",
+        "description": "innerHTMLの使用でXSS攻撃の可能性があります。",
+        "recommendation": "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/admin/billing 2.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/admin/billing.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/appointments.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/booking-widget-embed.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/customers.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/dashboard.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/force-refresh.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/index.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/login-new.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/login.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/messages.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/records.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/register.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "low",
+        "issue": "target=\"_blank\" without rel=\"noopener\"",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/register.html",
+        "description": "target=\"_blank\"にrel=\"noopener\"がありません。",
+        "recommendation": "rel=\"noopener noreferrer\"を追加してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/reports.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/services.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/settings.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      },
+      {
+        "type": "code",
+        "severity": "medium",
+        "issue": "Inline JavaScript without nonce",
+        "file": "/Users/leadfive/Desktop/system/017_SMS/app/frontend/staff.html",
+        "description": "nonceなしのインラインJavaScriptが検出されました。",
+        "recommendation": "CSP nonceを使用するか、外部ファイルに移動してください"
+      }
+    ]
+  },
+  "dependencies": {
+    "total": 27,
+    "packages": {
+      "@line/bot-sdk": "^9.0.0",
+      "@sendgrid/mail": "^8.1.0",
+      "bcryptjs": "^2.4.3",
+      "chart.js": "^4.4.0",
+      "chartjs-adapter-date-fns": "^3.0.0",
+      "cors": "^2.8.5",
+      "date-fns": "^3.0.0",
+      "dotenv": "^16.3.1",
+      "express": "^4.18.2",
+      "express-rate-limit": "^8.1.0",
+      "express-validator": "^7.2.1",
+      "firebase": "^12.2.1",
+      "firebase-admin": "^13.5.0",
+      "helmet": "^7.1.0",
+      "jsonwebtoken": "^9.0.2",
+      "multer": "^1.4.5-lts.1",
+      "node-cron": "^3.0.3",
+      "papaparse": "^5.4.1",
+      "rate-limiter-flexible": "^4.0.1",
+      "sharp": "^0.34.3",
+      "socket.io": "^4.7.4",
+      "socket.io-client": "^4.7.4",
+      "twilio": "^4.20.0",
+      "uuid": "^9.0.1",
+      "validator": "^13.11.0",
+      "prettier": "^3.1.0",
+      "vercel": "latest"
+    },
+    "vulnerabilities": []
+  },
+  "summary": {
+    "securityScore": 0,
+    "totalVulnerabilities": 35,
+    "highSeverity": 4,
+    "mediumSeverity": 30,
+    "lowSeverity": 1,
+    "categories": {
+      "headers": 0,
+      "code": 35,
+      "dependencies": 0
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "critical",
+      "title": "高危険度の脆弱性を即座に修正",
+      "description": "4件の高危険度脆弱性が発見されました",
+      "actions": [
+        "機密情報は環境変数や設定ファイルで管理してください",
+        "機密情報は環境変数や設定ファイルで管理してください",
+        "機密情報は環境変数や設定ファイルで管理してください",
+        "機密情報は環境変数や設定ファイルで管理してください"
+      ]
+    },
+    {
+      "priority": "high",
+      "title": "中危険度の脆弱性を修正",
+      "description": "30件の中危険度脆弱性が発見されました",
+      "actions": [
+        "textContentやsetAttributeを使用するか、値をサニタイズしてください",
+        "textContentやsetAttributeを使用するか、値をサニタイズしてください",
+        "textContentやsetAttributeを使用するか、値をサニタイズしてください"
+      ]
+    },
+    {
+      "priority": "medium",
+      "title": "低危険度の問題を改善",
+      "description": "1件の改善可能な問題があります",
+      "actions": [
+        "セキュリティベストプラクティスの適用を検討してください"
+      ]
+    }
+  ]
+}

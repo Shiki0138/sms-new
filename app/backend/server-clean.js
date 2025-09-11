@@ -1445,10 +1445,21 @@ try {
       projectId: process.env.FIREBASE_PROJECT_ID || 'salon-system-138'
     });
     db = admin.firestore();
+    global.db = db; // グローバル参照を設定
   }
 } catch (error) {
   console.log('⚠️  Firebase running in development mode');
   db = null;
+  global.db = null;
+}
+
+// 新機能APIルート
+try {
+  const messagingRoutes = require('./routes/messaging');
+  app.use('/api/messaging', messagingRoutes);
+  console.log('📡 Messaging API loaded');
+} catch (error) {
+  console.log('⚠️  Messaging API loading skipped');
 }
 
 // Start server

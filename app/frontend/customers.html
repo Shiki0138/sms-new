@@ -105,8 +105,8 @@
                         <div><strong>累計金額:</strong> ¥89,500</div>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-secondary" style="flex: 1;">連絡</button>
-                        <button class="btn btn-primary" style="flex: 1;">詳細</button>
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="contactCustomer('1')">連絡</button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="viewCustomerRecord('1')">カルテ</button>
                     </div>
                 </div>
             </div>
@@ -154,6 +154,49 @@
             }
         });
 
+        // 電子カルテ機能
+        window.viewCustomerRecord = function(customerId) {
+            // カルテモーダルを表示
+            showMedicalRecordModal(customerId);
+        };
+        
+        window.contactCustomer = function(customerId) {
+            // メッセージページに顧客IDを渡して遷移
+            window.location.href = `/messages.html?customer=${customerId}`;
+        };
+        
+        function showMedicalRecordModal(customerId) {
+            // ダミーカルテデータ
+            const medicalRecord = {
+                '1': {
+                    name: '山田花子',
+                    treatments: [
+                        { date: '2024-03-10', service: 'カット+カラー', notes: '前髪短めに。カラーは8トーンのアッシュブラウン。', staff: '田中', photos: 2 },
+                        { date: '2024-01-20', service: 'カット', notes: '全体的に3cm短く。毛先の痛みが気になる。', staff: '佐藤', photos: 1 }
+                    ],
+                    allergies: 'ジアミン系カラー剤にアレルギーあり',
+                    notes: '敏感肌。パッチテスト必須。',
+                    lastVisit: '2024-03-10'
+                }
+            };
+            
+            const record = medicalRecord[customerId];
+            if (!record) {
+                alert('カルテ情報が見つかりません');
+                return;
+            }
+            
+            const treatmentHistory = record.treatments.map(t => 
+                `${t.date}: ${t.service}\n担当: ${t.staff}\n記録: ${t.notes}\n写真: ${t.photos}枚`
+            ).join('\n\n');
+            
+            alert(`📋 ${record.name} 様のカルテ\n\n` +
+                  `⚠️ アレルギー情報:\n${record.allergies}\n\n` +
+                  `📝 注意事項:\n${record.notes}\n\n` +
+                  `📅 施術履歴:\n${treatmentHistory}\n\n` +
+                  `💡 次回施術時の参考にしてください`);
+        }
+        
         window.showCreateCustomerModal = function() {
             alert('新規顧客登録機能 - 実装中です');
         };

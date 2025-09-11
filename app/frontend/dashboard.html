@@ -101,6 +101,10 @@
                 <span class="nav-icon">💬</span>
                 <span>連絡</span>
             </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>売上</span>
+            </a>
             <a href="/settings.html" class="nav-item">
                 <span class="nav-icon">⚙️</span>
                 <span>設定</span>
@@ -125,15 +129,15 @@
             <header class="header">
                 <h1 class="page-title">こんにちは、素敵な一日を！</h1>
                 <div class="header-actions">
-                    <button class="icon-button" aria-label="検索">
-                        🔍
+                    <button class="icon-button" aria-label="顧客検索" onclick="openSearch()" title="顧客検索">
+                        🔍 検索
                     </button>
-                    <button class="icon-button" aria-label="通知">
-                        🔔
-                        <span class="notification-badge"></span>
+                    <button class="icon-button" aria-label="通知確認" onclick="openNotifications()" title="新着通知・お知らせ">
+                        🔔 通知
+                        <span class="notification-badge">3</span>
                     </button>
-                    <button class="icon-button" aria-label="新規追加">
-                        ➕
+                    <button class="icon-button" aria-label="新規予約" onclick="openNewBooking()" title="新規予約作成">
+                        ➕ 予約
                     </button>
                 </div>
             </header>
@@ -1857,6 +1861,19 @@
                 }
             }
         });
+        
+        // 右上ボタンの機能実装
+        window.openSearch = function() {
+            window.location.href = '/customers.html?search=true';
+        };
+        
+        window.openNotifications = function() {
+            alert('📢 新着通知\n\n• 山田様から予約変更の連絡\n• 明日の予約リマインダー送信完了\n• 今月の売上目標達成！');
+        };
+        
+        window.openNewBooking = function() {
+            window.location.href = '/appointments.html?new=true';
+        };
         
         // 顧客管理の新規顧客ボタン用
         window.showCreateCustomerModal = function() {

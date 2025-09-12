@@ -10,7 +10,8 @@ const STATIC_CACHE_URLS = [
   '/reports.html',
   '/login.html',
   '/customer-booking.html',
-  '/css/main-unified.css',
+  '/css/legacy/main-unified.css',
+  '/css/mobile-navigation.css',
   '/js/app-new.js',
   '/js/firebase-config.js',
   '/manifest.json'

@@ -192,8 +192,11 @@
         </div>
 
         <div class="main-controls">
-            <div class="view-toggle">
-                <button id="calendarViewBtn" class="view-toggle-btn" data-view="calendar">📅 カレンダー</button>
+            <!-- 表示期間切り替え -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <button class="btn btn-secondary view-btn active" onclick="switchView('day')" id="dayView">日表示</button>
+                <button class="btn btn-secondary view-btn" onclick="switchView('week')" id="weekView">週表示</button>
+                <button class="btn btn-secondary view-btn" onclick="switchView('month')" id="monthView">月表示</button>
             </div>
             
             <div id="listFilters" class="filter-bar">
@@ -606,9 +609,161 @@
             }
         };
         
+        // 表示切り替え機能
+        let currentView = 'week'; // デフォルトは週表示
+        
+        window.switchView = function(viewType) {
+            currentView = viewType;
+            
+            // ボタンの状態更新
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            });
+            
+            const activeBtn = document.getElementById(viewType + 'View');
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.add('btn-primary');
+                activeBtn.classList.remove('btn-secondary');
+            }
+            
+            // カレンダー表示を切り替え
+            switch(viewType) {
+                case 'day':
+                    showDayView();
+                    break;
+                case 'week':
+                    showWeekView();
+                    break;
+                case 'month':
+                    showMonthView();
+                    break;
+            }
+        };
+        
+        function showDayView() {
+            const container = document.getElementById('appointmentCalendar');
+            const today = new Date().getDate();
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="color: var(--primary);">本日 ${today}日の予約</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1px; background: var(--gray-200); border-radius: 8px; overflow: hidden;">
+                    <!-- 日表示のタイムスケジュール -->
+                    <div style="background: var(--gray-600); color: white; padding: 0.75rem; text-align: center; font-weight: 500;">時間</div>
+                    <div style="background: var(--primary); color: white; padding: 0.75rem; text-align: center; font-weight: 500;">本日の予約</div>
+                    
+                    <!-- 9:00 -->
+                    <div style="background: var(--gray-100); padding: 0.5rem; text-align: center; font-weight: 500;">9:00</div>
+                    <div style="background: var(--white); padding: 0.5rem; min-height: 60px;"></div>
+                    
+                    <!-- 10:00 -->
+                    <div style="background: var(--gray-100); padding: 0.5rem; text-align: center; font-weight: 500;">10:00</div>
+                    <div style="background: var(--white); padding: 0.5rem; min-height: 60px;">
+                        <div style="background: #ecfdf5; color: #065f46; padding: 8px; border-radius: 4px; border-left: 3px solid #10b981; cursor: pointer;" onclick="viewAppointment('apt-005')">
+                            <strong>山田花子様</strong><br>
+                            <span style="font-size: 0.9rem;">カット+カラー+トリートメント (90分)</span><br>
+                            <span style="font-size: 0.8rem; opacity: 0.8;">担当: 田中</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 11:00 -->
+                    <div style="background: var(--gray-100); padding: 0.5rem; text-align: center; font-weight: 500;">11:00</div>
+                    <div style="background: var(--primary-50); padding: 0.5rem; min-height: 60px;">
+                        <div style="text-align: center; color: var(--primary); font-size: 0.9rem;">山田様 施術中</div>
+                    </div>
+                    
+                    <!-- 13:00 -->
+                    <div style="background: var(--gray-100); padding: 0.5rem; text-align: center; font-weight: 500;">13:00</div>
+                    <div style="background: var(--white); padding: 0.5rem; min-height: 60px;">
+                        <div style="background: #dbeafe; color: #1e40af; padding: 8px; border-radius: 4px; border-left: 3px solid #3b82f6; cursor: pointer;" onclick="viewAppointment('apt-006')">
+                            <strong>佐藤美咲様</strong><br>
+                            <span style="font-size: 0.9rem;">パーマ+トリートメント (120分)</span><br>
+                            <span style="font-size: 0.8rem; opacity: 0.8;">担当: 佐藤</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 15:00 -->
+                    <div style="background: var(--gray-100); padding: 0.5rem; text-align: center; font-weight: 500;">15:00</div>
+                    <div style="background: var(--white); padding: 0.5rem; min-height: 60px;">
+                        <div style="background: #fef3c7; color: #92400e; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b; cursor: pointer;" onclick="viewAppointment('apt-007')">
+                            <strong>高橋由紀様</strong><br>
+                            <span style="font-size: 0.9rem;">カット (60分) - 待機中</span><br>
+                            <span style="font-size: 0.8rem; opacity: 0.8;">担当: 山田</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showWeekView() {
+            const container = document.getElementById('appointmentCalendar');
+            // 現在の週表示を維持（既存のコード）
+            location.reload();
+        }
+        
+        function showMonthView() {
+            const container = document.getElementById('appointmentCalendar');
+            const today = new Date();
+            const currentMonth = today.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' });
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="color: var(--primary);">${currentMonth}の予約</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--gray-200); border-radius: 8px; overflow: hidden;">
+                    <!-- 月表示のカレンダーヘッダー -->
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">月</div>
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">火</div>
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">水</div>
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">木</div>
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">金</div>
+                    <div style="background: var(--primary); color: white; padding: 1rem; text-align: center; font-weight: 500;">土</div>
+                    <div style="background: var(--gray-400); color: white; padding: 1rem; text-align: center; font-weight: 500;">日</div>
+                    
+                    <!-- 月表示の日付セル（サンプル）-->
+                    ${generateMonthDays()}
+                </div>
+            `;
+        }
+        
+        function generateMonthDays() {
+            let html = '';
+            for (let day = 1; day <= 31; day++) {
+                const isToday = day === new Date().getDate();
+                const bgColor = isToday ? 'var(--primary-50)' : 'var(--white)';
+                const borderStyle = isToday ? 'border: 2px solid var(--primary);' : '';
+                
+                // サンプル予約データ
+                let appointments = '';
+                if (day === 14) { // 今日
+                    appointments = '<div style="font-size: 0.7rem; background: #ecfdf5; color: #065f46; padding: 1px 3px; border-radius: 2px; margin: 1px 0;">山田様</div>' +
+                                 '<div style="font-size: 0.7rem; background: #dbeafe; color: #1e40af; padding: 1px 3px; border-radius: 2px; margin: 1px 0;">佐藤様</div>';
+                } else if (day === 15) { // 明日
+                    appointments = '<div style="font-size: 0.7rem; background: #fef3c7; color: #92400e; padding: 1px 3px; border-radius: 2px;">中村様</div>';
+                } else if (day % 7 === 0) { // 定休日
+                    appointments = '<div style="font-size: 0.7rem; color: var(--text-light);">定休日</div>';
+                }
+                
+                html += `
+                    <div style="background: ${bgColor}; padding: 0.5rem; min-height: 80px; ${borderStyle}">
+                        <div style="font-weight: bold; margin-bottom: 0.25rem;">${day}</div>
+                        ${appointments}
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
         // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Appointments calendar loaded with dummy data');
+            
+            // デフォルト表示（週表示）
+            switchView('week');
             
             // モーダル外クリックで閉じる
             window.addEventListener('click', function(e) {

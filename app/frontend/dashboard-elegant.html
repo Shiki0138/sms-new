@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f8e5e1">
+    <title>Dashboard - Salon Lumière</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <style>
+        /* Dashboard elegant page specific styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #d4a574;
+            --primary-dark: #b8935f;
+            --secondary: #f8e5e1;
+            --accent: #e8b4b8;
+            --success: #81c784;
+            --warning: #ffb74d;
+            --error: #e57373;
+            --text-dark: #3a3a3a;
+            --text-light: #6b6b6b;
+            --white: #ffffff;
+            --bg-light: #fdf9f7;
+            --shadow-sm: 0 2px 8px rgba(212, 165, 116, 0.1);
+            --shadow-md: 0 4px 16px rgba(212, 165, 116, 0.15);
+            --shadow-lg: 0 8px 32px rgba(212, 165, 116, 0.2);
+            --gradient-1: linear-gradient(135deg, #f8e5e1 0%, #fdf0ed 50%, #fff9f7 100%);
+            --gradient-2: linear-gradient(135deg, #d4a574 0%, #e8b4b8 100%);
+            --gradient-3: linear-gradient(135deg, #fff 0%, rgba(248, 229, 225, 0.3) 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--white);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            background: var(--gradient-2);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .logo-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .salon-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 400;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: var(--gradient-2);
+            transition: height 0.3s ease;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--secondary);
+            color: var(--primary-dark);
+        }
+
+        .nav-item.active::before,
+        .nav-item:hover::before {
+            height: 60%;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            opacity: 0.8;
+        }
+
+        .user-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: var(--white);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 500;
+            margin-right: 1rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: transparent;
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--secondary);
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .icon-button {
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-button:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: 50%;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-3);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-trend {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .trend-down {
+            color: var(--error);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Schedule Section */
+        .schedule-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .view-all-btn {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .appointment-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--gradient-3);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .appointment-card:hover {
+            background: var(--secondary);
+            transform: translateX(10px);
+        }
+
+        .time-slot {
+            flex-shrink: 0;
+            width: 80px;
+            text-align: center;
+            padding-right: 1rem;
+            border-right: 2px solid rgba(212, 165, 116, 0.2);
+            margin-right: 1rem;
+        }
+
+        .time {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .duration {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .appointment-info {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .service-name {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .appointment-status {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1100;
+            width: 50px;
+            height: 50px;
+            background: var(--white);
+            border: none;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeIn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .schedule-section {
+            animation: fadeIn 0.6s ease-out 0.5s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>ダッシュボード</span>
+            </a>
+            <a href="#" class="nav-item" data-page="appointments">
+                <span class="nav-icon">📅</span>
+                <span>予約管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="customers">
+                <span class="nav-icon">👥</span>
+                <span>顧客管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="services">
+                <span class="nav-icon">✂️</span>
+                <span>サービス管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="staff">
+                <span class="nav-icon">👨‍💼</span>
+                <span>スタッフ管理</span>
+            </a>
+            <a href="#" class="nav-item" data-page="messages">
+                <span class="nav-icon">💬</span>
+                <span>メッセージ</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <span class="nav-icon">📈</span>
+                <span>分析・レポート</span>
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1 class="page-title">こんにちは、素敵な一日を！</h1>
+            <div class="header-actions">
+                <button class="icon-button">
+                    🔍
+                </button>
+                <button class="icon-button">
+                    🔔
+                    <span class="notification-badge"></span>
+                </button>
+                <button class="icon-button">
+                    ➕
+                </button>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📅</div>
+                    <span class="stat-trend trend-up">+12%</span>
+                </div>
+                <div class="stat-value">24</div>
+                <div class="stat-label">本日の予約</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <span class="stat-trend trend-up">+8%</span>
+                </div>
+                <div class="stat-value">¥248,500</div>
+                <div class="stat-label">本日の売上</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">👥</div>
+                    <span class="stat-trend trend-up">+15</span>
+                </div>
+                <div class="stat-value">1,234</div>
+                <div class="stat-label">総顧客数</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⭐</div>
+                    <span class="stat-trend">New!</span>
+                </div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">平均評価</div>
+            </div>
+        </div>
+
+        <div class="schedule-section">
+            <div class="section-header">
+                <h2 class="section-title">本日の予約</h2>
+                <a href="#" class="view-all-btn">すべて見る →</a>
+            </div>
+            <div class="appointment-list">
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">10:00</div>
+                        <div class="duration">90分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">山田 花子 様</div>
+                        <div class="service-name">カット + カラー + トリートメント</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">13:00</div>
+                        <div class="duration">60分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">佐藤 美咲 様</div>
+                        <div class="service-name">カット + パーマ</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+
+                <div class="appointment-card">
+                    <div class="time-slot">
+                        <div class="time">15:00</div>
+                        <div class="duration">120分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name">鈴木 真由美 様</div>
+                        <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
+                    </div>
+                    <div class="appointment-status"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Close mobile menu after selection
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('salon_token');
+            localStorage.removeItem('salon_user');
+            sessionStorage.removeItem('salon_token');
+            sessionStorage.removeItem('salon_user');
+            window.location.href = '/login-elegant.html';
+        });
+
+        // Check authentication
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('salon_token') || sessionStorage.getItem('salon_token');
+            if (!token) {
+                window.location.href = '/login-elegant.html';
+            }
+        });
+
+        // Add hover effect to cards
+        document.querySelectorAll('.stat-card, .appointment-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

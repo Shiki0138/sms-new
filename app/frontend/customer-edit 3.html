@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顧客詳細 - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/main-unified.css?v=20250907
+    <style>
+        /* Customer edit page specific styles */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .customer-edit-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .edit-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- サイドバー -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Salon Lumière</h1>
+                <p id="salonName">Loading...</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>ダッシュボード</span>
+                </a>
+                <a href="/dashboard.html#customers" class="nav-item active">
+                    <span class="icon">👥</span>
+                    <span>顧客管理</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span id="userName">Loading...</span>
+                    <span id="userPlan" class="plan-badge">Light</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </aside>
+        
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <div class="page-header">
+                <div class="breadcrumb">
+                    <a href="/dashboard.html">ダッシュボード</a>
+                    <span>/</span>
+                    <a href="/dashboard.html#customers">顧客管理</a>
+                    <span>/</span>
+                    <span id="customerNameBreadcrumb">顧客詳細</span>
+                </div>
+            </div>
+            
+            <!-- 顧客基本情報 -->
+            <div class="customer-header">
+                <div class="customer-info">
+                    <h1 id="customerFullName">-</h1>
+                    <p class="customer-kana" id="customerFullNameKana">-</p>
+                    <div class="customer-tags" id="customerTags"></div>
+                </div>
+                <div class="customer-actions">
+                    <button class="btn btn-secondary" onclick="editCustomer()">編集</button>
+                    <button class="btn btn-primary" onclick="createAppointment()">予約作成</button>
+                </div>
+            </div>
+            
+            <!-- タブメニュー -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="basic">基本情報</button>
+                <button class="tab-button" data-tab="history">来店履歴</button>
+                <button class="tab-button" data-tab="records">カルテ</button>
+                <button class="tab-button" data-tab="photos">写真</button>
+                <button class="tab-button" data-tab="growth">成長記録</button>
+                <button class="tab-button" data-tab="desires">願望・ニーズ</button>
+            </div>
+            
+            <!-- タブコンテンツ -->
+            <div class="tab-content">
+                <!-- 基本情報タブ -->
+                <div id="basic" class="tab-pane active">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>電話番号</label>
+                            <p id="customerPhone">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>メールアドレス</label>
+                            <p id="customerEmail">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>生年月日</label>
+                            <p id="customerBirthDate">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>性別</label>
+                            <p id="customerGender">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>郵便番号</label>
+                            <p id="customerPostalCode">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>住所</label>
+                            <p id="customerAddress">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>初回来店日</label>
+                            <p id="customerFirstVisit">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>最終来店日</label>
+                            <p id="customerLastVisit">-</p>
+                        </div>
+                        <div class="info-item">
+                            <label>来店回数</label>
+                            <p><span id="customerVisitCount">0</span>回</p>
+                        </div>
+                        <div class="info-item">
+                            <label>累計売上</label>
+                            <p>¥<span id="customerTotalSales">0</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="notes-section">
+                        <h3>備考</h3>
+                        <p id="customerNotes" class="notes-content">-</p>
+                    </div>
+                </div>
+                
+                <!-- 来店履歴タブ -->
+                <div id="history" class="tab-pane">
+                    <div class="history-timeline" id="visitHistory">
+                        <!-- 来店履歴がここに表示されます -->
+                    </div>
+                </div>
+                
+                <!-- カルテタブ -->
+                <div id="records" class="tab-pane">
+                    <div class="records-header">
+                        <h3>施術カルテ</h3>
+                        <button class="btn btn-primary btn-sm" onclick="addRecord()">カルテ追加</button>
+                    </div>
+                    <div class="records-list" id="medicalRecords">
+                        <!-- カルテがここに表示されます -->
+                    </div>
+                </div>
+                
+                <!-- 写真タブ -->
+                <div id="photos" class="tab-pane">
+                    <div class="photos-header">
+                        <h3>成長記録</h3>
+                        <button class="btn btn-primary btn-sm" onclick="uploadPhoto()">写真追加</button>
+                    </div>
+                    <div class="photos-grid" id="customerPhotos">
+                        <!-- 写真がここに表示されます -->
+                    </div>
+                </div>
+                
+                <!-- 成長記録タブ -->
+                <div id="growth" class="tab-pane">
+                    <div class="growth-header">
+                        <h3>成長記録グラフ</h3>
+                        <div class="period-selector">
+                            <button class="period-btn active" data-period="6m">6ヶ月</button>
+                            <button class="period-btn" data-period="1y">1年</button>
+                            <button class="period-btn" data-period="all">全期間</button>
+                        </div>
+                    </div>
+                    <div class="growth-content">
+                        <div class="growth-chart" id="growthChart">
+                            <!-- チャートがここに表示されます -->
+                        </div>
+                        <div class="growth-insights">
+                            <h4>分析</h4>
+                            <div id="growthInsights">
+                                <!-- 成長分析がここに表示されます -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 願望・ニーズタブ -->
+                <div id="desires" class="tab-pane">
+                    <div class="desires-section">
+                        <h3>お客様の願望</h3>
+                        <div class="editable-content" id="customerDesires">
+                            <p class="content-text"></p>
+                            <button class="edit-btn" onclick="editDesires()">編集</button>
+                        </div>
+                    </div>
+                    
+                    <div class="needs-section">
+                        <h3>お客様のニーズ</h3>
+                        <div class="editable-content" id="customerNeeds">
+                            <p class="content-text"></p>
+                            <button class="edit-btn" onclick="editNeeds()">編集</button>
+                        </div>
+                    </div>
+                    
+                    <div class="preferences-section">
+                        <h3>お好み・注意事項</h3>
+                        <div class="preferences-grid" id="customerPreferences">
+                            <!-- 好みや注意事項がここに表示されます -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- モーダル -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">タイトル</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- モーダルコンテンツ -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/customer-detail.js"></script>
+</body>
+</html>

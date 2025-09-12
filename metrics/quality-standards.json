@@ -1,0 +1,126 @@
+{
+  "codeQualityStandards": {
+    "maintainability": {
+      "cyclomatic_complexity": {
+        "target": "≤10",
+        "warning": "11-15",
+        "critical": ">15",
+        "description": "Maximum cyclomatic complexity per function"
+      },
+      "file_size": {
+        "target": "≤500 lines",
+        "warning": "500-750 lines",
+        "critical": ">750 lines",
+        "description": "Maximum lines per file"
+      },
+      "function_length": {
+        "target": "≤50 lines",
+        "warning": "50-100 lines",
+        "critical": ">100 lines",
+        "description": "Maximum lines per function"
+      },
+      "duplicate_code": {
+        "target": "<5%",
+        "warning": "5-10%",
+        "critical": ">10%",
+        "description": "Percentage of duplicated code"
+      }
+    },
+    "reliability": {
+      "test_coverage": {
+        "target": "≥80%",
+        "warning": "70-80%",
+        "critical": "<70%",
+        "description": "Unit test coverage percentage"
+      },
+      "bug_density": {
+        "target": "≤2 bugs/KLOC",
+        "warning": "2-5 bugs/KLOC",
+        "critical": ">5 bugs/KLOC",
+        "description": "Bugs per 1000 lines of code"
+      },
+      "critical_vulnerabilities": {
+        "target": "0",
+        "warning": "1-2",
+        "critical": ">2",
+        "description": "Number of critical security vulnerabilities"
+      }
+    },
+    "documentation": {
+      "api_documentation": {
+        "target": "100%",
+        "warning": "80-99%",
+        "critical": "<80%",
+        "description": "Percentage of API endpoints documented"
+      },
+      "code_comments": {
+        "target": "≥20%",
+        "warning": "10-20%",
+        "critical": "<10%",
+        "description": "Comment density in codebase"
+      },
+      "readme_completeness": {
+        "target": "Complete",
+        "warning": "Partial",
+        "critical": "Missing",
+        "description": "README file completeness"
+      }
+    },
+    "security": {
+      "authentication": {
+        "target": "JWT + bcrypt",
+        "warning": "Basic auth",
+        "critical": "No auth",
+        "description": "Authentication mechanism strength"
+      },
+      "input_validation": {
+        "target": "100%",
+        "warning": "80-99%",
+        "critical": "<80%",
+        "description": "Percentage of endpoints with input validation"
+      },
+      "cors_configuration": {
+        "target": "Properly configured",
+        "warning": "Overly permissive",
+        "critical": "Not configured",
+        "description": "CORS security configuration"
+      }
+    }
+  },
+  "developmentPractices": {
+    "version_control": {
+      "commit_frequency": {
+        "target": "Daily commits",
+        "warning": "Weekly commits",
+        "critical": "Infrequent commits",
+        "description": "Code commit frequency"
+      },
+      "branch_strategy": {
+        "target": "GitFlow/Feature branches",
+        "warning": "Basic branching",
+        "critical": "Single branch",
+        "description": "Git branching strategy"
+      },
+      "commit_message_quality": {
+        "target": "Conventional commits",
+        "warning": "Descriptive messages",
+        "critical": "Poor messages",
+        "description": "Commit message standard"
+      }
+    },
+    "deployment": {
+      "ci_cd_pipeline": {
+        "target": "Fully automated",
+        "warning": "Semi-automated",
+        "critical": "Manual deployment",
+        "description": "Deployment automation level"
+      },
+      "environment_parity": {
+        "target": "Dev/Prod identical",
+        "warning": "Minor differences",
+        "critical": "Major differences",
+        "description": "Development and production environment similarity"
+      }
+    }
+  }
+}

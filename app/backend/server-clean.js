@@ -60,8 +60,10 @@ const generateToken = (userId, email, role = 'user') => {
   );
 };
 
-// Security middleware
-app.set('trust proxy', true);
+// Security middleware - 本番環境でのみtrust proxy有効
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', true);
+}
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {

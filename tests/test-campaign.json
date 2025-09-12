@@ -1,0 +1,19 @@
+{
+  "name": "Test SMS Campaign",
+  "description": "A test SMS blast campaign",
+  "type": "promotional",
+  "messageContent": "Hello. This is a test SMS from our salon. Thank you for being our valued customer.",
+  "templateId": "aa8d1202-af05-46f9-ad3b-8735155a61c5",
+  "settings": {
+    "enableTracking": true,
+    "sendRate": 1,
+    "timeWindow": {
+      "start": "09:00",
+      "end": "18:00",
+      "timezone": "Asia/Tokyo"
+    }
+  },
+  "targetCriteria": {
+    "hasPhoneNumber": true
+  }
+}

@@ -107,7 +107,7 @@
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-secondary" style="flex: 1;" onclick="contactCustomer('1')">連絡</button>
-                        <button class="btn btn-primary" style="flex: 1;" onclick="viewCustomerRecord('1')">カルテ</button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="viewCustomerRecord('1')">詳細カルテ</button>
                     </div>
                 </div>
             </div>
@@ -157,8 +157,8 @@
 
         // 電子カルテ機能
         window.viewCustomerRecord = function(customerId) {
-            // カルテモーダルを表示
-            showMedicalRecordModal(customerId);
+            // 詳細カルテページに遷移
+            window.location.href = `/customer-medical-record.html?customer=${customerId}`;
         };
         
         window.contactCustomer = function(customerId) {

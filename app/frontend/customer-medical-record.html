@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>電子カルテ - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/legacy/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/mobile-navigation.css">
+    <style>
+        .medical-record-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .patient-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .patient-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .patient-info h1 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+        }
+        
+        .patient-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .medical-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .medical-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        .treatment-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .treatment-item {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .treatment-date {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        .treatment-service {
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+        
+        .treatment-notes {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .allergy-item {
+            background: var(--warning-light);
+            border: 1px solid var(--warning);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .allergy-severity {
+            font-weight: 600;
+            color: var(--warning);
+        }
+        
+        .notes-section {
+            background: var(--info-light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-item {
+            aspect-ratio: 1;
+            background: var(--gray-200);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>ホーム</span>
+            </a>
+            <a href="/appointments.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>予約</span>
+            </a>
+            <a href="/customers.html" class="nav-item active">
+                <span class="nav-icon">👥</span>
+                <span>顧客</span>
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>連絡</span>
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>売上</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="medical-record-container">
+            <!-- 患者ヘッダー -->
+            <div class="patient-header">
+                <div class="patient-avatar" id="patientAvatar">山</div>
+                <div class="patient-info">
+                    <h1 id="patientName">山田 花子 様</h1>
+                    <div class="patient-details">
+                        <div><strong>顧客ID:</strong> <span id="customerId">C-001</span></div>
+                        <div><strong>電話番号:</strong> <span id="patientPhone">090-1234-5678</span></div>
+                        <div><strong>メール:</strong> <span id="patientEmail">yamada@email.com</span></div>
+                        <div><strong>最終来店:</strong> <span id="lastVisit">2024-03-14</span></div>
+                        <div><strong>来店回数:</strong> <span id="visitCount">23回</span></div>
+                        <div><strong>累計金額:</strong> <span id="totalSpent">¥128,000</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-sections">
+                <!-- 左側：施術履歴 -->
+                <div class="medical-section">
+                    <h2 class="section-title">📋 施術履歴</h2>
+                    <div class="treatment-history" id="treatmentHistory">
+                        <div class="treatment-item">
+                            <div class="treatment-date">2024年3月14日</div>
+                            <div class="treatment-service">カット + カラー + トリートメント</div>
+                            <div class="treatment-notes">
+                                <strong>担当:</strong> 田中スタッフ<br>
+                                <strong>施術時間:</strong> 90分<br>
+                                <strong>料金:</strong> ¥12,000<br>
+                                <strong>カラー:</strong> 8トーンのアッシュブラウン<br>
+                                <strong>使用薬剤:</strong> イルミナカラー<br>
+                                <strong>記録:</strong> 前髪を5mm短く。全体的に軽やかな仕上がり。お客様大変満足。
+                            </div>
+                        </div>
+                        
+                        <div class="treatment-item">
+                            <div class="treatment-date">2024年1月20日</div>
+                            <div class="treatment-service">カット + パーマ</div>
+                            <div class="treatment-notes">
+                                <strong>担当:</strong> 佐藤スタッフ<br>
+                                <strong>施術時間:</strong> 120分<br>
+                                <strong>料金:</strong> ¥15,000<br>
+                                <strong>パーマ:</strong> デジタルパーマ（ゆるめ）<br>
+                                <strong>記録:</strong> 髪質が細いため弱めの薬剤使用。持ちが良好。
+                            </div>
+                        </div>
+                        
+                        <div class="treatment-item">
+                            <div class="treatment-date">2023年12月10日</div>
+                            <div class="treatment-service">カット + トリートメント</div>
+                            <div class="treatment-notes">
+                                <strong>担当:</strong> 田中スタッフ<br>
+                                <strong>施術時間:</strong> 75分<br>
+                                <strong>料金:</strong> ¥8,000<br>
+                                <strong>記録:</strong> 乾燥が気になるためトリートメント重点。毛先の状態改善。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addNewTreatment()" style="width: 100%; margin-top: 1rem;">
+                        新規施術記録を追加
+                    </button>
+                </div>
+
+                <!-- 右側：医療情報・注意事項 -->
+                <div class="medical-section">
+                    <h2 class="section-title">⚠️ 医療情報・注意事項</h2>
+                    
+                    <!-- アレルギー情報 -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--warning); margin-bottom: 1rem;">アレルギー情報</h3>
+                        <div class="allergy-item">
+                            <div class="allergy-severity">重要</div>
+                            <div><strong>ジアミン系カラー剤アレルギー</strong></div>
+                            <div style="font-size: 0.9rem; margin-top: 0.5rem;">
+                                症状: かゆみ・発疹<br>
+                                対応: パッチテスト必須、ノンジアミンカラー使用
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 体質・特記事項 -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--text-dark); margin-bottom: 1rem;">体質・特記事項</h3>
+                        <div class="notes-section">
+                            <div><strong>肌質:</strong> 敏感肌</div>
+                            <div><strong>髪質:</strong> 細毛、やわらかい</div>
+                            <div><strong>頭皮:</strong> 乾燥しやすい</div>
+                            <div><strong>希望:</strong> ナチュラルな仕上がり希望</div>
+                            <div><strong>注意:</strong> 強い薬剤は避ける</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 施術写真 -->
+                    <div>
+                        <h3 style="color: var(--text-dark); margin-bottom: 1rem;">施術写真</h3>
+                        <div class="photo-gallery">
+                            <div class="photo-item" onclick="viewPhoto('before-2024-03-14')">
+                                <div style="text-align: center; color: var(--text-medium);">
+                                    <div style="font-size: 1.5rem;">📷</div>
+                                    <div style="font-size: 0.8rem;">Before<br>3/14</div>
+                                </div>
+                            </div>
+                            <div class="photo-item" onclick="viewPhoto('after-2024-03-14')">
+                                <div style="text-align: center; color: var(--text-medium);">
+                                    <div style="font-size: 1.5rem;">📷</div>
+                                    <div style="font-size: 0.8rem;">After<br>3/14</div>
+                                </div>
+                            </div>
+                            <div class="photo-item" onclick="viewPhoto('process-2024-03-14')">
+                                <div style="text-align: center; color: var(--text-medium);">
+                                    <div style="font-size: 1.5rem;">📷</div>
+                                    <div style="font-size: 0.8rem;">Process<br>3/14</div>
+                                </div>
+                            </div>
+                            <div class="photo-item" onclick="addPhoto()" style="border: 2px dashed var(--primary);">
+                                <div style="text-align: center; color: var(--primary);">
+                                    <div style="font-size: 1.5rem;">➕</div>
+                                    <div style="font-size: 0.8rem;">写真追加</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="editMedicalInfo()" style="width: 100%; margin-top: 1rem;">
+                        医療情報を編集
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 下部：カルテ操作 -->
+            <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                <button class="btn btn-secondary" onclick="printRecord()">
+                    カルテ印刷
+                </button>
+                <button class="btn btn-secondary" onclick="exportRecord()">
+                    データ出力
+                </button>
+                <button class="btn btn-primary" onclick="goBackToCustomers()">
+                    顧客一覧に戻る
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- モバイル底部ナビゲーション -->
+    <nav class="mobile-bottom-nav" role="navigation" aria-label="メインナビゲーション">
+        <div class="mobile-nav-items">
+            <a href="/dashboard.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div class="mobile-nav-label">ホーム</div>
+            </a>
+            <a href="/appointments.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📅</div>
+                <div class="mobile-nav-label">予約</div>
+            </a>
+            <a href="/customers.html" class="mobile-nav-item active" aria-current="page">
+                <div class="mobile-nav-icon">👥</div>
+                <div class="mobile-nav-label">顧客</div>
+            </a>
+            <a href="/messages.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">💬</div>
+                <div class="mobile-nav-label">連絡</div>
+            </a>
+            <a href="/settings.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚙️</div>
+                <div class="mobile-nav-label">設定</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // URLパラメータから顧客IDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerId = urlParams.get('customer') || '1';
+        
+        // 顧客データベース
+        const customerDatabase = {
+            '1': {
+                id: 'C-001',
+                name: '山田 花子',
+                phone: '090-1234-5678',
+                email: 'yamada@email.com',
+                lastVisit: '2024-03-14',
+                visitCount: 23,
+                totalSpent: 128000,
+                allergies: [
+                    {
+                        type: 'ジアミン系カラー剤',
+                        severity: '重要',
+                        symptoms: 'かゆみ・発疹',
+                        action: 'パッチテスト必須、ノンジアミンカラー使用'
+                    }
+                ],
+                medicalNotes: {
+                    skin: '敏感肌',
+                    hair: '細毛、やわらかい',
+                    scalp: '乾燥しやすい',
+                    preference: 'ナチュラルな仕上がり希望',
+                    caution: '強い薬剤は避ける'
+                },
+                treatments: [
+                    {
+                        date: '2024-03-14',
+                        service: 'カット + カラー + トリートメント',
+                        staff: '田中',
+                        duration: 90,
+                        price: 12000,
+                        color: '8トーンのアッシュブラウン',
+                        chemicals: 'イルミナカラー',
+                        notes: '前髪を5mm短く。全体的に軽やかな仕上がり。お客様大変満足。',
+                        photos: ['before-2024-03-14', 'after-2024-03-14', 'process-2024-03-14']
+                    },
+                    {
+                        date: '2024-01-20',
+                        service: 'カット + パーマ',
+                        staff: '佐藤',
+                        duration: 120,
+                        price: 15000,
+                        perm: 'デジタルパーマ（ゆるめ）',
+                        notes: '髪質が細いため弱めの薬剤使用。持ちが良好。',
+                        photos: ['before-2024-01-20', 'after-2024-01-20']
+                    }
+                ]
+            }
+        };
+        
+        // ページ初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomerData(customerId);
+        });
+        
+        function loadCustomerData(customerId) {
+            const customer = customerDatabase[customerId];
+            if (!customer) {
+                alert('顧客データが見つかりません');
+                return;
+            }
+            
+            // 基本情報表示
+            document.getElementById('patientAvatar').textContent = customer.name[0];
+            document.getElementById('patientName').textContent = customer.name + ' 様';
+            document.getElementById('customerId').textContent = customer.id;
+            document.getElementById('patientPhone').textContent = customer.phone;
+            document.getElementById('patientEmail').textContent = customer.email;
+            document.getElementById('lastVisit').textContent = customer.lastVisit;
+            document.getElementById('visitCount').textContent = customer.visitCount + '回';
+            document.getElementById('totalSpent').textContent = '¥' + customer.totalSpent.toLocaleString();
+        }
+        
+        // 新規施術記録追加
+        function addNewTreatment() {
+            const service = prompt('施術内容を入力してください (例: カット+カラー):');
+            const staff = prompt('担当スタッフを入力してください:');
+            const duration = prompt('施術時間を入力してください (分):');
+            const price = prompt('料金を入力してください (円):');
+            const notes = prompt('施術記録・備考を入力してください:');
+            
+            if (service && staff && duration && price) {
+                const today = new Date().toLocaleDateString('ja-JP');
+                alert(`✅ 新規施術記録を追加しました\n\n` +
+                      `日付: ${today}\n` +
+                      `施術: ${service}\n` +
+                      `担当: ${staff}\n` +
+                      `時間: ${duration}分\n` +
+                      `料金: ¥${price}\n` +
+                      `記録: ${notes || 'なし'}`);
+                
+                console.log('新規施術記録:', { service, staff, duration, price, notes });
+            }
+        }
+        
+        // 医療情報編集
+        function editMedicalInfo() {
+            const allergies = prompt('アレルギー情報を更新してください:', 'ジアミン系カラー剤アレルギー');
+            const skinType = prompt('肌質を入力してください:', '敏感肌');
+            const hairType = prompt('髪質を入力してください:', '細毛、やわらかい');
+            const cautions = prompt('注意事項を入力してください:', '強い薬剤は避ける');
+            
+            if (allergies || skinType || hairType || cautions) {
+                alert(`✅ 医療情報を更新しました\n\n` +
+                      `アレルギー: ${allergies}\n` +
+                      `肌質: ${skinType}\n` +
+                      `髪質: ${hairType}\n` +
+                      `注意事項: ${cautions}`);
+                
+                console.log('医療情報更新:', { allergies, skinType, hairType, cautions });
+            }
+        }
+        
+        // 写真管理
+        function viewPhoto(photoId) {
+            alert(`📷 施術写真表示\n\n写真ID: ${photoId}\n\n実際の運用では高解像度の施術写真が表示されます。\nBefore/After比較機能も含まれます。`);
+        }
+        
+        function addPhoto() {
+            const photoType = prompt('写真の種類を選択してください:\n\n1. Before（施術前）\n2. After（施術後）\n3. Process（施術中）\n\n番号を入力:', '1');
+            const description = prompt('写真の説明を入力してください:', '');
+            
+            if (photoType) {
+                const types = { '1': 'Before', '2': 'After', '3': 'Process' };
+                const type = types[photoType] || 'その他';
+                
+                alert(`✅ 写真を追加しました\n\n種類: ${type}\n説明: ${description || 'なし'}\n\n実際の運用ではカメラ機能で撮影・アップロードされます。`);
+                console.log('写真追加:', { type, description });
+            }
+        }
+        
+        // カルテ操作
+        function printRecord() {
+            alert('🖨️ カルテ印刷機能\n\n印刷用フォーマットでカルテを出力します。\n\n・患者情報\n・施術履歴\n・医療情報\n・写真（選択可能）');
+        }
+        
+        function exportRecord() {
+            const customer = customerDatabase[customerId];
+            const exportData = {
+                customerId: customer?.id,
+                name: customer?.name,
+                exportDate: new Date().toLocaleDateString(),
+                treatments: customer?.treatments?.length || 0
+            };
+            
+            alert(`📥 カルテデータ出力\n\n${JSON.stringify(exportData, null, 2)}\n\nCSV・PDF形式での出力が可能です。`);
+            console.log('カルテ出力:', exportData);
+        }
+        
+        function goBackToCustomers() {
+            window.location.href = '/customers.html';
+        }
+        
+        // モバイル対応
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (mobileMenuToggle && sidebar && sidebarOverlay) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebarOverlay.classList.toggle('active');
+                });
+
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                });
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/login.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

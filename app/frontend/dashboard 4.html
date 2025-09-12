@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/legacy/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/mobile-navigation.css">
     <style>
         /* Page visibility - navigation functionality only */
         .page {
@@ -74,6 +75,7 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -87,31 +89,23 @@
         <nav class="nav-menu">
             <a href="/dashboard.html" class="nav-item active">
                 <span class="nav-icon">🏠</span>
-                <span>ダッシュボード</span>
+                <span>ホーム</span>
             </a>
             <a href="/appointments.html" class="nav-item">
                 <span class="nav-icon">📅</span>
-                <span>予約管理</span>
+                <span>予約</span>
             </a>
             <a href="/customers.html" class="nav-item">
                 <span class="nav-icon">👥</span>
-                <span>顧客管理</span>
+                <span>顧客</span>
             </a>
             <a href="/messages.html" class="nav-item">
                 <span class="nav-icon">💬</span>
-                <span>メッセージ</span>
-            </a>
-            <a href="/staff.html" class="nav-item">
-                <span class="nav-icon">👨‍💼</span>
-                <span>スタッフ管理</span>
-            </a>
-            <a href="/services.html" class="nav-item">
-                <span class="nav-icon">✂️</span>
-                <span>サービス管理</span>
+                <span>連絡</span>
             </a>
             <a href="/reports.html" class="nav-item">
-                <span class="nav-icon">📊</span>
-                <span>レポート</span>
+                <span class="nav-icon">📈</span>
+                <span>売上</span>
             </a>
             <a href="/settings.html" class="nav-item">
                 <span class="nav-icon">⚙️</span>
@@ -131,101 +125,154 @@
         </div>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content" id="main-content">
         <!-- Dashboard Page -->
-        <div class="page active" id="dashboard">
+        <div class="page active" id="dashboard" role="main" aria-label="ダッシュボード">
             <header class="header">
                 <h1 class="page-title">こんにちは、素敵な一日を！</h1>
                 <div class="header-actions">
-                    <button class="icon-button" aria-label="検索">
+                    <button class="icon-button" aria-label="顧客検索" onclick="openSearch()" title="顧客検索">
                         🔍
                     </button>
-                    <button class="icon-button" aria-label="通知">
+                    <button class="icon-button" aria-label="通知確認" onclick="openNotifications()" title="新着通知・お知らせ">
                         🔔
-                        <span class="notification-badge"></span>
+                        <span class="notification-badge">3</span>
                     </button>
-                    <button class="icon-button" aria-label="新規追加">
+                    <button class="icon-button" aria-label="新規予約" onclick="openNewBooking()" title="新規予約作成">
                         ➕
                     </button>
                 </div>
             </header>
 
-            <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">📅</div>
-                    <span class="stat-trend trend-up">+12%</span>
-                </div>
-                <div class="stat-value">24</div>
-                <div class="stat-label">本日の予約</div>
+            <!-- メイン表示エリア -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <!-- 本日の予約（左側・最上部） -->
+                <section class="schedule-section">
+                    <div class="section-header">
+                        <h2 class="section-title">本日の予約</h2>
+                        <a href="/appointments.html" class="view-all-btn">すべて見る →</a>
+                    </div>
+                    <div class="appointment-list">
+                        <div class="appointment-card" onclick="viewAppointmentDetail('apt-001')" style="cursor: pointer;">
+                            <div class="time-slot">
+                                <div class="time">10:00</div>
+                                <div class="duration">90分</div>
+                            </div>
+                            <div class="appointment-info">
+                                <div class="customer-name" onclick="viewCustomerDetail('1')" style="color: var(--primary); text-decoration: underline;">山田 花子 様</div>
+                                <div class="service-name">カット + カラー + トリートメント</div>
+                            </div>
+                            <div class="appointment-status" aria-label="予約確定"></div>
+                        </div>
+
+                        <div class="appointment-card" onclick="viewAppointmentDetail('apt-002')" style="cursor: pointer;">
+                            <div class="time-slot">
+                                <div class="time">13:00</div>
+                                <div class="duration">60分</div>
+                            </div>
+                            <div class="appointment-info">
+                                <div class="customer-name" onclick="viewCustomerDetail('2')" style="color: var(--primary); text-decoration: underline;">佐藤 美咲 様</div>
+                                <div class="service-name">カット + パーマ</div>
+                            </div>
+                            <div class="appointment-status" aria-label="予約確定"></div>
+                        </div>
+
+                        <div class="appointment-card" onclick="viewAppointmentDetail('apt-003')" style="cursor: pointer;">
+                            <div class="time-slot">
+                                <div class="time">15:00</div>
+                                <div class="duration">120分</div>
+                            </div>
+                            <div class="appointment-info">
+                                <div class="customer-name" onclick="viewCustomerDetail('3')" style="color: var(--primary); text-decoration: underline;">鈴木 真由美 様</div>
+                                <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
+                            </div>
+                            <div class="appointment-status" aria-label="予約確定"></div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 新着連絡（右側） -->
+                <section class="messages-section">
+                    <div class="section-header">
+                        <h2 class="section-title">新着連絡</h2>
+                        <a href="/messages.html" class="view-all-btn">すべて見る →</a>
+                    </div>
+                    <div class="message-list">
+                        <div class="message-card" onclick="viewMessage('msg-001')" style="background: var(--white); border-radius: 12px; padding: 1rem; margin-bottom: 0.5rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+                            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <div style="background: #10b981; color: white; border-radius: 6px; padding: 2px 6px; font-size: 0.7rem;">LINE</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; margin-bottom: 0.25rem; font-size: 0.9rem;">田中 さくら 様</div>
+                                    <div style="color: var(--text-light); font-size: 0.8rem; line-height: 1.3;">明日の予約時間を30分遅らせていただけますか？</div>
+                                    <div style="color: var(--text-light); font-size: 0.7rem; margin-top: 0.25rem;">5分前</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="message-card" onclick="viewMessage('msg-002')" style="background: var(--white); border-radius: 12px; padding: 1rem; margin-bottom: 0.5rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+                            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <div style="background: #f59e0b; color: white; border-radius: 6px; padding: 2px 6px; font-size: 0.7rem;">SMS</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; margin-bottom: 0.25rem; font-size: 0.9rem;">高橋 恵子 様</div>
+                                    <div style="color: var(--text-light); font-size: 0.8rem; line-height: 1.3;">来週の予約をお願いしたいです</div>
+                                    <div style="color: var(--text-light); font-size: 0.7rem; margin-top: 0.25rem;">12分前</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="message-card" onclick="viewMessage('msg-003')" style="background: var(--white); border-radius: 12px; padding: 1rem; cursor: pointer; box-shadow: var(--shadow-sm);">
+                            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <div style="background: #8b5cf6; color: white; border-radius: 6px; padding: 2px 6px; font-size: 0.7rem;">Instagram</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; margin-bottom: 0.25rem; font-size: 0.9rem;">吉田 美穂 様</div>
+                                    <div style="color: var(--text-light); font-size: 0.8rem; line-height: 1.3;">カラーの色が思ったより暗くて...</div>
+                                    <div style="color: var(--text-light); font-size: 0.7rem; margin-top: 0.25rem;">20分前</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">💰</div>
-                    <span class="stat-trend trend-up">+8%</span>
-                </div>
-                <div class="stat-value">¥248,500</div>
-                <div class="stat-label">本日の売上</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">👥</div>
-                    <span class="stat-trend trend-up">+15</span>
-                </div>
-                <div class="stat-value">1,234</div>
-                <div class="stat-label">総顧客数</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <div class="stat-icon">⭐</div>
-                    <span class="stat-trend">New!</span>
-                </div>
-                <div class="stat-value">4.8</div>
-                <div class="stat-label">平均評価</div>
-            </div>
-        </div>
-
+        <!-- 明日の予約 -->
         <section class="schedule-section">
             <div class="section-header">
-                <h2 class="section-title">本日の予約</h2>
-                <a href="/appointments.html" class="view-all-btn">すべて見る →</a>
+                <h2 class="section-title">明日の予約</h2>
+                <a href="/appointments.html?date=tomorrow" class="view-all-btn">詳細 →</a>
             </div>
             <div class="appointment-list">
-                <div class="appointment-card">
+                <div class="appointment-card" onclick="viewAppointmentDetail('apt-101')" style="cursor: pointer;">
                     <div class="time-slot">
-                        <div class="time">10:00</div>
+                        <div class="time">9:30</div>
+                        <div class="duration">45分</div>
+                    </div>
+                    <div class="appointment-info">
+                        <div class="customer-name" onclick="viewCustomerDetail('4')" style="color: var(--primary); text-decoration: underline;">中村 恵美 様</div>
+                        <div class="service-name">ヘッドスパ</div>
+                    </div>
+                    <div class="appointment-status" aria-label="予約確定"></div>
+                </div>
+
+                <div class="appointment-card" onclick="viewAppointmentDetail('apt-102')" style="cursor: pointer;">
+                    <div class="time-slot">
+                        <div class="time">11:00</div>
                         <div class="duration">90分</div>
                     </div>
                     <div class="appointment-info">
-                        <div class="customer-name">山田 花子 様</div>
-                        <div class="service-name">カット + カラー + トリートメント</div>
+                        <div class="customer-name" onclick="viewCustomerDetail('5')" style="color: var(--primary); text-decoration: underline;">伊藤 真理 様</div>
+                        <div class="service-name">カット + カラー</div>
                     </div>
                     <div class="appointment-status" aria-label="予約確定"></div>
                 </div>
 
-                <div class="appointment-card">
+                <div class="appointment-card" onclick="viewAppointmentDetail('apt-103')" style="cursor: pointer;">
                     <div class="time-slot">
-                        <div class="time">13:00</div>
+                        <div class="time">14:00</div>
                         <div class="duration">60分</div>
                     </div>
                     <div class="appointment-info">
-                        <div class="customer-name">佐藤 美咲 様</div>
-                        <div class="service-name">カット + パーマ</div>
-                    </div>
-                    <div class="appointment-status" aria-label="予約確定"></div>
-                </div>
-
-                <div class="appointment-card">
-                    <div class="time-slot">
-                        <div class="time">15:00</div>
-                        <div class="duration">120分</div>
-                    </div>
-                    <div class="appointment-info">
-                        <div class="customer-name">鈴木 真由美 様</div>
-                        <div class="service-name">フルコース（カット + カラー + トリートメント + ヘッドスパ）</div>
+                        <div class="customer-name" onclick="viewCustomerDetail('6')" style="color: var(--primary); text-decoration: underline;">新規 様</div>
+                        <div class="service-name">カット</div>
                     </div>
                     <div class="appointment-status" aria-label="予約確定"></div>
                 </div>
@@ -1595,6 +1642,32 @@
             </div>
         </div>
     </main>
+    
+    <!-- モバイル底部ナビゲーション -->
+    <nav class="mobile-bottom-nav" role="navigation" aria-label="メインナビゲーション">
+        <div class="mobile-nav-items">
+            <a href="/dashboard.html" class="mobile-nav-item active" aria-current="page">
+                <div class="mobile-nav-icon">🏠</div>
+                <div class="mobile-nav-label">ホーム</div>
+            </a>
+            <a href="/appointments.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📅</div>
+                <div class="mobile-nav-label">予約</div>
+            </a>
+            <a href="/customers.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">👥</div>
+                <div class="mobile-nav-label">顧客</div>
+            </a>
+            <a href="/messages.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">💬</div>
+                <div class="mobile-nav-label">連絡</div>
+            </a>
+            <a href="/settings.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚙️</div>
+                <div class="mobile-nav-label">設定</div>
+            </a>
+        </div>
+    </nav>
 
     <!-- Include app-new.js for authentication and API handling -->
     <script src="/js/calendar.js"></script>
@@ -1869,6 +1942,109 @@
                 }
             }
         });
+        
+        // 右上ボタンの機能実装
+        window.openSearch = function() {
+            window.location.href = '/customers.html?search=true';
+        };
+        
+        window.openNotifications = function() {
+            alert('📢 新着通知\n\n• 山田様から予約変更の連絡\n• 明日の予約リマインダー送信完了\n• 今月の売上目標達成！');
+        };
+        
+        window.openNewBooking = function() {
+            window.location.href = '/appointments.html?new=true';
+        };
+        
+        // ダッシュボード機能
+        window.showTodayAppointments = function() {
+            window.location.href = '/appointments.html?filter=today';
+        };
+        
+        window.viewAppointmentDetail = function(appointmentId) {
+            // 予約詳細情報を表示（本番仕様）
+            const appointments = {
+                'apt-001': { customer: '山田花子様', time: '10:00-11:30', service: 'カット+カラー+トリートメント', staff: '田中', phone: '090-1234-5678', price: 12000, notes: '前回と同じカラーリング希望' },
+                'apt-002': { customer: '佐藤美咲様', time: '13:00-14:00', service: 'カット+パーマ', staff: '佐藤', phone: '080-9876-5432', price: 15000, notes: 'デジタルパーマ、ゆるめのカール' },
+                'apt-003': { customer: '鈴木真由美様', time: '15:00-17:00', service: 'フルコース', staff: '山田', phone: '070-1111-2222', price: 18000, notes: 'リラックスコース、ヘッドスパ重点' },
+                'apt-101': { customer: '中村恵美様', time: '9:30-10:15', service: 'ヘッドスパ', staff: '田中', phone: '070-9999-0000', price: 6000, notes: '頭皮の乾燥が気になる' },
+                'apt-102': { customer: '伊藤真理様', time: '11:00-12:30', service: 'カット+カラー', staff: '佐藤', phone: '090-2222-2222', price: 10000, notes: '明るめのブラウン希望' },
+                'apt-103': { customer: '新規様', time: '14:00-15:00', service: 'カット', staff: '山田', phone: '080-1111-1111', price: 4500, notes: '初回来店、カウンセリング重要' }
+            };
+            
+            const apt = appointments[appointmentId];
+            if (apt) {
+                alert(`📅 予約詳細情報\n\n` +
+                      `お客様: ${apt.customer}\n` +
+                      `時間: ${apt.time}\n` +
+                      `サービス: ${apt.service}\n` +
+                      `担当: ${apt.staff}スタッフ\n` +
+                      `料金: ¥${apt.price.toLocaleString()}\n` +
+                      `備考: ${apt.notes}\n` +
+                      `電話: ${apt.phone}`);
+            }
+        };
+        
+        window.viewCustomerDetail = function(customerId) {
+            // 顧客詳細情報とカルテを表示
+            const customers = {
+                '1': { name: '山田花子', phone: '090-1234-5678', email: 'yamada@email.com', lastVisit: '2024-03-14', totalSpent: 128000, visitCount: 23 },
+                '2': { name: '佐藤美咲', phone: '080-9876-5432', email: 'sato@email.com', lastVisit: '2024-03-13', totalSpent: 89500, visitCount: 16 },
+                '3': { name: '鈴木真由美', phone: '070-1111-2222', email: 'suzuki@email.com', lastVisit: '2024-03-12', totalSpent: 23000, visitCount: 3 },
+                '4': { name: '中村恵美', phone: '070-9999-0000', email: 'emi@email.com', lastVisit: '2024-03-05', totalSpent: 45000, visitCount: 8 },
+                '5': { name: '伊藤真理', phone: '090-2222-2222', email: 'ito@email.com', lastVisit: '2024-03-11', totalSpent: 67000, visitCount: 12 },
+                '6': { name: '新規様', phone: '080-1111-1111', email: 'new@email.com', lastVisit: '初回', totalSpent: 0, visitCount: 0 }
+            };
+            
+            const customer = customers[customerId];
+            if (customer) {
+                const message = `👤 ${customer.name} 様の詳細情報\n\n` +
+                      `📱 電話: ${customer.phone}\n` +
+                      `📧 メール: ${customer.email}\n` +
+                      `📅 最終来店: ${customer.lastVisit}\n` +
+                      `💰 累計金額: ¥${customer.totalSpent.toLocaleString()}\n` +
+                      `🔄 来店回数: ${customer.visitCount}回\n\n` +
+                      `詳細なカルテを確認しますか？`;
+                
+                if (confirm(message)) {
+                    // カルテ表示
+                    showCustomerMedicalRecord(customerId);
+                }
+            }
+        };
+        
+        window.showCustomerMedicalRecord = function(customerId) {
+            const medicalRecords = {
+                '1': { allergies: 'ジアミン系カラー剤アレルギー', notes: '敏感肌、パッチテスト必須', treatments: '前回: カット+カラー+トリートメント (3/14)' },
+                '2': { allergies: 'なし', notes: '髪質細め、カール持ちが良い', treatments: '前回: パーマ+トリートメント (3/13)' },
+                '3': { allergies: 'なし', notes: '新規顧客、要丁寧対応', treatments: '前回: ヘッドスパ+トリートメント (3/12)' }
+            };
+            
+            const record = medicalRecords[customerId] || { allergies: '記録なし', notes: '新規顧客', treatments: '施術履歴なし' };
+            
+            alert(`📋 カルテ情報\n\n` +
+                  `⚠️ アレルギー: ${record.allergies}\n` +
+                  `📝 注意事項: ${record.notes}\n` +
+                  `💉 施術履歴: ${record.treatments}`);
+        };
+        
+        window.viewMessage = function(messageId) {
+            // メッセージの詳細とやりとり履歴を表示
+            const messages = {
+                'msg-001': { customer: '田中さくら', channel: 'LINE', history: ['こんにちは', '明日の予約時間を30分遅らせていただけますか？', 'ありがとうございます'] },
+                'msg-002': { customer: '高橋恵子', channel: 'SMS', history: ['お疲れ様です', '来週の予約をお願いしたいです'] },
+                'msg-003': { customer: '吉田美穂', channel: 'Instagram', history: ['施術ありがとうございました', 'カラーの色が思ったより暗くて...', 'また相談させてください'] }
+            };
+            
+            const msg = messages[messageId];
+            if (msg) {
+                const historyText = msg.history.map((text, index) => `${index + 1}. ${text}`).join('\n');
+                
+                if (confirm(`💬 ${msg.customer}様との${msg.channel}やりとり履歴\n\n${historyText}\n\nメッセージ画面で返信しますか？`)) {
+                    window.location.href = `/messages.html?customer=${msg.customer}`;
+                }
+            }
+        };
         
         // 顧客管理の新規顧客ボタン用
         window.showCreateCustomerModal = function() {

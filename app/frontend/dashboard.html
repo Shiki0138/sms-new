@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/mobile-navigation.css">
     <style>
         /* Page visibility - navigation functionality only */
         .page {
@@ -74,6 +75,7 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -123,9 +125,9 @@
         </div>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content" id="main-content">
         <!-- Dashboard Page -->
-        <div class="page active" id="dashboard">
+        <div class="page active" id="dashboard" role="main" aria-label="ダッシュボード">
             <header class="header">
                 <h1 class="page-title">こんにちは、素敵な一日を！</h1>
                 <div class="header-actions">
@@ -1640,6 +1642,32 @@
             </div>
         </div>
     </main>
+    
+    <!-- モバイル底部ナビゲーション -->
+    <nav class="mobile-bottom-nav" role="navigation" aria-label="メインナビゲーション">
+        <div class="mobile-nav-items">
+            <a href="/dashboard.html" class="mobile-nav-item active" aria-current="page">
+                <div class="mobile-nav-icon">🏠</div>
+                <div class="mobile-nav-label">ホーム</div>
+            </a>
+            <a href="/appointments.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📅</div>
+                <div class="mobile-nav-label">予約</div>
+            </a>
+            <a href="/customers.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">👥</div>
+                <div class="mobile-nav-label">顧客</div>
+            </a>
+            <a href="/messages.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">💬</div>
+                <div class="mobile-nav-label">連絡</div>
+            </a>
+            <a href="/settings.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚙️</div>
+                <div class="mobile-nav-label">設定</div>
+            </a>
+        </div>
+    </nav>
 
     <!-- Include app-new.js for authentication and API handling -->
     <script src="/js/calendar.js"></script>

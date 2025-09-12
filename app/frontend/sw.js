@@ -1,15 +1,18 @@
 // Service Worker - Fixed version for POST method caching
-const CACHE_NAME = 'salon-system-v1';
+const CACHE_NAME = 'salon-system-v2';
 const STATIC_CACHE_URLS = [
   '/',
   '/dashboard.html',
+  '/customers.html',
+  '/appointments.html',
+  '/messages.html',
+  '/settings.html',
+  '/reports.html',
   '/login.html',
-  '/landing.html',
-  '/css/style.css',
-  '/css/dashboard.css',
+  '/customer-booking.html',
+  '/css/main-unified.css',
   '/js/app-new.js',
-  '/js/settings.js',
-  '/js/calendar.js',
+  '/js/firebase-config.js',
   '/manifest.json'
 ];
 

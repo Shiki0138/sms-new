@@ -107,7 +107,8 @@
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button class="btn btn-secondary" style="flex: 1;" onclick="contactCustomer('1')">連絡</button>
-                        <button class="btn btn-primary" style="flex: 1;" onclick="viewCustomerRecord('1')">詳細カルテ</button>
+                        <button class="btn btn-info" style="flex: 1;" onclick="viewCustomerProfile('1')">詳細</button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="viewCustomerRecord('1')">カルテ</button>
                     </div>
                 </div>
             </div>
@@ -155,6 +156,12 @@
             }
         });
 
+        // 顧客管理機能
+        window.viewCustomerProfile = function(customerId) {
+            // 包括的な顧客詳細ページに遷移
+            window.location.href = `/customer-profile.html?customer=${customerId}`;
+        };
+        
         // 電子カルテ機能
         window.viewCustomerRecord = function(customerId) {
             // 詳細カルテページに遷移

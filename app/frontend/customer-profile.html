@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顧客詳細プロフィール - Salon Lumière</title>
+    <link rel="stylesheet" href="/css/legacy/main-unified.css?v=20250907">
+    <link rel="stylesheet" href="/css/mobile-navigation.css">
+    <style>
+        .profile-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .customer-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .customer-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .summary-item {
+            background: rgba(255,255,255,0.7);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            margin-top: 0.25rem;
+        }
+        
+        .content-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+        
+        .visit-item {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .visit-date {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .visit-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .detail-item {
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-medium);
+        }
+        
+        .treatment-photos {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            background: var(--gray-200);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .photo-thumbnail:hover {
+            transform: scale(1.1);
+        }
+        
+        .personal-notes {
+            background: var(--info-light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--info);
+        }
+        
+        .alert-section {
+            background: var(--warning-light);
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: var(--warning);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">✨</div>
+            <h2 class="salon-name">Salon Lumière</h2>
+            <span class="plan-badge">PREMIUM</span>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>ホーム</span>
+            </a>
+            <a href="/appointments.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>予約</span>
+            </a>
+            <a href="/customers.html" class="nav-item active">
+                <span class="nav-icon">👥</span>
+                <span>顧客</span>
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>連絡</span>
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>売上</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <div class="user-section">
+            <div class="user-info">
+                <div class="user-avatar">管</div>
+                <div class="user-details">
+                    <div class="user-name">管理者</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">ログアウト</button>
+        </div>
+    </aside>
+
+    <main class="main-content" id="main-content">
+        <div class="profile-container">
+            <!-- 顧客ヘッダー -->
+            <div class="profile-header">
+                <div class="customer-avatar" id="customerAvatar">山</div>
+                <div style="flex: 1;">
+                    <h1 id="customerName" style="margin: 0 0 1rem 0; font-size: 2rem; color: var(--text-dark);">山田 花子 様</h1>
+                    
+                    <div class="customer-summary">
+                        <div class="summary-item">
+                            <div class="summary-value" id="visitCount">23</div>
+                            <div class="summary-label">来店回数</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value" id="totalSpent">¥128,000</div>
+                            <div class="summary-label">累計金額</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value" id="lastVisit">3/14</div>
+                            <div class="summary-label">最終来店</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value" id="avgSpent">¥5,565</div>
+                            <div class="summary-label">平均単価</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value" id="membershipLevel">VIP</div>
+                            <div class="summary-label">会員ランク</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 重要な医療情報・アラート -->
+            <div class="alert-section">
+                <div class="alert-title">⚠️ 重要な医療情報・注意事項</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong>アレルギー:</strong> ジアミン系カラー剤<br>
+                        <strong>症状:</strong> かゆみ・発疹<br>
+                        <strong>対応:</strong> パッチテスト必須
+                    </div>
+                    <div>
+                        <strong>肌質:</strong> 敏感肌<br>
+                        <strong>髪質:</strong> 細毛・やわらかい<br>
+                        <strong>頭皮:</strong> 乾燥しやすい
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-sections">
+                <!-- 左側：基本情報・連絡先 -->
+                <div class="section-card">
+                    <h2 class="section-title">👤 基本情報</h2>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <div class="personal-notes">
+                            <h3 style="margin: 0 0 1rem 0; color: var(--info);">連絡先情報</h3>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <div><strong>電話番号:</strong> <span id="phoneNumber">090-1234-5678</span></div>
+                                <div><strong>メールアドレス:</strong> <span id="emailAddress">yamada@email.com</span></div>
+                                <div><strong>LINE ID:</strong> <span id="lineId">yamada_hanako</span></div>
+                                <div><strong>Instagram:</strong> <span id="instagramId">@yamada_beauty</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="personal-notes">
+                            <h3 style="margin: 0 0 1rem 0; color: var(--info);">個人情報</h3>
+                            <div style="display: grid; gap: 0.5rem;">
+                                <div><strong>生年月日:</strong> 1985年7月15日 (39歳)</div>
+                                <div><strong>住所:</strong> 東京都渋谷区○○1-2-3</div>
+                                <div><strong>職業:</strong> 会社員（営業）</div>
+                                <div><strong>家族構成:</strong> 夫・子供2人</div>
+                            </div>
+                        </div>
+                        
+                        <div class="personal-notes">
+                            <h3 style="margin: 0 0 1rem 0; color: var(--info);">美容に関する希望・こだわり</h3>
+                            <div>
+                                <div>• ナチュラルで上品な仕上がり希望</div>
+                                <div>• 朝のスタイリングが楽になるカット</div>
+                                <div>• 白髪が気になるため定期的なカラー</div>
+                                <div>• 頭皮マッサージが大好き</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右側：来店履歴・施術記録 -->
+                <div class="section-card">
+                    <h2 class="section-title">📋 来店履歴・施術記録</h2>
+                    
+                    <div class="treatment-history">
+                        <div class="visit-item">
+                            <div class="visit-date">2024年3月14日 (最新)</div>
+                            <div class="visit-details">
+                                <div><span class="detail-label">施術:</span> カット + カラー + トリートメント</div>
+                                <div><span class="detail-label">担当:</span> 田中スタッフ</div>
+                                <div><span class="detail-label">時間:</span> 10:00-11:30 (90分)</div>
+                                <div><span class="detail-label">料金:</span> ¥12,000</div>
+                            </div>
+                            <div style="margin: 1rem 0; padding: 1rem; background: var(--white); border-radius: 8px;">
+                                <strong>施術詳細:</strong><br>
+                                • カット: 前髪5mm、全体3cm<br>
+                                • カラー: 8トーンアッシュブラウン (イルミナカラー)<br>
+                                • トリートメント: オラプレックス<br>
+                                • 仕上がり: 軽やかで上品。お客様大変満足
+                            </div>
+                            <div class="treatment-photos">
+                                <div class="photo-thumbnail" onclick="viewPhoto('before-20240314')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>Before</div>
+                                </div>
+                                <div class="photo-thumbnail" onclick="viewPhoto('after-20240314')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>After</div>
+                                </div>
+                                <div class="photo-thumbnail" onclick="viewPhoto('color-20240314')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>カラー</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="visit-item">
+                            <div class="visit-date">2024年1月20日</div>
+                            <div class="visit-details">
+                                <div><span class="detail-label">施術:</span> カット + パーマ</div>
+                                <div><span class="detail-label">担当:</span> 佐藤スタッフ</div>
+                                <div><span class="detail-label">時間:</span> 13:00-15:00 (120分)</div>
+                                <div><span class="detail-label">料金:</span> ¥15,000</div>
+                            </div>
+                            <div style="margin: 1rem 0; padding: 1rem; background: var(--white); border-radius: 8px;">
+                                <strong>施術詳細:</strong><br>
+                                • カット: レイヤーカット<br>
+                                • パーマ: デジタルパーマ（ゆるめ）<br>
+                                • 仕上がり: 自然なウェーブ。髪質に配慮
+                            </div>
+                            <div class="treatment-photos">
+                                <div class="photo-thumbnail" onclick="viewPhoto('before-20240120')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>Before</div>
+                                </div>
+                                <div class="photo-thumbnail" onclick="viewPhoto('after-20240120')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>After</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="visit-item">
+                            <div class="visit-date">2023年12月10日</div>
+                            <div class="visit-details">
+                                <div><span class="detail-label">施術:</span> カット + トリートメント</div>
+                                <div><span class="detail-label">担当:</span> 田中スタッフ</div>
+                                <div><span class="detail-label">時間:</span> 14:00-15:15 (75分)</div>
+                                <div><span class="detail-label">料金:</span> ¥8,000</div>
+                            </div>
+                            <div style="margin: 1rem 0; padding: 1rem; background: var(--white); border-radius: 8px;">
+                                <strong>施術詳細:</strong><br>
+                                • カット: 毛先中心<br>
+                                • トリートメント: 保湿重点<br>
+                                • 仕上がり: 乾燥改善、ツヤ回復
+                            </div>
+                            <div class="treatment-photos">
+                                <div class="photo-thumbnail" onclick="viewPhoto('after-20231210')">
+                                    <div style="text-align: center; font-size: 0.7rem;">📷<br>After</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 下部：詳細情報 -->
+            <div class="content-sections">
+                <!-- 予約履歴 -->
+                <div class="section-card">
+                    <h2 class="section-title">📅 予約履歴</h2>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2024年3月14日</span>
+                            <span style="color: var(--success);">来店済み</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2024年1月20日</span>
+                            <span style="color: var(--success);">来店済み</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2023年12月10日</span>
+                            <span style="color: var(--success);">来店済み</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--warning-light); border-radius: 4px;">
+                            <span>2023年11月25日</span>
+                            <span style="color: var(--warning);">キャンセル</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 支払い履歴 -->
+                <div class="section-card">
+                    <h2 class="section-title">💰 支払い履歴</h2>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2024年3月14日</span>
+                            <span style="color: var(--success); font-weight: 500;">¥12,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2024年1月20日</span>
+                            <span style="color: var(--success); font-weight: 500;">¥15,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem; background: var(--gray-50); border-radius: 4px;">
+                            <span>2023年12月10日</span>
+                            <span style="color: var(--success); font-weight: 500;">¥8,000</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--primary-50); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                            <span>総支払額:</span>
+                            <span style="color: var(--primary); font-size: 1.2rem;">¥128,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                            <span>平均単価:</span>
+                            <span>¥5,565</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- アクションボタン -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button class="btn btn-secondary" onclick="editCustomerInfo()">
+                    基本情報編集
+                </button>
+                <button class="btn btn-secondary" onclick="viewMedicalRecord()">
+                    医療カルテ
+                </button>
+                <button class="btn btn-primary" onclick="createNewAppointment()">
+                    新規予約作成
+                </button>
+                <button class="btn btn-secondary" onclick="sendMessage()">
+                    メッセージ送信
+                </button>
+                <button class="btn btn-secondary" onclick="goBackToCustomers()">
+                    顧客一覧に戻る
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- モバイル底部ナビゲーション -->
+    <nav class="mobile-bottom-nav" role="navigation" aria-label="メインナビゲーション">
+        <div class="mobile-nav-items">
+            <a href="/dashboard.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">🏠</div>
+                <div class="mobile-nav-label">ホーム</div>
+            </a>
+            <a href="/appointments.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">📅</div>
+                <div class="mobile-nav-label">予約</div>
+            </a>
+            <a href="/customers.html" class="mobile-nav-item active" aria-current="page">
+                <div class="mobile-nav-icon">👥</div>
+                <div class="mobile-nav-label">顧客</div>
+            </a>
+            <a href="/messages.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">💬</div>
+                <div class="mobile-nav-label">連絡</div>
+            </a>
+            <a href="/settings.html" class="mobile-nav-item">
+                <div class="mobile-nav-icon">⚙️</div>
+                <div class="mobile-nav-label">設定</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // URLパラメータから顧客IDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerId = urlParams.get('customer') || '1';
+        
+        // 包括的な顧客データベース
+        const customerProfiles = {
+            '1': {
+                id: 'C-001',
+                name: '山田 花子',
+                phone: '090-1234-5678',
+                email: 'yamada@email.com',
+                lineId: 'yamada_hanako',
+                instagramId: '@yamada_beauty',
+                birthDate: '1985-07-15',
+                address: '東京都渋谷区○○1-2-3',
+                occupation: '会社員（営業）',
+                family: '夫・子供2人',
+                preferences: [
+                    'ナチュラルで上品な仕上がり希望',
+                    '朝のスタイリングが楽になるカット',
+                    '白髪が気になるため定期的なカラー',
+                    '頭皮マッサージが大好き'
+                ],
+                visitCount: 23,
+                totalSpent: 128000,
+                lastVisit: '2024-03-14',
+                membershipLevel: 'VIP',
+                allergies: {
+                    type: 'ジアミン系カラー剤',
+                    symptoms: 'かゆみ・発疹',
+                    action: 'パッチテスト必須'
+                },
+                medicalInfo: {
+                    skin: '敏感肌',
+                    hair: '細毛・やわらかい',
+                    scalp: '乾燥しやすい'
+                }
+            },
+            '2': {
+                id: 'C-002',
+                name: '佐藤 美咲',
+                phone: '080-9876-5432',
+                email: 'sato@email.com',
+                visitCount: 16,
+                totalSpent: 89500,
+                lastVisit: '2024-03-08',
+                membershipLevel: '常連'
+            }
+        };
+        
+        // ページ初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomerProfile(customerId);
+        });
+        
+        function loadCustomerProfile(customerId) {
+            const customer = customerProfiles[customerId];
+            if (!customer) {
+                alert('顧客データが見つかりません');
+                window.location.href = '/customers.html';
+                return;
+            }
+            
+            // 基本情報の表示
+            document.getElementById('customerAvatar').textContent = customer.name[0];
+            document.getElementById('customerName').textContent = customer.name + ' 様';
+            document.getElementById('visitCount').textContent = customer.visitCount;
+            document.getElementById('totalSpent').textContent = '¥' + customer.totalSpent.toLocaleString();
+            document.getElementById('lastVisit').textContent = customer.lastVisit.substring(5); // MM-DD
+            document.getElementById('avgSpent').textContent = '¥' + Math.round(customer.totalSpent / customer.visitCount).toLocaleString();
+            document.getElementById('membershipLevel').textContent = customer.membershipLevel;
+            document.getElementById('phoneNumber').textContent = customer.phone;
+            document.getElementById('emailAddress').textContent = customer.email;
+            
+            if (customer.lineId) {
+                document.getElementById('lineId').textContent = customer.lineId;
+            }
+            if (customer.instagramId) {
+                document.getElementById('instagramId').textContent = customer.instagramId;
+            }
+        }
+        
+        // 機能実装
+        function editCustomerInfo() {
+            const customer = customerProfiles[customerId];
+            const newPhone = prompt('電話番号を編集:', customer.phone);
+            const newEmail = prompt('メールアドレスを編集:', customer.email);
+            
+            if (newPhone || newEmail) {
+                alert(`✅ 顧客情報を更新しました\n\n電話: ${newPhone || customer.phone}\nメール: ${newEmail || customer.email}`);
+                console.log('顧客情報更新:', { newPhone, newEmail });
+            }
+        }
+        
+        function viewMedicalRecord() {
+            window.location.href = `/customer-medical-record.html?customer=${customerId}`;
+        }
+        
+        function createNewAppointment() {
+            const customer = customerProfiles[customerId];
+            alert(`📅 ${customer.name}様の新規予約作成\n\n予約管理画面で新規予約を作成します。\n\n・顧客情報自動入力\n・過去の施術履歴参照\n・アレルギー情報確認済み`);
+            // window.location.href = `/appointments.html?new=true&customer=${customerId}`;
+        }
+        
+        function sendMessage() {
+            const customer = customerProfiles[customerId];
+            window.location.href = `/messages.html?customer=${customerId}`;
+        }
+        
+        function viewPhoto(photoId) {
+            alert(`📷 施術写真表示\n\n写真ID: ${photoId}\n\n実際の運用では高解像度の施術写真が表示されます。\n\n・Before/After比較\n・拡大表示\n・写真メモ機能`);
+        }
+        
+        function goBackToCustomers() {
+            window.location.href = '/customers.html';
+        }
+        
+        // モバイル対応
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            if (mobileMenuToggle && sidebar && sidebarOverlay) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebarOverlay.classList.toggle('active');
+                });
+
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                });
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/login.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

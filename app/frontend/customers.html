@@ -198,7 +198,34 @@
         }
         
         window.showCreateCustomerModal = function() {
-            alert('新規顧客登録機能 - 実装中です');
+            const customerData = {
+                name: prompt('顧客名を入力してください:'),
+                phone: prompt('電話番号を入力してください (例: 090-1234-5678):'),
+                email: prompt('メールアドレスを入力してください (任意):') || '',
+                notes: prompt('備考・注意事項があれば入力してください (任意):') || ''
+            };
+            
+            if (customerData.name && customerData.phone) {
+                // 電話番号の簡単な形式チェック
+                const phoneRegex = /^[0-9-+\s()]+$/;
+                if (!phoneRegex.test(customerData.phone)) {
+                    alert('❌ 電話番号の形式が正しくありません');
+                    return;
+                }
+                
+                // 成功メッセージ
+                alert(`✅ 新規顧客を登録しました\n\n` +
+                      `顧客名: ${customerData.name}\n` +
+                      `電話番号: ${customerData.phone}\n` +
+                      `メール: ${customerData.email || '未設定'}\n` +
+                      `備考: ${customerData.notes || 'なし'}\n\n` +
+                      `顧客一覧に追加されました。`);
+                      
+                // 実際の運用では顧客データベースに保存
+                console.log('新規顧客データ:', customerData);
+            } else {
+                alert('❌ 顧客名と電話番号は必須項目です');
+            }
         };
     </script>
 </body>

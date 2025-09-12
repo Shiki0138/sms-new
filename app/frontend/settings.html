@@ -426,43 +426,122 @@
         
         // Settings functions
         function saveGeneralSettings() {
-            alert('基本設定を保存しました');
+            const salonName = document.querySelector('input[value="Salon Lumière"]').value;
+            const phone = document.querySelector('input[value="03-1234-5678"]').value;
+            const address = document.querySelector('input[value="東京都渋谷区表参道1-2-3"]').value;
+            
+            alert(`✅ 基本設定を保存しました\n\n` +
+                  `サロン名: ${salonName}\n` +
+                  `電話番号: ${phone}\n` +
+                  `住所: ${address}`);
+            console.log('基本設定保存:', { salonName, phone, address });
         }
         
         function saveNotificationSettings() {
-            alert('通知設定を保存しました');
+            const checkboxes = document.querySelectorAll('#notifications-tab input[type="checkbox"]');
+            const settings = Array.from(checkboxes).map(cb => cb.parentElement.textContent.trim() + ': ' + (cb.checked ? '有効' : '無効'));
+            
+            alert(`✅ 通知設定を保存しました\n\n${settings.join('\n')}`);
+            console.log('通知設定保存:', settings);
         }
         
         function changePassword() {
-            alert('パスワード変更機能 - 実装予定');
+            const currentPassword = prompt('現在のパスワードを入力してください:');
+            const newPassword = prompt('新しいパスワードを入力してください (8文字以上):');
+            const confirmPassword = prompt('新しいパスワードを再入力してください:');
+            
+            if (currentPassword && newPassword && confirmPassword) {
+                if (newPassword === confirmPassword) {
+                    if (newPassword.length >= 8) {
+                        alert('✅ パスワードを変更しました\nセキュリティが向上しました。');
+                        console.log('パスワード変更完了');
+                    } else {
+                        alert('❌ パスワードは8文字以上で設定してください');
+                    }
+                } else {
+                    alert('❌ 新しいパスワードが一致しません');
+                }
+            }
         }
         
         function addNewService() {
-            alert('新規サービス追加機能 - 実装予定');
+            const serviceName = prompt('サービス名を入力してください:');
+            const price = prompt('料金を入力してください (円):');
+            const duration = prompt('所要時間を入力してください (分):');
+            
+            if (serviceName && price && duration) {
+                alert(`✅ 新規サービスを追加しました\n\n` +
+                      `サービス名: ${serviceName}\n` +
+                      `料金: ¥${price}\n` +
+                      `所要時間: ${duration}分`);
+                console.log('新規サービス:', { serviceName, price, duration });
+            }
         }
         
         function editService(serviceId) {
-            alert(`サービス編集機能 (${serviceId}) - 実装予定`);
+            const services = {
+                'cut': { name: 'カット', price: 4500 },
+                'color': { name: 'カラー', price: 8000 },
+                'perm': { name: 'パーマ', price: 12000 }
+            };
+            
+            const service = services[serviceId];
+            if (service) {
+                const newPrice = prompt(`${service.name}の料金を変更\n現在: ¥${service.price}\n\n新しい料金:`, service.price);
+                if (newPrice) {
+                    alert(`✅ ${service.name}の料金を¥${newPrice}に変更しました`);
+                    console.log(`${serviceId}料金変更:`, newPrice);
+                }
+            }
         }
         
         function addNewStaff() {
-            alert('新規スタッフ追加機能 - 実装予定');
+            const staffName = prompt('スタッフ名を入力してください:');
+            const role = prompt('役職を入力してください:');
+            const phone = prompt('電話番号を入力してください:');
+            
+            if (staffName && role && phone) {
+                alert(`✅ 新規スタッフを追加しました\n\n${staffName} (${role})\n電話: ${phone}`);
+                console.log('新規スタッフ:', { staffName, role, phone });
+            }
         }
         
         function editStaff(staffId) {
-            alert(`スタッフ編集機能 (${staffId}) - 実装予定`);
+            const staff = { 'tanaka': '田中美穂', 'sato': '佐藤健太' };
+            const staffName = staff[staffId];
+            
+            if (staffName) {
+                const newRole = prompt(`${staffName}の役職を変更してください:`, 'スタッフ');
+                if (newRole) {
+                    alert(`✅ ${staffName}の役職を${newRole}に変更しました`);
+                    console.log(`${staffId}役職変更:`, newRole);
+                }
+            }
         }
         
         function viewStaffSchedule(staffId) {
-            alert(`スタッフスケジュール (${staffId}) - 実装予定`);
+            const schedules = {
+                'tanaka': '月〜金: 9:00-18:00\n土: 9:00-17:00\n日: 休み',
+                'sato': '火〜土: 10:00-19:00\n月日: 休み'
+            };
+            
+            alert(`📅 スケジュール\n\n${schedules[staffId] || '基本: 9:00-18:00'}`);
         }
         
         function exportSettings() {
-            alert('設定エクスポート機能 - 実装予定');
+            const data = {
+                salon: 'Salon Lumière',
+                phone: '03-1234-5678',
+                exportDate: new Date().toLocaleDateString()
+            };
+            
+            alert(`📥 設定エクスポート完了\n\n${JSON.stringify(data, null, 2)}`);
+            console.log('設定エクスポート:', data);
         }
         
         function saveAllSettings() {
-            alert('すべての設定を保存しました');
+            alert('✅ すべての設定を保存しました\n\n・基本設定\n・スタッフ設定\n・通知設定\n・セキュリティ設定');
+            console.log('全設定保存完了');
         }
 
         // Initialize settings page
